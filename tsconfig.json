@@ -1,0 +1,11 @@
+{
+  "references": [
+    {
+      "path": "./packages/task_contrib_types"
+    },
+    {
+      "path": "./packages/tasks_panel"
+    }
+  ],
+  "include": ["src/**/*"]
+}

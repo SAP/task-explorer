@@ -1,0 +1,17 @@
+{
+  "name": "@vscode-tasks-explorer/task_contrib_types",
+  "version": "2.2.3",
+  "repository": "https://https://github.com/SAP/task-explorer",
+  "typings": "./api.d.ts",
+  "files": [
+    "api.d.ts"
+  ],
+  "scripts": {
+    "ci": "npm-run-all compile",
+    "ci:artifacts_only": "npm-run-all compile",
+    "compile": "tsc"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

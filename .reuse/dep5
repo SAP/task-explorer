@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: task-explorer
+Upstream-Contact: Michal Tall <michal.tall@sap.com>
+Source: https://github.com/SAP/task-explorer
+
+Files: *
+Copyright: 2021 SAP SE or an SAP affiliate company and task-explorer contributors
+License: Apache-2.0
