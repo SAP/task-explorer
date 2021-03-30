@@ -1,0 +1,50 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "extensionHost",
+      "request": "launch",
+      "name": "Launch Tasks Panel with Sample Task Contributor",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/tasks_panel",
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode_task_contrib"
+      ],
+      "outFiles": ["${workspaceRoot}/dist/src/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run websocket server",
+      "program": "${workspaceFolder}/packages/tasks_panel/src/webSocketServer/index.ts",
+      "outFiles": ["${workspaceFolder}/packages/tasks_panel/dist/**/*.js"],
+      "env": {
+        "PORT": "8081"
+      },
+      "preLaunchTask": "watch backend (tsc)"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run websocket server - editor",
+      "program": "${workspaceFolder}/packages/vue_frontend_rpc/local-dev/run-fs-backend-mock-editor.js",
+      "outFiles": ["${workspaceFolder}/packages/vue_frontend_rpc/dist/**/*.js"],
+      "env": {
+        "PORT": "8081"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run websocket server - selector",
+      "program": "${workspaceFolder}/packages/vue_frontend_rpc/local-dev/run-fs-backend-mock-selector.js",
+      "outFiles": ["${workspaceFolder}/packages/vue_frontend_rpc/dist/**/*.js"],
+      "env": {
+        "PORT": "8081"
+      }
+    }
+  ]
+}
