@@ -45,8 +45,8 @@ describe("Create Task", () => {
       });
 
       it("should trigger 'setSelectedTask' when selecting task", async () => {
-        const list = wrapper.find(".tasksByIntent");
-        await list.setProps({ value: true });
+        const listItem = wrapper.find('.tasksByIntent > [role="button"]');
+        await listItem.trigger("click");
         const task = wrapper.find(".v-list-item__title.selection-task-label");
         await task.trigger("mouseover");
         const button = wrapper.find("#configure");
@@ -101,8 +101,8 @@ describe("Create Task", () => {
       });
 
       it("should display 'Configured' button only when hovering task", async () => {
-        const list = wrapper.find(".tasksByIntent");
-        await list.setProps({ value: true });
+        const listItem = wrapper.find('.tasksByIntent > [role="button"]');
+        await listItem.trigger("click");
         const task1 = wrapper
           .findAll(".v-list-item__title.selection-task-label")
           .at(0);
