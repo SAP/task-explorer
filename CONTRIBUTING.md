@@ -94,3 +94,7 @@ Performing a release requires push permissions to the repository.
 - Once the tag build has finished successfully inspect the npm registry to see the new versions
   for all the changed packages of this mono-repo.
   - `npm view [package-name] version`
+
+## Developer Certificate of Origin (DCO)
+
+Due to legal reasons, contributors will be asked to accept a DCO before they submit the first pull request to this projects, this happens in an automated fashion during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).
