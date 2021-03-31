@@ -4,7 +4,7 @@ Type Definitions for Task Providers contributing to the Task Explorer.
 
 ## Usage
 
-This package only exports TypeScript definitions, See
+This package only exports TypeScript definitions, 
 See [api.d.ts](./api.d.ts) for the full definitions.
 
 ## Support
