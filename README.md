@@ -6,36 +6,37 @@
 [![DependentBot](https://api.dependabot.com/badges/status?host=github&repo=SAP/task-explorer)](https://dependabot.com/)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/task-explorer)](https://api.reuse.software/info/github.com/SAP/task-explorer)
 
-# VSCode Task Explorer
+# VS Code Task Explorer
 
 ![](screenshot.png)
 
-This npm [mono-repo][mono-repo] contains tasks exploring tool for [SAP Business Application Studio][SAP BAS] and [VSCode][VSCode] projects.
+This npm [mono-repo][mono-repo] contains the tool for exploring tasks in [SAP Business Application Studio][SAP BAS] and [VS Code][VSCode] projects.
 
 It currently contains:
 
-The [Tasks Explorer](./packages/tasks_panel) VSCode Extension.
+- The [Task Explorer](./packages/tasks_panel) VS Code extension.
 
-The following packages:
+- The following packages:
 
-- [@task-explorer/task_contrib_types](./packages/task_contrib_types) Type signatures for Tasks Providers contributing to Tasks Explorer.
-- [@task-explorer/tasks_panel](./packages/tasks_panel) Task Explorer extension.
-- [@task-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
-- [@task-explorer/vscode_task_contrib](./packages/vscode_task_contrib) Sample of Task Provider that contributes to Task Explorer.
+   - [@task-explorer/task_contrib_types](./packages/task_contrib_types) Type signatures for task providers contributing to the Task Explorer.
+   - [@task-explorer/tasks_panel](./packages/tasks_panel) The Task Explorer extension.
+   - [@task-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
+   - [@task-explorer/vscode_task_contrib](./packages/vscode_task_contrib) A sample of the task provider that contributes to Task Explorer.
 
 ## Download and Installation
 
-* Clone this repository
-* yarn install
-* yarn run ci
+1. Clone this repository
+2. Enter the `yarn install` command.
+3. Enter the `yarn run ci` command.
 
-### Run the VSCode extension with provided sample
-* Start VSCode on your local machine, and click on open workspace. Select this repo folder.
-* On the debug panel choose "Launch Tasks Panel with Sample Task Contributor", and click on the "Run" button.
+### Run the VS Code extension with the provided sample
+1. Start VS Code on your local machine, and click on **Open Workspace**.
+2. Select this repo folder.
+3. On the Debug panel, choose "Launch Tasks Panel with Sample Task Contributor", and click **Run**.
 
 ## Support
 
-Please open [issues](https://github.com/SAP/task-explorer/issues) on github.
+Open an [issue](https://github.com/SAP/task-explorer/issues) on GitHub.
 
 ## Contributing
 
