@@ -2081,13 +2081,13 @@
   dependencies:
     ws "^7.2.3"
 
-"@sap/swa-for-sapbas-vsx@1.1.9":
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/@sap/swa-for-sapbas-vsx/-/swa-for-sapbas-vsx-1.1.9.tgz#c180dcf7e25abc443127df19332a2f2d0a6c780c"
-  integrity sha512-+GYqIkxeGBFnNdHvlD9Ew9l/YOpuI8PmEgRjbfJ8IUYsEBMLJdIeppZYFqEOoV7CRGue+dKKK2UxKuF2OJCiPw==
+"@sap/swa-for-sapbas-vsx@1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@sap/swa-for-sapbas-vsx/-/swa-for-sapbas-vsx-1.2.7.tgz#db0551a0111ba7a89eb51cbd2baebcaa86b65d14"
+  integrity sha512-YHXrfNgcGweGabt38WtuByUvtVpeX+neIq1vpiPyAeQfMaA9gSLRCrIFe0JESWQMyr6qz4+yqtxvJ0cth57M0w==
   dependencies:
     esm "3.2.25"
-    lodash "4.17.20"
+    lodash "4.17.21"
     matomo-tracker "2.2.2"
 
 "@sinonjs/commons@^1.6.0", "@sinonjs/commons@^1.7.0", "@sinonjs/commons@^1.8.1":
