@@ -85,7 +85,8 @@ export class TasksSelection {
   }
 
   private async setSelectedTask(selectedTask: ConfiguredTask): Promise<void> {
-    getSWA().track("Task Explorer - Create Task", [
+    getSWA().track(messages.SWA_CREATE_TASK_EVENT(), [
+      messages.SWA_TASK_EXPLORER_PARAM(),
       selectedTask.__intent,
       selectedTask.__extensionName,
     ]);
