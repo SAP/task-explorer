@@ -10,7 +10,7 @@
 
 ![](screenshot.png)
 
-This npm [mono-repo][mono-repo] contains tasks exploring tool for [SAP Business Application Studio][SAP BAS] and [VSCode][VSCode] projects.
+This npm [mono-repo][mono-repo] contains tasks exploring tool for [SAP Business Application Studio][sap bas] and [VSCode][vscode] projects.
 
 It currently contains:
 
@@ -25,13 +25,14 @@ The following packages:
 
 ## Download and Installation
 
-* Clone this repository
-* yarn install
-* yarn run ci
+- Clone this repository
+- yarn install
+- yarn run ci
 
 ### Run the VSCode extension with provided sample
-* Start VSCode on your local machine, and click on open workspace. Select this repo folder.
-* On the debug panel choose "Launch Tasks Panel with Sample Task Contributor", and click on the "Run" button.
+
+- Start VSCode on your local machine, and click on open workspace. Select this repo folder.
+- On the debug panel choose "Launch Tasks Panel with Sample Task Contributor", and click on the "Run" button.
 
 ## Support
 
@@ -42,7 +43,5 @@ Please open [issues](https://github.com/SAP/task-explorer/issues) on github.
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 [mono-repo]: https://github.com/babel/babel/blob/master/doc/design/monorepo.md
-[SAP BAS]: https://help.sap.com/viewer/product/SAP%20Business%20Application%20Studio/Cloud/en-USl
-[VSCode]: https://code.visualstudio.com/
-
-
+[sap bas]: https://help.sap.com/viewer/product/SAP%20Business%20Application%20Studio/Cloud/en-USl
+[vscode]: https://code.visualstudio.com/
