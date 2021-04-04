@@ -6,6 +6,7 @@
 [![DependentBot](https://api.dependabot.com/badges/status?host=github&repo=SAP/task-explorer)](https://dependabot.com/)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/task-explorer)](https://api.reuse.software/info/github.com/SAP/task-explorer)
 
+
 # VSCode Task Explorer
 
 ![](screenshot.png)
