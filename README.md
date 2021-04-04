@@ -1,5 +1,5 @@
 [![CircleCI](https://circleci.com/gh/SAP/task-explorer.svg?style=svg)](https://circleci.com/gh/SAP/task-explorer)
-[![Coverage Status](https://coveralls.io/repos/github/SAP/task-explore/badge.svg?branch=master)](https://coveralls.io/github/SAP/task-explorer?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/SAP/task-explorer/badge.svg?branch=main)](https://coveralls.io/github/SAP/task-explorer?branch=main)
 [![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/SAP/task-explorer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SAP/task-explorer/context:javascript)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
@@ -42,6 +42,6 @@ Please open [issues](https://github.com/SAP/task-explorer/issues) on github.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-[mono-repo]: https://github.com/babel/babel/blob/master/doc/design/monorepo.md
+[mono-repo]: https://github.com/babel/babel/blob/main/doc/design/monorepo.md
 [sap bas]: https://help.sap.com/viewer/product/SAP%20Business%20Application%20Studio/Cloud/en-USl
 [vscode]: https://code.visualstudio.com/
