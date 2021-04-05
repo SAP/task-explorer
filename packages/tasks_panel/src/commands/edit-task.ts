@@ -24,7 +24,8 @@ export async function editTask(
   task: ConfiguredTask,
   readResource: (file: string) => Promise<string>
 ): Promise<void> {
-  getSWA().track("Task Explorer - Edit Task", [
+  getSWA().track(messages.SWA_EDIT_TASK_EVENT(), [
+    messages.SWA_TASK_EXPLORER_PARAM(),
     task.__intent,
     task.__extensionName,
   ]);

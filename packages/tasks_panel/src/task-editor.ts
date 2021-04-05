@@ -203,7 +203,11 @@ export class TaskEditor {
 
   public async saveTask() {
     // report usage analytics on save
-    getSWA().track("Task Editor - Save", [this.intent, this.extensionName]);
+    getSWA().track(messages.SWA_SAVE_TASK_EVENT(), [
+      messages.SWA_TASK_EDITOR_PARAM(),
+      this.intent,
+      this.extensionName,
+    ]);
     const editedTask = { ...this.task };
     delete editedTask.__image;
     if (
@@ -223,7 +227,11 @@ export class TaskEditor {
 
   private async executeTask() {
     // report usage analytics on execute
-    getSWA().track("Task Editor - Execute", [this.intent, this.extensionName]);
+    getSWA().track(messages.SWA_EXECUTE_TASK_EVENT(), [
+      messages.SWA_TASK_EDITOR_PARAM(),
+      this.intent,
+      this.extensionName,
+    ]);
     await this.appEvents.executeTask(this.task);
   }
 

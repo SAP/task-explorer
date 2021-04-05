@@ -48,4 +48,11 @@ export const messages = {
     `Could not get the image from the given path: "${imagePath}". Failed with error: ${err}`,
   LABEL_IS_NOT_UNIQUE: (): string => `Enter a unique value.`,
   MANDATORY_FIELD: (): string => `Mandatory field`,
+  SWA_SAVE_TASK_EVENT: (): string => `Save`,
+  SWA_CREATE_TASK_EVENT: (): string => `Create`,
+  SWA_EXECUTE_TASK_EVENT: (): string => `Execute`,
+  SWA_DELETE_TASK_EVENT: (): string => `Delete`,
+  SWA_EDIT_TASK_EVENT: (): string => `Edit`,
+  SWA_TASK_EXPLORER_PARAM: (): string => `Explorer`,
+  SWA_TASK_EDITOR_PARAM: (): string => `Editor`,
 };
