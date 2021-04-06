@@ -1,6 +1,6 @@
 {
   "name": "@vscode-tasks-explorer/vue_frontend_rpc",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "engines": {
     "node": ">= 10.9.0"
   },

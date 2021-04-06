@@ -2,7 +2,7 @@
   "name": "vscode-task-contrib",
   "displayName": "VSCode Task Contributor Sample",
   "private": true,
-  "version": "3.0.0",
+  "version": "3.0.1",
   "publisher": "SAPSE",
   "keywords": [],
   "categories": [],
@@ -66,7 +66,7 @@
     "package": "node ./scripts/package-vsix.js"
   },
   "dependencies": {
-    "@vscode-tasks-explorer/task_contrib_types": "^3.0.0",
+    "@vscode-tasks-explorer/task_contrib_types": "^3.0.1",
     "comment-json": "2.1.0",
     "datauri": "2.0.0",
     "fs-extra": "7.0.1",
