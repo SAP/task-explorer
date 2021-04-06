@@ -14,7 +14,8 @@ export async function executeTaskFromTree(
     !isEmpty(treeItem.command.arguments)
   ) {
     const task = treeItem.command.arguments[0];
-    getSWA().track("Task Explorer - Execute Task", [
+    getSWA().track(messages.SWA_EXECUTE_TASK_EVENT(), [
+      messages.SWA_TASK_EXPLORER_PARAM(),
       task.__intent,
       task.__extensionName,
     ]);

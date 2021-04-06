@@ -18,7 +18,8 @@ export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
 
   const task = treeItem.command.arguments[0];
 
-  getSWA().track("Task Explorer - Delete Task", [
+  getSWA().track(messages.SWA_DELETE_TASK_EVENT(), [
+    messages.SWA_TASK_EXPLORER_PARAM(),
     task.__intent,
     task.__extensionName,
   ]);

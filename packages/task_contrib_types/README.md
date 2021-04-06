@@ -14,5 +14,3 @@ Open an [issue](https://github.com/SAP/task-explorer/issues) on GitHub.
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-
