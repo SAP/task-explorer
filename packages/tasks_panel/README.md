@@ -1,11 +1,10 @@
 # Task Explorer Panel
 
-
 This VS Code extension provides a view for exploring tasks. This includes browsing, creation, editing and execution.
 
 ## Description
 
-The Task panel presents the tree of tasks, grouped by intents. 
+The Task panel presents the tree of tasks, grouped by intents.
 The following intents are supported:
 
 - Build

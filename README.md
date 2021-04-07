@@ -10,7 +10,7 @@
 
 ![](screenshot.png)
 
-This npm [mono-repo][mono-repo] contains the tool for exploring tasks in [SAP Business Application Studio][SAP BAS] and [VS Code][VSCode] projects.
+This npm [mono-repo][mono-repo] contains the tool for exploring tasks in [SAP Business Application Studio][sap bas] and [VS Code][vscode] projects.
 
 It currently contains:
 
@@ -18,10 +18,10 @@ It currently contains:
 
 - The following packages:
 
-   - [@task-explorer/task_contrib_types](./packages/task_contrib_types) Type signatures for task providers contributing to the Task Explorer.
-   - [@task-explorer/tasks_panel](./packages/tasks_panel) The Task Explorer extension.
-   - [@task-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
-   - [@task-explorer/vscode_task_contrib](./packages/vscode_task_contrib) A sample of the task provider that contributes to Task Explorer.
+  - [@task-explorer/task_contrib_types](./packages/task_contrib_types) Type signatures for task providers contributing to the Task Explorer.
+  - [@task-explorer/tasks_panel](./packages/tasks_panel) The Task Explorer extension.
+  - [@task-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
+  - [@task-explorer/vscode_task_contrib](./packages/vscode_task_contrib) A sample of the task provider that contributes to Task Explorer.
 
 ## Download and Installation
 
@@ -30,6 +30,7 @@ It currently contains:
 3. Enter the `yarn run ci` command.
 
 ### Run the VS Code extension with the provided sample
+
 1. Start VS Code on your local machine, and click on **Open Workspace**.
 2. Select this repo folder.
 3. On the Debug panel, choose "Launch Tasks Panel with Sample Task Contributor", and click **Run**.
