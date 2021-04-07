@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/SAP/task-explorer/compare/v3.0.1...v3.0.2) (2021-04-07)
+
+### Bug Fixes
+
+- fix lint ([62130b6](https://github.com/SAP/task-explorer/commit/62130b60c6337c3dc028d4e84978634d231bf469))
+- update config.yml ([#24](https://github.com/SAP/task-explorer/issues/24)) ([0f802cb](https://github.com/SAP/task-explorer/commit/0f802cbb4733f82e8138ba01daa0a938ce5827f8))
+
 ## [3.0.1](https://github.com/SAP/task-explorer/compare/v3.0.0...v3.0.1) (2021-04-06)
 
 **Note:** Version bump only for package vscode-tasks-explorer
