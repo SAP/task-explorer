@@ -1,11 +1,11 @@
 # Task Explorer Panel
 
-This VS Code extension provides panel for tasks exploring including their browsing, creation, editing and execution.
+This VS Code extension provides a view for exploring tasks. This includes browsing, creation, editing and execution.
 
 ## Description
 
-The tasks panel presents the tree of tasks, grouped by intents.
-Supported intents are:
+The Task panel presents the tree of tasks, grouped by intents.
+The following intents are supported:
 
 - Build
 - Deploy
@@ -13,17 +13,17 @@ Supported intents are:
 
 ### Features
 
-- User can create a new task using `Create` button of the panel.
-- Context menu on the tree enables to edit and remove tasks.
-- `Run` button on the task's item run's the task.
+- The user can create a new task using the view's **Create** button.
+- The context menu on the tree enables users to edit and remove tasks.
+- The **Run** button on the task's item runs the task.
 
 ## Limitations
 
-The tasks panel is hidden if no extension exposes task provider contributing to the Task Explorer.
+The Tasks panel is hidden if no extension exposes the task provider contributing to the Task Explorer.
 
 ### Support
 
-You can open [issues](https://github.com/SAP/task-explorer/issues) on GitHub.
+Open an [issue](https://github.com/SAP/task-explorer/issues) on GitHub.
 
 ### Contributing
 
