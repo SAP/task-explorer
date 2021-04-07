@@ -14,7 +14,6 @@
     "version": "node ./scripts/update-root-version.js && git add package.json && yarn format:fix:changelog",
     "release:version": "yarn worktree:update && lerna version --force-publish",
     "release:publish": "lerna publish from-git --yes",
-    "release:version:auto": "yarn worktree:update && echo '\nunsafe-perm=true' >> .npmrc && lerna version --force-publish --yes",
     "worktree:update": "yarn && git fetch && git rebase",
     "postinstall": "patch-package",
     "ci": "npm-run-all format:validate lint:validate ci:subpackages coverage:merge",
