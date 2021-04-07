@@ -1,6 +1,6 @@
 {
   "name": "@vscode-tasks-explorer/task_contrib_types",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "repository": "https://github.com/SAP/task-explorer",
   "typings": "./api.d.ts",
   "files": [
