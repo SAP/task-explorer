@@ -81,7 +81,7 @@ jobs:
       - checkout
       - run: yarn
       - run: yarn run ci
-      - run: mkdir -p artifacts && cp packages/*/*.vsix ./artifacts
+      - run: mkdir -p artifacts && cp packages/task_panel/*.vsix ./artifacts
       - run:
           name: "Inspect Artifacts Folder"
           working_directory: ./artifacts
