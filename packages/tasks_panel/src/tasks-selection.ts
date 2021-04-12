@@ -1,5 +1,5 @@
 import { filter, groupBy, map } from "lodash";
-import { ConfiguredTask } from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask } from "@sap-oss/task_contrib_types";
 import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 import { AppEvents } from "./app-events";
 import {

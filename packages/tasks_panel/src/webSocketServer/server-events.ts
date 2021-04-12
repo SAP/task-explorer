@@ -3,7 +3,7 @@ import {
   FormProperty,
   TaskEditorContributionAPI,
   TaskUserInput,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap-oss/task_contrib_types";
 import { AppEvents } from "../app-events";
 
 export class ServerEvents implements AppEvents {

@@ -1,8 +1,5 @@
 import { isFunction, has, map } from "lodash";
-import {
-  ConfiguredTask,
-  FormProperty,
-} from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask, FormProperty } from "@sap-oss/task_contrib_types";
 import { GuiOptions, TaskQuestion, validationFunction } from "./definitions";
 import { AppEvents } from "../app-events";
 import { messages } from "../i18n/messages";

@@ -1,4 +1,4 @@
-import { ConfiguredTask } from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask } from "@sap-oss/task_contrib_types";
 import { TaskSelectionPanel } from "./task-selection-panel";
 import { TaskEditorPanel } from "./task-editor-panel";
 import { getLogger } from "../logger/logger-wrapper";
