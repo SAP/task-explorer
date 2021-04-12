@@ -7,7 +7,7 @@ import {
   SimpleFormProperty,
   TaskEditorContributionAPI,
   TaskUserInput,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap-oss/task_contrib_types";
 import { NPMScriptDefinitionType } from "./script-definitions";
 import { getImage } from "../utils/utils";
 import { executeCommand } from "../utils/exec";

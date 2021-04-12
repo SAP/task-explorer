@@ -15,7 +15,7 @@ import {
   ConfiguredTask,
   TaskEditorContributionAPI,
   TaskUserInput,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap-oss/task_contrib_types";
 import { AppEvents } from "./app-events";
 import { getSWA } from "./utils/swa";
 import { getClassLogger } from "./logger/logger-wrapper";

@@ -8,7 +8,7 @@ import {
 import {
   ConfiguredTask,
   TaskEditorContributionAPI,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap-oss/task_contrib_types";
 
 import { AppEvents } from "./app-events";
 import { Contributors } from "./services/contributors";
