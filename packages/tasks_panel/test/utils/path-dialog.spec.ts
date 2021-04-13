@@ -3,7 +3,7 @@ import { homedir } from "os";
 import * as fs from "fs-extra";
 import { expect } from "chai";
 import { restore, stub } from "sinon";
-import { ConfiguredTask } from "@sap-oss/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { showOpenDialog } from "../../src/utils/path-dialog";
 import { editTask } from "../../src/commands/edit-task";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";

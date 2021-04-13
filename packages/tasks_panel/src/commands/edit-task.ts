@@ -1,5 +1,5 @@
 import { window } from "vscode";
-import { ConfiguredTask } from "@sap-oss/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";

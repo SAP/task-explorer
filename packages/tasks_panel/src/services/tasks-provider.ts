@@ -1,6 +1,6 @@
 import { cloneDeep, filter, map } from "lodash";
 import { Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
-import { ConfiguredTask } from "@sap-oss/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import {
   IContributors,
   ITasksEventHandler,

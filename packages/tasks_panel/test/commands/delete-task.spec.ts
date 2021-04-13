@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ConfiguredTask } from "@sap-oss/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import {
   MockConfigTask,
   mockVscode,

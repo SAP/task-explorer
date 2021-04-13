@@ -1,5 +1,5 @@
 {
-  "name": "@sap-oss/task_contrib_types",
+  "name": "@sap_oss/task_contrib_types",
   "version": "3.0.4",
   "repository": "https://github.com/SAP/task-explorer",
   "typings": "./api.d.ts",

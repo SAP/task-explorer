@@ -4,7 +4,7 @@ import {
   FormProperty,
   TaskEditorContributionAPI,
   TaskUserInput,
-} from "@sap-oss/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 
 const Module = require("module");
 const originalRequire = Module.prototype.require;
