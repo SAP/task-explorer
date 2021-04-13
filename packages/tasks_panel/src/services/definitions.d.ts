@@ -2,7 +2,7 @@ import { Question } from "inquirer";
 import {
   ConfiguredTask,
   TaskEditorContributionAPI,
-} from "@sap-oss/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 
 export interface IContributors {
   init(): Promise<void>;

@@ -2,7 +2,7 @@ import { ExtensionContext, tasks } from "vscode";
 import {
   ConfiguredTask,
   TaskEditorContributorExtensionAPI,
-} from "@sap-oss/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import { NPM_SCRIPT_TYPE } from "./npm_script/script-definitions";
 import { ScriptTaskProvider } from "./npm_script/script-task-provider";
 import { ScriptTaskExplorerContributor } from "./npm_script/script-task-explorer-contributor";

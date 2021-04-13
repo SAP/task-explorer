@@ -1,4 +1,4 @@
-import { ConfiguredTask } from "@sap-oss/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 
 export const NPM_SCRIPT_TYPE = "npm-script";
 export const NPM_SCRIPT_TASK_TYPE = "Miscellaneous";

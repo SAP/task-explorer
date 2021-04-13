@@ -7,7 +7,7 @@ import {
   SimpleFormProperty,
   TaskEditorContributionAPI,
   TaskUserInput,
-} from "@sap-oss/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import { NPMScriptDefinitionType } from "./script-definitions";
 import { getImage } from "../utils/utils";
 import { executeCommand } from "../utils/exec";

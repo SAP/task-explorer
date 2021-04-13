@@ -1,7 +1,7 @@
 import {
   ConfiguredTask,
   TaskEditorContributionAPI,
-} from "@sap-oss/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import {
   IContributors,
   ITaskTypeEventHandler,
