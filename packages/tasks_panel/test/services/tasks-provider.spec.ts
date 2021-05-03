@@ -3,7 +3,7 @@ import {
   ConfiguredTask,
   FormProperty,
   TaskEditorContributionAPI,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import {
   MockConfigTask,
   mockVscode,

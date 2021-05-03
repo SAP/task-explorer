@@ -3,7 +3,7 @@ import { get, keys, map, uniq, zipObject } from "lodash";
 import {
   ConfiguredTask,
   TaskEditorContributionAPI,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
 import { messages } from "../i18n/messages";

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import {
   ConfiguredTask,
   TaskEditorContributionAPI,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import { AppEvents } from "../../src/app-events";
 import { MockContributor, MockContributorWithOnSave } from "./mockContributor";
 

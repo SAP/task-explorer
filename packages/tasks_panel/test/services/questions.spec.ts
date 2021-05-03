@@ -5,7 +5,7 @@ import {
   isFormPropertyValid,
   TaskEditorContributionAPI,
   TaskUserInput,
-} from "@vscode-tasks-explorer/task_contrib_types";
+} from "@sap_oss/task_contrib_types";
 import { convertContributedPropertiesToQuestions } from "../../src/services/questions";
 import { AppEvents } from "../../src/app-events";
 import { TaskQuestion } from "../../src/services/definitions";

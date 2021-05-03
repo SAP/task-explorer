@@ -1,6 +1,6 @@
 import { SinonSandbox, SinonMock, createSandbox, restore } from "sinon";
 import { TreeItemCollapsibleState } from "vscode";
-import { ConfiguredTask } from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 
 import { mockVscode, testVscode } from "../utils/mockVSCode";
 mockVscode("src/services/tasks-executor");

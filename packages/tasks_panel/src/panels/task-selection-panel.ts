@@ -1,6 +1,6 @@
 import { WebviewPanel } from "vscode";
 import { RpcExtension } from "@sap-devx/webview-rpc/out.ext/rpc-extension";
-import { ConfiguredTask } from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "../app-events";
 import { VSCodeEvents } from "../vscode-events";
 import { AbstractWebviewPanel } from "./abstract-webview-panel";

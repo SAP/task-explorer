@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ConfiguredTask } from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 
 import {
   MockConfigTask,

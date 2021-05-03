@@ -1,5 +1,5 @@
 import { ConfigurationTarget, Uri, workspace } from "vscode";
-import { ConfiguredTask } from "@vscode-tasks-explorer/task_contrib_types";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { serializeTask } from "../utils/task-serializer";
