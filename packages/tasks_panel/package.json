@@ -156,7 +156,7 @@
     "escape-string-regexp": "4.0.0",
     "fs-extra": "8.1.0",
     "lodash": "4.17.21",
-    "strip-ansi": "6.0.0",
+    "strip-ansi": "7.0.0",
     "ws": "7.4.0"
   },
   "devDependencies": {
