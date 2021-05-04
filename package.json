@@ -16,7 +16,7 @@
     "release:publish": "lerna publish from-git --yes",
     "worktree:update": "yarn && git fetch && git rebase",
     "postinstall": "patch-package",
-    "ci": "npm-run-all format:validate lint:validate ci:subpackages coverage:merge",
+    "ci": "npm-run-all format:validate lint:validate ci:subpackages coverage:merge legal:*",
     "ci:subpackages": "lerna run ci",
     "ci:artifacts_only": "lerna run ci:artifacts_only",
     "compile": "lerna run clean && tsc --build",
@@ -26,7 +26,9 @@
     "format:validate": "prettier --check \"**/*.@(js|ts|json|md|vue)\" --ignore-path=.gitignore",
     "lint:fix": "eslint . --ext=js,ts,vue --fix --max-warnings=0 --ignore-path=.gitignore",
     "lint:validate": "eslint . --ext=js,ts,vue --max-warnings=0 --ignore-path=.gitignore",
-    "coverage:merge": "node ./scripts/merge-coverage"
+    "coverage:merge": "node ./scripts/merge-coverage",
+    "legal:delete": "lerna exec \"shx rm -rf .reuse LICENSES\" || true",
+    "legal:copy": "lerna exec \"shx cp -r ../../.reuse .reuse && shx cp -r ../../LICENSES LICENSES\""
   },
   "devDependencies": {
     "@types/chai": "4.2.14",
