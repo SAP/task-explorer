@@ -16,7 +16,7 @@
     "release:publish": "lerna publish from-git --yes",
     "worktree:update": "yarn && git fetch && git rebase",
     "postinstall": "patch-package",
-    "ci": "npm-run-all format:validate lint:validate ci:subpackages coverage:merge legal:*" ,
+    "ci": "npm-run-all format:validate lint:validate ci:subpackages coverage:merge legal:*",
     "ci:subpackages": "lerna run ci",
     "ci:artifacts_only": "lerna run ci:artifacts_only",
     "compile": "lerna run clean && tsc --build",
