@@ -46,3 +46,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 [mono-repo]: https://github.com/babel/babel/blob/main/doc/design/monorepo.md
 [sap bas]: https://help.sap.com/viewer/product/SAP%20Business%20Application%20Studio/Cloud/en-USl
 [vscode]: https://code.visualstudio.com/
+
+## Licensing
+
+Please see our [LICENSE](https://raw.githubusercontent.com/SAP/task-explorer/main/LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available via the [REUSE tool](https://api.reuse.software/info/github.com/SAP/task-explorer).
