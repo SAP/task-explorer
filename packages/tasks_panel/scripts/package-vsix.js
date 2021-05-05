@@ -1,5 +1,6 @@
 const { resolve } = require("path");
-const { readFileSync, writeFileSync } = require("fs");
+const { readFileSync, writeFileSync, copyFileSync } = require("fs");
+const { copySync, emptyDirSync } = require("fs-extra");
 const { expect } = require("chai");
 const { packageCommand } = require("vsce/out/package");
 
@@ -16,7 +17,23 @@ expect(pkgJson.main).to.equal("./dist/src/extension");
 // to reduce loading time.
 pkgJson.main = "./dist/extension";
 const updatedPkgContents = JSON.stringify(pkgJson, null, 2);
-writeFileSync(pkgJsonPath, updatedPkgContents);
+writeFileSync(pkgJsonPath, updatedPkgContents, copySync, emptyDirSync);
+
+// Ensure License and copywrite related files are part of the packaged .vsix
+const rootMonoRepoDir = resolve(__dirname, "..", "..", "..");
+const licenseRootMonoRepoPath = resolve(rootMonoRepoDir, "LICENSE");
+const licenseExtPath = resolve(rootExtDir, "LICENSE");
+copyFileSync(licenseRootMonoRepoPath, licenseExtPath);
+
+const licensesDirPath = resolve(rootMonoRepoDir, "LICENSES");
+const licensesDirExtPath = resolve(rootExtDir, "LICENSES");
+emptyDirSync(licensesDirExtPath);
+copySync(licensesDirPath, licensesDirExtPath);
+
+const reuseDirPath = resolve(rootMonoRepoDir, ".reuse");
+const reuseDirExtPath = resolve(rootExtDir, "LICENSES");
+emptyDirSync(reuseDirExtPath);
+copySync(reuseDirPath, reuseDirExtPath);
 
 // Time to create the VSIX.
 packageCommand({

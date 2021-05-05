@@ -1,13 +1,16 @@
 {
   "name": "vscode-tasks-explorer-tasks-panel",
   "displayName": "VSCode Tasks Panel",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "private": true,
   "publisher": "SAPSE",
   "keywords": [],
   "categories": [],
+  "license": "Apache-2.0",
   "main": "./dist/src/extension",
   "files": [
+    ".reuse",
+    "LICENSES",
     "dist",
     "src",
     "*.vsix"
@@ -138,7 +141,7 @@
   "scripts": {
     "ci": "npm-run-all clean compile coverage bundle frontend:copy package",
     "ci:artifacts_only": "npm-run-all clean compile bundle frontend:copy package",
-    "clean": "rimraf ./dist *.vsix",
+    "clean": "rimraf ./dist *.vsix LICENSE",
     "compile": "tsc",
     "coverage": "nyc mocha",
     "test": "mocha",
@@ -149,8 +152,8 @@
   },
   "dependencies": {
     "@sap-devx/webview-rpc": "0.2.3",
-    "@sap_oss/task_contrib_types": "^3.0.4",
     "@sap/swa-for-sapbas-vsx": "1.2.14",
+    "@sap_oss/task_contrib_types": "^3.0.5",
     "@vscode-logging/logger": "1.2.2",
     "datauri": "2.0.0",
     "escape-string-regexp": "4.0.0",
@@ -160,16 +163,16 @@
     "ws": "7.4.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^8.1.0",
+    "@types/fs-extra": "^9.0.11",
     "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.150",
-    "@types/sinon": "^9.0.4",
+    "@types/sinon": "^10.0.0",
     "@types/vscode": "1.50.0",
     "@types/ws": "^7.4.0",
-    "@vscode-tasks-explorer/vue_frontend_rpc": "^3.0.4",
+    "@vscode-tasks-explorer/vue_frontend_rpc": "^3.0.5",
     "proxyquire": "2.1.3",
     "sinon": "^9.0.3",
-    "vsce": "1.79.5",
+    "vsce": "1.88.0",
     "webpack": "^5.3.0",
     "webpack-cli": "^4.1.0"
   }

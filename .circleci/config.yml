@@ -1,5 +1,15 @@
 version: 2.1
 jobs:
+  build-node16:
+    docker:
+      - image: circleci/node:16-browsers
+    working_directory: ~/repo
+    steps:
+      - run: sudo apt-get install libxss1
+      - checkout
+      - run: yarn
+      - run: yarn run ci
+
   build-node14:
     docker:
       - image: circleci/node:14-browsers
@@ -33,16 +43,6 @@ jobs:
       - run: yarn
       - run: yarn run ci
 
-  build-node10:
-    docker:
-      - image: circleci/node:10-browsers
-    working_directory: ~/repo
-    steps:
-      - run: sudo apt-get install libxss1
-      - checkout
-      - run: yarn
-      - run: yarn run ci
-
   compliance:
     docker:
       - image: circleci/python:3.6.4
@@ -69,7 +69,7 @@ jobs:
       - run: yarn run ci
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
       # To help debug when lerna detects changes to the working tree and fails the publish
-      - run: git checkout -- .
+      - run: git status
       - run: yarn run release:publish
 
   prepare-vsix:
@@ -113,7 +113,8 @@ workflows:
   version: 2
   voter:
     jobs:
-      - build-node10
+#   no tag for version 16 on https://hub.docker.com/r/circleci/node yet
+#      - build-node16
       - build-node12
       - build-node14
       - compliance
