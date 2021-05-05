@@ -1,0 +1,7 @@
+# These files will be copied from the root package during bundling.
+/LICENSE
+/LICENSES
+/.reuse
+
+.cache
+dist
