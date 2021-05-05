@@ -6,8 +6,11 @@
   "publisher": "SAPSE",
   "keywords": [],
   "categories": [],
+  "license": "Apache-2.0",
   "main": "./dist/src/extension",
   "files": [
+    ".reuse",
+    "LICENSES",
     "dist",
     "src",
     "*.vsix"
@@ -138,7 +141,7 @@
   "scripts": {
     "ci": "npm-run-all clean compile coverage bundle frontend:copy package",
     "ci:artifacts_only": "npm-run-all clean compile bundle frontend:copy package",
-    "clean": "rimraf ./dist *.vsix",
+    "clean": "rimraf ./dist *.vsix LICENSE",
     "compile": "tsc",
     "coverage": "nyc mocha",
     "test": "mocha",
