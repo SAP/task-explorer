@@ -69,3 +69,4 @@ tsconfig.tsbuildinfo
 
 # generated artifacts
 dist
+packages/tasks_panel/dummy
