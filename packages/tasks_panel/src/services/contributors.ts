@@ -13,9 +13,6 @@ export class Contributors implements IContributors {
   private readonly tasksEditorContributorsMap = new Map<string, any>();
   private static instance: IContributors | undefined;
 
-  public static readonly TASKS_EXPLORER_EXTENSION_ID =
-    "sapse.vscode-tasks-explorer-tasks-panel";
-
   private constructor() {
     return;
   }

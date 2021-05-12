@@ -26,7 +26,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const logger = getLogger();
   const swa = new SWATracker(
     "SAPSE",
-    "vscode-tasks-explorer-tasks-panel",
+    "@sap_oss/vscode-task-explorer",
     // We ignore error code `204` because it appears in every user interaction.
     (err: string | number) => {
       if (err !== 204) {
