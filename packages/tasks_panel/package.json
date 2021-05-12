@@ -152,7 +152,7 @@
   },
   "dependencies": {
     "@sap-devx/webview-rpc": "0.2.3",
-    "@sap/swa-for-sapbas-vsx": "1.2.14",
+    "@sap/swa-for-sapbas-vsx": "1.2.15",
     "@sap_oss/task_contrib_types": "^3.0.6",
     "@vscode-logging/logger": "1.2.2",
     "datauri": "2.0.0",
