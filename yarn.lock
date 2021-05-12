@@ -2030,10 +2030,10 @@
   dependencies:
     vue "^2.6.10"
 
-"@sap-devx/inquirer-gui@0.1.21":
-  version "0.1.21"
-  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui/-/inquirer-gui-0.1.21.tgz#5eb000b3bf74c57b6a91857c5ea5b9cf9b199e0d"
-  integrity sha512-dVA1Cqm/cHj2lWYCsmr5M0RP7Pz182IMUotAwdvhgJ1beRWAo9x5U7z/ukEd6xUZoEaDKHZVioaRghtNxqYLAQ==
+"@sap-devx/inquirer-gui@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui/-/inquirer-gui-0.2.0.tgz#aa385f92d8501a149b86d2be7f28ce3507204d78"
+  integrity sha512-hYR4k1pelDubd5lPBUKVLpF+CuaNv2Jw23H7UUOdIqDf9E03BYnmYQmMZTqF6S/X1N1uZF60d+v12FSqpxcs9w==
   dependencies:
     strip-ansi "^6.0.0"
     vue "2.6.12"
