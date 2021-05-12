@@ -1,6 +1,6 @@
 {
   "name": "vscode-tasks-explorer-tasks-panel",
-  "displayName": "VSCode Tasks Panel",
+  "displayName": "Task Explorer",
   "version": "3.0.6",
   "private": true,
   "publisher": "SAPSE",
