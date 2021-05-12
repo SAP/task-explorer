@@ -110,13 +110,13 @@
       "type": "object",
       "title": "Task Explorer",
       "properties": {
-        "TaskExplorer.enableSapWebAnalytics": {
+        "Task Explorer.enableSapWebAnalytics": {
           "type": "boolean",
           "default": true,
           "description": "Enable collecting usage analytics data for Application Wizard.  If enabled, non-personally identifiable information is used to help understand the product usage and improve the tool.",
           "scope": "resource"
         },
-        "TaskExplorer.loggingLevel": {
+        "Task Explorer.loggingLevel": {
           "type": "string",
           "enum": [
             "off",
@@ -131,7 +131,7 @@
           "description": "The verbosity of logging according to the following order: trace > debug > info > warn > error > fatal > off.",
           "scope": "resource"
         },
-        "TaskExplorer.sourceLocationTracking": {
+        "Task Explorer.sourceLocationTracking": {
           "type": "boolean",
           "default": false,
           "description": "If chosen, the location of the source code is added to log entries. Warning – this action may slow your extension. We recommend you use it only for debugging.",
