@@ -108,15 +108,15 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Task Explorer",
+      "title": "TaskExplorer",
       "properties": {
-        "Task Explorer.enableSapWebAnalytics": {
+        "vscode-tasks-explorer-tasks-panel.enableSapWebAnalytics": {
           "type": "boolean",
           "default": true,
           "description": "Enable collecting usage analytics data for Application Wizard.  If enabled, non-personally identifiable information is used to help understand the product usage and improve the tool.",
           "scope": "resource"
         },
-        "Task Explorer.loggingLevel": {
+        "vscode-tasks-explorer-tasks-panel.loggingLevel": {
           "type": "string",
           "enum": [
             "off",
@@ -131,7 +131,7 @@
           "description": "The verbosity of logging according to the following order: trace > debug > info > warn > error > fatal > off.",
           "scope": "resource"
         },
-        "Task Explorer.sourceLocationTracking": {
+        "vscode-tasks-explorer-tasks-panel.sourceLocationTracking": {
           "type": "boolean",
           "default": false,
           "description": "If chosen, the location of the source code is added to log entries. Warning – this action may slow your extension. We recommend you use it only for debugging.",
