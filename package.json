@@ -2,7 +2,7 @@
   "name": "vscode-tasks-explorer",
   "displayName": "Tasks Explorer",
   "description": "Tasks Explorer",
-  "version": "3.0.6",
+  "version": "3.1.0",
   "private": true,
   "workspaces": {
     "packages": [

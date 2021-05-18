@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/SAP/task-explorer/compare/v3.0.6...v3.1.0) (2021-05-18)
+
+### Features
+
+- publish to vsc marketplace ([#63](https://github.com/SAP/task-explorer/issues/63)) ([8082bda](https://github.com/SAP/task-explorer/commit/8082bda35968fc1ad60a11b08079b917539b3ebd))
+
 ## [3.0.6](https://github.com/SAP/task-explorer/compare/v3.0.5...v3.0.6) (2021-05-05)
 
 **Note:** Version bump only for package vscode-tasks-explorer
