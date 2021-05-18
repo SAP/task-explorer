@@ -1,6 +1,6 @@
 {
   "name": "vscode-tasks-explorer-tasks-panel",
-  "displayName": "VSCode Tasks Panel",
+  "displayName": "Task Explorer",
   "version": "3.0.6",
   "private": true,
   "publisher": "SAPSE",
@@ -108,9 +108,15 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "VSCode Tasks Panel",
+      "title": "TaskExplorer",
       "properties": {
-        "VSCode Tasks Panel.loggingLevel": {
+        "vscode-tasks-explorer-tasks-panel.enableSapWebAnalytics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable collecting usage analytics data for Application Wizard.  If enabled, non-personally identifiable information is used to help understand the product usage and improve the tool.",
+          "scope": "resource"
+        },
+        "vscode-tasks-explorer-tasks-panel.loggingLevel": {
           "type": "string",
           "enum": [
             "off",
@@ -125,7 +131,7 @@
           "description": "The verbosity of logging according to the following order: trace > debug > info > warn > error > fatal > off.",
           "scope": "resource"
         },
-        "VSCode Tasks Panel.sourceLocationTracking": {
+        "vscode-tasks-explorer-tasks-panel.sourceLocationTracking": {
           "type": "boolean",
           "default": false,
           "description": "If chosen, the location of the source code is added to log entries. Warning – this action may slow your extension. We recommend you use it only for debugging.",
