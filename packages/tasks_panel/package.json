@@ -160,7 +160,7 @@
     "@sap-devx/webview-rpc": "0.2.3",
     "@sap/swa-for-sapbas-vsx": "1.2.15",
     "@sap_oss/task_contrib_types": "^3.0.6",
-    "@vscode-logging/logger": "1.2.2",
+    "@vscode-logging/logger": "1.2.3",
     "datauri": "2.0.0",
     "escape-string-regexp": "4.0.0",
     "fs-extra": "8.1.0",
