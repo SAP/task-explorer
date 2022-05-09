@@ -166,7 +166,7 @@
     "fs-extra": "8.1.0",
     "lodash": "4.17.21",
     "strip-ansi": "6.0.0",
-    "ws": "7.4.0"
+    "ws": "8.6.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.11",
