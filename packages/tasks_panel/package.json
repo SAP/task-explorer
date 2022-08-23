@@ -3,10 +3,11 @@
   "displayName": "Task Explorer",
   "version": "3.1.0",
   "private": true,
-  "publisher": "SAPSE",
-  "keywords": [],
   "categories": [],
+  "keywords": [],
+  "repository": "https://github.com/SAP/task-explorer",
   "license": "Apache-2.0",
+  "publisher": "SAPSE",
   "main": "./dist/src/extension",
   "files": [
     ".reuse",
@@ -15,71 +16,19 @@
     "src",
     "*.vsix"
   ],
-  "activationEvents": [
-    "*"
-  ],
+  "scripts": {
+    "bundle": "webpack --mode production",
+    "ci": "npm-run-all clean compile coverage bundle frontend:copy package",
+    "ci:artifacts_only": "npm-run-all clean compile bundle frontend:copy package",
+    "clean": "rimraf ./dist *.vsix LICENSE",
+    "compile": "tsc",
+    "coverage": "nyc mocha",
+    "frontend:copy": "webpack --mode none --config ./copy.frontend.webpack.config.js",
+    "package": "node ./scripts/package-vsix.js",
+    "test": "mocha",
+    "watch": "tsc -watch -p ./"
+  },
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "tasks-explorer",
-          "title": "TASK EXPLORER",
-          "icon": "resources/task_explorer.svg",
-          "when": "is-task-explorer-view-visible"
-        }
-      ]
-    },
-    "views": {
-      "tasks-explorer": [
-        {
-          "id": "tasksPanel",
-          "name": "",
-          "when": "is-task-explorer-view-visible"
-        }
-      ]
-    },
-    "menus": {
-      "commandPalette": [
-        {
-          "command": "tasks-explorer.editTask",
-          "when": "false"
-        },
-        {
-          "command": "tasks-explorer.deleteTask",
-          "when": "false"
-        },
-        {
-          "command": "tasks-explorer.executeTask",
-          "when": "false"
-        },
-        {
-          "command": "tasks-explorer.createTask",
-          "when": "false"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "tasks-explorer.createTask",
-          "when": "view == tasksPanel",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "tasks-explorer.editTask",
-          "when": "viewItem == task"
-        },
-        {
-          "command": "tasks-explorer.deleteTask",
-          "when": "viewItem == task"
-        },
-        {
-          "command": "tasks-explorer.executeTask",
-          "when": "viewItem == task",
-          "group": "inline"
-        }
-      ]
-    },
     "commands": [
       {
         "command": "tasks-explorer.executeTask",
@@ -138,24 +87,72 @@
           "scope": "resource"
         }
       }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "tasks-explorer.editTask",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.deleteTask",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.executeTask",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.createTask",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "tasks-explorer.createTask",
+          "when": "view == tasksPanel",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tasks-explorer.editTask",
+          "when": "viewItem == task"
+        },
+        {
+          "command": "tasks-explorer.deleteTask",
+          "when": "viewItem == task"
+        },
+        {
+          "command": "tasks-explorer.executeTask",
+          "when": "viewItem == task",
+          "group": "inline"
+        }
+      ]
+    },
+    "views": {
+      "tasks-explorer": [
+        {
+          "id": "tasksPanel",
+          "name": "",
+          "when": "is-task-explorer-view-visible"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tasks-explorer",
+          "title": "TASK EXPLORER",
+          "icon": "resources/task_explorer.svg",
+          "when": "is-task-explorer-view-visible"
+        }
+      ]
     }
   },
-  "repository": "https://github.com/SAP/task-explorer",
-  "engines": {
-    "vscode": "^1.50.0"
-  },
-  "scripts": {
-    "ci": "npm-run-all clean compile coverage bundle frontend:copy package",
-    "ci:artifacts_only": "npm-run-all clean compile bundle frontend:copy package",
-    "clean": "rimraf ./dist *.vsix LICENSE",
-    "compile": "tsc",
-    "coverage": "nyc mocha",
-    "test": "mocha",
-    "bundle": "webpack --mode production",
-    "package": "node ./scripts/package-vsix.js",
-    "frontend:copy": "webpack --mode none --config ./copy.frontend.webpack.config.js",
-    "watch": "tsc -watch -p ./"
-  },
+  "activationEvents": [
+    "*"
+  ],
   "dependencies": {
     "@sap-devx/webview-rpc": "0.2.3",
     "@sap/swa-for-sapbas-vsx": "1.2.15",
@@ -181,5 +178,8 @@
     "vsce": "1.100.1",
     "webpack": "^5.3.0",
     "webpack-cli": "^4.1.0"
+  },
+  "engines": {
+    "vscode": "^1.50.0"
   }
 }

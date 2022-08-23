@@ -1,20 +1,17 @@
 {
   "name": "@vscode-tasks-explorer/vue_frontend_rpc",
   "version": "3.1.0",
-  "engines": {
-    "node": ">= 10.9.0"
-  },
   "private": true,
   "scripts": {
+    "backend:mock:editor": "node local-dev/run-fs-backend-mock-editor.js",
+    "backend:mock:selector": "node local-dev/run-fs-backend-mock-selector.js",
+    "build": "vue-cli-service build",
     "ci": "npm-run-all clean build coverage",
     "ci:artifacts_only": "npm-run-all clean build",
     "clean": "rimraf ./dist ./coverage",
-    "build": "vue-cli-service build",
-    "test": "vue-cli-service test:unit -t=0 ./test/**/*spec.js",
     "coverage": "nyc vue-cli-service test:unit -t=8000 ./test/**/*spec.js",
     "serve": "vue-cli-service serve --port=8090",
-    "backend:mock:editor": "node local-dev/run-fs-backend-mock-editor.js",
-    "backend:mock:selector": "node local-dev/run-fs-backend-mock-selector.js"
+    "test": "vue-cli-service test:unit -t=0 ./test/**/*spec.js"
   },
   "dependencies": {
     "@mdi/font": "^5.1.45",
@@ -43,5 +40,8 @@
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11",
     "ws": "^7.3.1"
+  },
+  "engines": {
+    "node": ">= 10.9.0"
   }
 }

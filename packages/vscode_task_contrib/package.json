@@ -1,22 +1,20 @@
 {
   "name": "vscode-task-contrib",
   "displayName": "VSCode Task Contributor Sample",
-  "private": true,
   "version": "3.1.0",
-  "publisher": "SAPSE",
-  "keywords": [],
+  "private": true,
   "categories": [],
+  "keywords": [],
+  "repository": "https://github.com/SAP/task-explorer",
+  "publisher": "SAPSE",
   "main": "./dist/src/extension",
-  "activationEvents": [
-    "*"
-  ],
-  "BASContributes": {
-    "tasksExplorer": [
-      {
-        "type": "npm-script",
-        "intent": "Miscellaneous"
-      }
-    ]
+  "scripts": {
+    "bundle": "webpack --mode production",
+    "ci": "npm-run-all clean compile bundle package",
+    "ci:artifacts_only": "npm-run-all clean compile bundle package",
+    "clean": "rimraf ./dist *.vsix",
+    "compile": "tsc",
+    "package": "node ./scripts/package-vsix.js"
   },
   "contributes": {
     "taskDefinitions": [
@@ -53,18 +51,9 @@
       }
     ]
   },
-  "repository": "https://github.com/SAP/task-explorer",
-  "engines": {
-    "vscode": "^1.50.0"
-  },
-  "scripts": {
-    "ci": "npm-run-all clean compile bundle package",
-    "ci:artifacts_only": "npm-run-all clean compile bundle package",
-    "clean": "rimraf ./dist *.vsix",
-    "compile": "tsc",
-    "bundle": "webpack --mode production",
-    "package": "node ./scripts/package-vsix.js"
-  },
+  "activationEvents": [
+    "*"
+  ],
   "dependencies": {
     "@sap_oss/task_contrib_types": "^3.1.0",
     "comment-json": "4.2.3",
@@ -84,5 +73,16 @@
     "vsce": "1.100.1",
     "webpack": "^5.3.0",
     "webpack-cli": "^4.1.0"
+  },
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "BASContributes": {
+    "tasksExplorer": [
+      {
+        "type": "npm-script",
+        "intent": "Miscellaneous"
+      }
+    ]
   }
 }
