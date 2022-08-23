@@ -139,7 +139,8 @@ describe("the TasksProvider class", () => {
 });
 
 class MockTaskEditorContribution
-  implements TaskEditorContributionAPI<ConfiguredTask> {
+  implements TaskEditorContributionAPI<ConfiguredTask>
+{
   updateTask(task: ConfiguredTask, changes: any): ConfiguredTask {
     return task;
   }

@@ -64,7 +64,8 @@ function createExtensionLogger(
 ): void {
   const contextLogPath = context.logPath;
   const logLevelSetting: LogLevel = getLoggingLevelSetting();
-  const sourceLocationTrackingSettings: boolean = getSourceLocationTrackingSetting();
+  const sourceLocationTrackingSettings: boolean =
+    getSourceLocationTrackingSetting();
 
   const meta = JSON.parse(
     readFileSync(resolve(context.extensionPath, PACKAGE_JSON), "utf8")

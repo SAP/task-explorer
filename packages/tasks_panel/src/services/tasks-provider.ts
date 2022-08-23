@@ -33,9 +33,8 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
       for (const wsFolder of workspace.workspaceFolders) {
         const wsFolderPath = wsFolder.uri.path;
         const configuration = workspace.getConfiguration("tasks", wsFolder.uri);
-        const configuredTasks: ConfiguredTask[] | undefined = configuration.get(
-          "tasks"
-        );
+        const configuredTasks: ConfiguredTask[] | undefined =
+          configuration.get("tasks");
 
         if (configuredTasks === undefined) {
           continue;

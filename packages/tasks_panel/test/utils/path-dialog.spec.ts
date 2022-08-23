@@ -41,9 +41,7 @@ describe("showOpenFileDialog function", () => {
     };
 
     beforeEach(async () => {
-      stub(fs, "readFile").returns(
-        Promise.resolve(("buf" as unknown) as Buffer)
-      );
+      stub(fs, "readFile").returns(Promise.resolve("buf" as unknown as Buffer));
       const task1: ConfiguredTask = {
         type: "test",
         label: "task 1",

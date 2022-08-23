@@ -12,9 +12,7 @@ export interface SelectionPanelState {
   tasks: ConfiguredTask[];
 }
 
-export class TaskSelectionPanel extends AbstractWebviewPanel<
-  SelectionPanelState
-> {
+export class TaskSelectionPanel extends AbstractWebviewPanel<SelectionPanelState> {
   public constructor(
     tasks: ConfiguredTask[],
     readResource: (file: string) => Promise<string>

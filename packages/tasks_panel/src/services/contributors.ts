@@ -86,9 +86,8 @@ export class Contributors implements IContributors {
         continue;
       }
 
-      const tasksPropertyMessageMap = this.getTasksPropertyMessageMap(
-        currentPackageJSON
-      );
+      const tasksPropertyMessageMap =
+        this.getTasksPropertyMessageMap(currentPackageJSON);
 
       const taskProviders = api.getTaskEditorContributors();
       taskProviders.forEach((provider: any, type: string) => {

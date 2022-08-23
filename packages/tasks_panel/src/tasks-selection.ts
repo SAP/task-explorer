@@ -71,12 +71,12 @@ export class TasksSelection {
     );
 
     // prepare tasks for frontend: array of { intent, tasksByIntent }
-    const tasksFrontend: FrontendTasks[] = map(tasksGroupedByIntent, function (
-      value,
-      key
-    ) {
-      return { intent: key, tasksByIntent: value };
-    });
+    const tasksFrontend: FrontendTasks[] = map(
+      tasksGroupedByIntent,
+      function (value, key) {
+        return { intent: key, tasksByIntent: value };
+      }
+    );
 
     const message =
       tasksFrontend.length === 0 ? messages.MISSING_AUTO_DETECTED_TASKS() : "";

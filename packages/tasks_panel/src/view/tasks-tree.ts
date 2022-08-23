@@ -15,9 +15,10 @@ import { messages } from "../i18n/messages";
 const LOGGER_CLASS_NAME = "Tasks Tree";
 
 export class TasksTree implements TreeDataProvider<TaskTreeItem> {
-  private readonly _onDidChangeTreeData: EventEmitter<TaskTreeItem | null> = new EventEmitter<TaskTreeItem | null>();
-  readonly onDidChangeTreeData: Event<TaskTreeItem | null> = this
-    ._onDidChangeTreeData.event;
+  private readonly _onDidChangeTreeData: EventEmitter<TaskTreeItem | null> =
+    new EventEmitter<TaskTreeItem | null>();
+  readonly onDidChangeTreeData: Event<TaskTreeItem | null> =
+    this._onDidChangeTreeData.event;
 
   constructor(private readonly tasksProvider: ITasksProvider) {
     this.tasksProvider.registerEventHandler(this);

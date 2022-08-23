@@ -16,9 +16,8 @@ export class MockConfigTask {
 export class MockVSCodeInfo {
   public static allExtensions: any[];
   public static visiblePanel = false;
-  public static configTasks:
-    | Map<string, MockConfigTask[]>
-    | undefined = new Map<string, MockConfigTask[]>();
+  public static configTasks: Map<string, MockConfigTask[]> | undefined =
+    new Map<string, MockConfigTask[]>();
   public static allTasks: any[] = [];
   public static fired = false;
   public static saveCalled = false;

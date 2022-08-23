@@ -258,7 +258,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         type: "input",
         taskProperty: "request",
         optional: true,
-        isValid: ("not a function" as any) as isFormPropertyValid,
+        isValid: "not a function" as any as isFormPropertyValid,
       },
     ];
     const questions = convertContributedPropertiesToQuestions(
