@@ -15,7 +15,7 @@ export async function executeVScodeTask(task: any): Promise<void> {
     } else {
       getLogger().error(messages.MISSING_EXECUTION_TASK());
     }
-  } catch (error) {
+  } catch (error: any) {
     getLogger().error(messages.EXECUTE_FAILURE(serializeTask(task)));
     await window.showErrorMessage(error.message);
   }

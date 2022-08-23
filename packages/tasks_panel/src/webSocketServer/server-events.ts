@@ -39,7 +39,8 @@ export class ServerEvents implements AppEvents {
 }
 
 export class MockTaskEditorContributer
-  implements TaskEditorContributionAPI<ConfiguredTask> {
+  implements TaskEditorContributionAPI<ConfiguredTask>
+{
   updateTask(task: ConfiguredTask, changes: TaskUserInput): ConfiguredTask {
     return { ...task, ...changes };
   }

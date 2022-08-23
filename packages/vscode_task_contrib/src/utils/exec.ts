@@ -9,7 +9,7 @@ export function executeCommand(command: string): string {
   // especially for long running commands
   try {
     return execSync(command, { encoding: "utf8" });
-  } catch (e) {
+  } catch (e: any) {
     return e.toString();
   }
 }

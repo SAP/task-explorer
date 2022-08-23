@@ -5,7 +5,8 @@ import {
 } from "@sap_oss/task_contrib_types";
 
 export class MockContributor
-  implements TaskEditorContributionAPI<ConfiguredTask> {
+  implements TaskEditorContributionAPI<ConfiguredTask>
+{
   static failOnValidate: boolean | undefined = false;
 
   updateTask(task: ConfiguredTask, changes: any): ConfiguredTask {

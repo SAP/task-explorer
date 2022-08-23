@@ -5,4 +5,12 @@ module.exports = {
   globals: {
     acquireVsCodeApi: true,
   },
+  rules: {
+    "vue/multi-word-component-names": [
+      "error",
+      {
+        ignores: ["Editor", "Selector"],
+      },
+    ],
+  },
 };

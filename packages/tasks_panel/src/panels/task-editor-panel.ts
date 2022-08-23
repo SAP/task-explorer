@@ -13,9 +13,7 @@ export interface TaskEditorPanelState {
 
 const TASK_EDITOR_VIEW_TYPE = "Task Editor";
 
-export class TaskEditorPanel extends AbstractWebviewPanel<
-  TaskEditorPanelState
-> {
+export class TaskEditorPanel extends AbstractWebviewPanel<TaskEditorPanelState> {
   private taskEditor: TaskEditor | undefined;
 
   public constructor(

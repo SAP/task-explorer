@@ -20,7 +20,8 @@ import { executeCommand } from "../utils/exec";
 // command, relating to the script
 // help of the command when user inputs invalid flags
 export class ScriptTaskExplorerContributor
-  implements TaskEditorContributionAPI<NPMScriptDefinitionType> {
+  implements TaskEditorContributionAPI<NPMScriptDefinitionType>
+{
   private readonly flagRegex = /[-]{1,2}[a-z]+/g;
   private readonly invalidArgumentsMsg = "invalid arguments";
 

@@ -186,7 +186,7 @@ export class TaskEditor {
           methodName,
           questionName,
           JSON.stringify(params),
-          error
+          error as Error
         )
       );
     }
@@ -329,9 +329,8 @@ export class TaskEditor {
       frontendTask = this.convertTaskToFormInfo();
     } else {
       // get form properties from contributor
-      const contributedProperties = this.taskEditorContributor.convertTaskToFormProperties(
-        this.task
-      );
+      const contributedProperties =
+        this.taskEditorContributor.convertTaskToFormProperties(this.task);
 
       // convert properties to gui inquirer format
       frontendTask = convertContributedPropertiesToQuestions(
@@ -372,9 +371,8 @@ export class TaskEditor {
     this.taskFrontendMirror = taskFrontendInfo;
 
     // normalize form properties, serializing functions
-    const normalizedTaskFrontendInfo = TaskEditor.normalizeFunctions(
-      taskFrontendInfo
-    );
+    const normalizedTaskFrontendInfo =
+      TaskEditor.normalizeFunctions(taskFrontendInfo);
 
     const taskExecImage = this.getTaskExecutionImage();
 
@@ -402,7 +400,7 @@ function getImage(imagePath: string): string {
     image = datauri.sync(imagePath);
   } catch (error) {
     getClassLogger(LOGGER_CLASS_NAME).error(
-      messages.GET_IMAGE_FAILURE(imagePath, error)
+      messages.GET_IMAGE_FAILURE(imagePath, error as Error)
     );
   }
   return image;
