@@ -309,6 +309,7 @@ describe("the TaskEditor class", () => {
 
   describe("evaluateMethod method", () => {
     let sandbox: any;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppress rule
     let loggerWrapperMock: any;
 
     beforeEach(() => {
@@ -435,6 +436,7 @@ describe("the TaskEditor class", () => {
 
   describe("getTaskExecutionImage method provides image for any intent", () => {
     let sandbox: any;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppress rule
     let loggerWrapperMock: any;
 
     beforeEach(() => {

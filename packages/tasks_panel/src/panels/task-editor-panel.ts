@@ -38,7 +38,7 @@ export class TaskEditorPanel extends AbstractWebviewPanel<TaskEditorPanelState> 
     const rpc = new RpcExtension(this.webViewPanel.webview);
     const vscodeEvents: AppEvents = new VSCodeEvents(this.webViewPanel);
     this.taskEditor = new TaskEditor(rpc, vscodeEvents, state.task);
-    this.webViewPanel.onDidDispose((e) => {
+    this.webViewPanel.onDidDispose(() => {
       this.taskEditor = undefined;
     });
     this.taskEditor.registerCustomQuestionEventHandler(

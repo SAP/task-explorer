@@ -120,6 +120,7 @@ export const testVscode: any = {
     createWebviewPanel: (): any => {
       return new MockWebViewPanel();
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
     registerTreeDataProvider<T>(): void {
       MockVSCodeInfo.treeDataProviderRegistered = true;
     },

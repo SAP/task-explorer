@@ -1,3 +1,5 @@
+/* eslint-disable eslint-comments/disable-enable-pair -- disable the next rule */
+/* eslint-disable @typescript-eslint/no-unused-vars -- leave unused args in function signatures as a reference */
 import { expect } from "chai";
 import { ConfiguredTask, FormProperty, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";

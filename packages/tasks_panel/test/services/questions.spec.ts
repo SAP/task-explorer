@@ -1,3 +1,6 @@
+/* eslint-disable eslint-comments/disable-enable-pair -- disable the next rules */
+/* eslint-disable @typescript-eslint/no-unused-vars -- suppress no-unused-vars for test scope */
+/* eslint-disable @typescript-eslint/no-non-null-assertion -- suppress no-non-null-assertion for test scope */
 import { expect } from "chai";
 import {
   ConfiguredTask,

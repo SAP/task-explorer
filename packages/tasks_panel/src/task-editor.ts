@@ -106,6 +106,7 @@ export class TaskEditor {
     if (!this.customQuestionEventHandlers.has(questionType)) {
       this.customQuestionEventHandlers.set(questionType, new Map());
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified above
     this.customQuestionEventHandlers.get(questionType)!.set(methodName, handler);
   }
 
@@ -162,7 +163,7 @@ export class TaskEditor {
       this.intent,
       this.extensionName,
     ]);
-    await this.appEvents.executeTask(this.task);
+    return this.appEvents.executeTask(this.task);
   }
 
   private async setAnswers(state: any): Promise<void> {
@@ -183,7 +184,7 @@ export class TaskEditor {
       this.task = await this.taskEditorContributor.updateTask(this.task, answers);
     }
     this.changed = true;
-    await this.passTaskToFrontend(true);
+    return this.passTaskToFrontend(true);
   }
 
   private updateTaskFrontendMirror(answers: TaskUserInput): void {
@@ -255,7 +256,7 @@ export class TaskEditor {
   }
 
   private async onFrontendReady(): Promise<void> {
-    await this.passTaskToFrontend();
+    return this.passTaskToFrontend();
   }
 
   // this method is called in 2 cases:
@@ -295,7 +296,7 @@ export class TaskEditor {
       taskIntent: this.getExecutionIntent(),
     };
 
-    await this.rpc.invoke("setTask", [taskWithMetadata]);
+    return this.rpc.invoke("setTask", [taskWithMetadata]);
   }
 
   private getExecutionIntent(): string {

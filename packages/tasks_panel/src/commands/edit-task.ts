@@ -13,7 +13,7 @@ export async function editTreeItemTask(
     return;
   }
 
-  await editTask(treeItem.command.arguments[0], readResource);
+  return editTask(treeItem.command.arguments[0], readResource);
 }
 
 export async function editTask(task: ConfiguredTask, readResource: (file: string) => Promise<string>): Promise<void> {
@@ -41,5 +41,5 @@ export async function editTask(task: ConfiguredTask, readResource: (file: string
 
   await disposeTaskSelectionPanel();
 
-  await createTaskEditorPanel(task, readResource);
+  return createTaskEditorPanel(task, readResource);
 }

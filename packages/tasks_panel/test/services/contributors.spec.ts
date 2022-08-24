@@ -6,7 +6,6 @@ import { Contributors } from "../../src/services/contributors";
 import { ITaskTypeEventHandler } from "../../src/services/definitions";
 import { messages } from "../../src/i18n/messages";
 import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "../utils/loggerWrapperMock";
-import * as loggerWrapper from "../../src/logger/logger-wrapper";
 
 const tasksDefinition = {
   taskDefinitions: [
@@ -29,6 +28,7 @@ const tasksDefinition = {
 
 describe("Contributors", () => {
   let sandbox: any;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppress
   let loggerWrapperMock: any;
 
   beforeEach(() => {

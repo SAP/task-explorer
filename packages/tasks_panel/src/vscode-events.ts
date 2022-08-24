@@ -17,7 +17,7 @@ export class VSCodeEvents implements AppEvents {
   }
 
   async executeTask(task: ConfiguredTask): Promise<void> {
-    await executeVScodeTask(task);
+    return executeVScodeTask(task);
   }
 
   async updateTaskInConfiguration(path: string, task: ConfiguredTask, index: number): Promise<void> {

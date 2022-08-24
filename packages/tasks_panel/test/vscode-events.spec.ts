@@ -4,7 +4,6 @@ import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode
 mockVscode("/src/vscode-events");
 import { VSCodeEvents } from "../src/vscode-events";
 import { messages } from "../src/i18n/messages";
-import { MockTaskEditorContributer } from "../src/webSocketServer/server-events";
 import { Contributors } from "../src/services/contributors";
 import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
 
@@ -32,6 +31,7 @@ describe("the VscodeEvents class", () => {
       MockVSCodeInfo.allTasks[0].name = MockVSCodeInfo.allTasks[0].label;
       MockVSCodeInfo.allTasks[1].name = MockVSCodeInfo.allTasks[1].label;
       await vscodeEvents.executeTask(task);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
       expect(MockVSCodeInfo.taskParam!.label).eq("task 1");
       expect(MockVSCodeInfo.executeCalled).true;
     });
@@ -46,7 +46,9 @@ describe("the VscodeEvents class", () => {
         new MockConfigTask("task two", "test"),
       ]);
       await vscodeEvents.updateTaskInConfiguration("path", task, 1);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
       expect(MockVSCodeInfo.configTasks.get("path")![0].label).eq("task one");
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
       expect(MockVSCodeInfo.configTasks.get("path")![1].label).eq("task 1");
     });
 

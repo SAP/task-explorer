@@ -1,3 +1,6 @@
+/* eslint-disable eslint-comments/disable-enable-pair -- suppress for tests scope */
+/* eslint-disable @typescript-eslint/no-non-null-assertion -- suppress for test scope */
+/* eslint-disable @typescript-eslint/no-unused-vars -- leave unsused arg for reference in test scope */
 import { expect } from "chai";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 

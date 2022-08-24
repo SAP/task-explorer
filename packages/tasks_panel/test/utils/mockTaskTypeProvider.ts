@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair -- suppresed: test scope
+/* eslint-disable @typescript-eslint/no-unused-vars -- suppresed: test scope */
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { IContributors, ITaskTypeEventHandler } from "../../src/services/definitions";
 import { MockContributor } from "./mockContributor";

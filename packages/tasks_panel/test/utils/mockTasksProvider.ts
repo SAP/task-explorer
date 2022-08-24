@@ -8,6 +8,7 @@ export class MockTasksProvider implements ITasksProvider {
     return this.tasks;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- leave unused args as a reference in test
   registerEventHandler(eventHandler: ITasksEventHandler): void {
     return;
   }

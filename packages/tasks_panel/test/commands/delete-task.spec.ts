@@ -10,7 +10,7 @@ import { TreeItemCollapsibleState } from "vscode";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";
 
 describe("Command deleteTask", () => {
-  const readFile = async function (path: string): Promise<string> {
+  const readFile = async function (): Promise<string> {
     return "aaa";
   };
 

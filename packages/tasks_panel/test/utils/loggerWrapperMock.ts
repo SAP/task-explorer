@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair -- disable no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars -- suppressed: test scope */
 import * as loggerWrapper from "../../src/logger/logger-wrapper";
 import { IChildLogger, IVSCodeExtLogger } from "@vscode-logging/logger";
 

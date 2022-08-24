@@ -37,6 +37,7 @@ function convertContributedPropertyToQuestion(
 
   if (has(formProperty, "isValid") && isFunction(formProperty.isValid)) {
     question.validate = async function (value: any): Promise<string | boolean> {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- existance is verified above
       const result = await formProperty.isValid!(value);
       return result !== "" ? result : true;
     };

@@ -27,6 +27,7 @@ describe("Command createTask", () => {
   ];
 
   let panelCreated = 0;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- leave unused args for reference
   const readFile = async function (path: string): Promise<string> {
     panelCreated++;
     return "aaa";
@@ -81,6 +82,7 @@ describe("Command createTask", () => {
     );
     // editor panel created
     expect(panelCreated).eq(1);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = getTaskEditor()!;
     taskEditor["changed"] = true;
     MockVSCodeInfo.dialogAnswer = "other";
@@ -101,6 +103,7 @@ describe("Command createTask", () => {
     );
     // editor panel initiated
     expect(panelCreated).eq(1);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = getTaskEditor()!;
     taskEditor["changed"] = true;
     MockVSCodeInfo.dialogAnswer = messages.DISCARD_CHANGES_BUTTON_TEXT();

@@ -24,6 +24,7 @@ export class MockAppEvents implements AppEvents {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppressed: test scope
   async updateTaskInConfiguration(path: string, task: ConfiguredTask, index: number): Promise<void> {
     expectTaskHasNoTechnicalFields(task);
     this.saveCalled = true;
@@ -42,6 +43,7 @@ export class MockAppEvents implements AppEvents {
 
 function expectTaskHasNoTechnicalFields(task: ConfiguredTask | undefined) {
   expect(task).exist;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: test scope
   const keys = Object.keys(task!);
   for (const key of keys) {
     expect(key).not.contains("__");

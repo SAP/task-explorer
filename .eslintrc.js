@@ -38,9 +38,6 @@ module.exports = {
         // However enabling some of these rules require this issue to be resolved first:
         // - https://github.com/typescript-eslint/typescript-eslint/issues/2094
         "@typescript-eslint/no-explicit-any": ["off"],
-        "@typescript-eslint/no-unused-vars": ["off"],
-        "@typescript-eslint/no-non-null-assertion": ["off"],
-        "@typescript-eslint/explicit-module-boundary-types": ["off"],
         "@typescript-eslint/no-var-requires": ["off"],
         "@typescript-eslint/no-use-before-define": [
           "error",

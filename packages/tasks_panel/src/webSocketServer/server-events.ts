@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair -- suppress the next rule
+/* eslint-disable @typescript-eslint/no-unused-vars -- leave args in function signatures for reference */
 import { ConfiguredTask, FormProperty, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "../app-events";
 

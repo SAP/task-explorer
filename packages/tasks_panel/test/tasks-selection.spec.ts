@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { mockVscode, MockVSCodeInfo, testVscode } from "./utils/mockVSCode";
+import { mockVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/tasks-selection");
 import { TasksSelection } from "../src/tasks-selection";
@@ -7,7 +7,6 @@ import { MockRpc } from "./utils/mockRpc";
 import { MockAppEvents } from "./utils/mockAppEvents";
 import { disposeTaskEditorPanel } from "../src/panels/panels-handler";
 import { messages } from "../src/i18n/messages";
-import { read } from "fs-extra";
 
 const taskContributed1 = {
   label: "Template: task1",
@@ -39,7 +38,7 @@ const taskNotContributed = {
   __extensionName: "testExtension",
 };
 
-const readFile = async function (path: string): Promise<string> {
+const readFile = async function (): Promise<string> {
   return "aaa";
 };
 
@@ -78,7 +77,7 @@ describe("the TasksSelection class", () => {
   });
 
   describe("the setSelectedTask method", () => {
-    const readFile = async function (path: string): Promise<string> {
+    const readFile = async function (): Promise<string> {
       return "aaa";
     };
 

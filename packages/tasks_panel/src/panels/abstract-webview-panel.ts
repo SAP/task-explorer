@@ -42,7 +42,7 @@ export abstract class AbstractWebviewPanel<T> {
     this.setFocused(this.webViewPanel.active);
 
     // Update the content based on view changes
-    this.webViewPanel.onDidChangeViewState((e) => {
+    this.webViewPanel.onDidChangeViewState(() => {
       if (this.webViewPanel) {
         this.setFocused(this.webViewPanel.active);
       }
