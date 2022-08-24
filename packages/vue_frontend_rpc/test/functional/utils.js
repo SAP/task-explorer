@@ -20,9 +20,7 @@ function getInputWrapperByIndex(wrapper, taskIndex) {
   // we assume that the structure of the HTML that inquirer-gui produces is in the following format:
   // 1st --> is 1st question input, 3rd is 2nd question input ...
   const indexInWrapper = 2 * taskIndex - 1;
-  const superDivOfParentWrapper = wrapper.find(
-    `form:nth-child(${indexInWrapper})`
-  );
+  const superDivOfParentWrapper = wrapper.find(`form:nth-child(${indexInWrapper})`);
   const questionInputWrapper = superDivOfParentWrapper.find("input");
   return questionInputWrapper;
 }

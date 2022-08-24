@@ -26,11 +26,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         type: "label",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(
       questions[0],
@@ -59,11 +55,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         hint: "Enter unique task label",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "input",
@@ -87,11 +79,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         optional: true,
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "checkbox",
@@ -111,11 +99,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         value: true,
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "confirm",
@@ -138,11 +122,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         value: "module2",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "list",
@@ -166,11 +146,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         value: "module2",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "expand",
@@ -194,11 +170,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         optional: true,
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "editor",
@@ -216,11 +188,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         optional: true,
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(questions[0], {
       type: "input",
@@ -241,11 +209,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         },
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     expect(questions[0].validate).to.exist;
     expect(await questions[0].validate!("value")).to.eq(true);
@@ -261,11 +225,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         isValid: "not a function" as any as isFormPropertyValid,
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     expect(questions[0].validate).to.be.undefined;
   });
@@ -277,11 +237,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         value: "value",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     expect(questions[0].name).to.eq("prop0");
   });
@@ -292,11 +248,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         type: "input",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     expect(questions[0].default).to.eq("");
   });
@@ -307,11 +259,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         type: "input",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     expect(questions[0].message).to.eq("prop0");
   });
@@ -323,11 +271,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         readonly: true,
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     expect(questions[0].guiOptions).to.exist;
     expect(questions[0].guiOptions!.type).to.eq("label");
@@ -341,11 +285,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
         taskProperty: "folderName",
       },
     ];
-    const questions = convertContributedPropertiesToQuestions(
-      task,
-      properties,
-      new MockAppEvents()
-    );
+    const questions = convertContributedPropertiesToQuestions(task, properties, new MockAppEvents());
     expect(questions.length).to.eq(1);
     checkResult(
       questions[0],
@@ -367,10 +307,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
 });
 
 class MockAppEvents implements AppEvents {
-  async addTaskToConfiguration(
-    path: string,
-    task: ConfiguredTask
-  ): Promise<number> {
+  async addTaskToConfiguration(path: string, task: ConfiguredTask): Promise<number> {
     return 0;
   }
 
@@ -382,9 +319,7 @@ class MockAppEvents implements AppEvents {
     return property;
   }
 
-  getTasksEditorContributor(
-    type: string
-  ): TaskEditorContributionAPI<ConfiguredTask> | undefined {
+  getTasksEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> | undefined {
     return new (class implements TaskEditorContributionAPI<ConfiguredTask> {
       async init(wsFolder: string, task: ConfiguredTask): Promise<void> {
         return;
@@ -404,20 +339,12 @@ class MockAppEvents implements AppEvents {
     })();
   }
 
-  async updateTaskInConfiguration(
-    path: string,
-    task: ConfiguredTask,
-    index: number
-  ): Promise<void> {
+  async updateTaskInConfiguration(path: string, task: ConfiguredTask, index: number): Promise<void> {
     return;
   }
 }
 
-function checkResult(
-  actual: TaskQuestion,
-  expected: TaskQuestion,
-  skipFunctions?: boolean
-): void {
+function checkResult(actual: TaskQuestion, expected: TaskQuestion, skipFunctions?: boolean): void {
   expect(actual.name).to.eq(expected.name);
   expect(actual.type).to.eq(expected.type);
   expect(actual.default).to.deep.equal(expected.default);
@@ -436,9 +363,7 @@ function checkResult(
   }
 }
 
-async function checkDefaultMandatoryValidation(
-  question: TaskQuestion
-): Promise<void> {
+async function checkDefaultMandatoryValidation(question: TaskQuestion): Promise<void> {
   expect(question.validate).to.exist;
   expect(await question.validate!("")).to.eq(messages.MANDATORY_FIELD());
   expect(await question.validate!("value")).to.be.true;

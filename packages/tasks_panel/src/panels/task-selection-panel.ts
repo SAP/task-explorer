@@ -13,10 +13,7 @@ export interface SelectionPanelState {
 }
 
 export class TaskSelectionPanel extends AbstractWebviewPanel<SelectionPanelState> {
-  public constructor(
-    tasks: ConfiguredTask[],
-    readResource: (file: string) => Promise<string>
-  ) {
+  public constructor(tasks: ConfiguredTask[], readResource: (file: string) => Promise<string>) {
     super(readResource);
     this.viewType = TASK_SELECTION_VIEW_TYPE;
     this.focusedKey = "tasksSelection.Focused";
@@ -25,10 +22,7 @@ export class TaskSelectionPanel extends AbstractWebviewPanel<SelectionPanelState
     });
   }
 
-  public setWebviewPanel(
-    webviewPanel: WebviewPanel,
-    state: SelectionPanelState
-  ): void {
+  public setWebviewPanel(webviewPanel: WebviewPanel, state: SelectionPanelState): void {
     this.webViewPanel = webviewPanel;
     this.webViewPanel.title = "Create Task";
     this.state = state;

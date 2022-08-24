@@ -1,22 +1,13 @@
 import { expect } from "chai";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 
-import {
-  MockConfigTask,
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-} from "../utils/mockVSCode";
+import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
 
 mockVscode("../../src/panels/task-editor-panel");
 import { editTask, editTreeItemTask } from "../../src/commands/edit-task";
 import { TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
-import {
-  disposeTaskEditorPanel,
-  getTaskEditor,
-  getTaskEditorPanel,
-} from "../../src/panels/panels-handler";
+import { disposeTaskEditorPanel, getTaskEditor, getTaskEditorPanel } from "../../src/panels/panels-handler";
 
 describe("Command editTask", () => {
   const readFile = async function (path: string): Promise<string> {
@@ -39,14 +30,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "path",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
     await editTreeItemTask(readFile, item1);
     const task2: ConfiguredTask = {
       type: "test",
@@ -58,14 +42,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(
-      0,
-      "test",
-      "bbb",
-      "path",
-      TreeItemCollapsibleState.None,
-      command2
-    );
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
     await editTreeItemTask(readFile, item2);
     expect(MockVSCodeInfo.webViewCreated).eq(2);
   });
@@ -81,14 +58,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "path",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -99,14 +69,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(
-      0,
-      "test",
-      "bbb",
-      "path",
-      TreeItemCollapsibleState.None,
-      command2
-    );
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
     await editTreeItemTask(readFile, item1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
     await editTreeItemTask(readFile, item2);
@@ -114,22 +77,13 @@ describe("Command editTask", () => {
   });
 
   it("item misses command with task; view is not created", async () => {
-    const item = new TaskTreeItem(
-      0,
-      "test",
-      "bbb",
-      "path",
-      TreeItemCollapsibleState.None
-    );
+    const item = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None);
     await editTreeItemTask(readFile, item);
     expect(MockVSCodeInfo.webViewCreated).eq(0);
   });
 
   it("task `aaa` opened for editing and changed; we try to edit task `bbb` and answer `Discard Changes` in the dialog; task `aaa` is closed and task `bbb` is opened for editing", async () => {
-    MockVSCodeInfo.configTasks?.set("path", [
-      new MockConfigTask("task1", "test"),
-      new MockConfigTask("bbb", "test"),
-    ]);
+    MockVSCodeInfo.configTasks?.set("path", [new MockConfigTask("task1", "test"), new MockConfigTask("bbb", "test")]);
     const task1: ConfiguredTask = {
       type: "test",
       label: "aaa",
@@ -140,14 +94,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "path",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -158,14 +105,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(
-      0,
-      "test",
-      "bbb",
-      "path",
-      TreeItemCollapsibleState.None,
-      command2
-    );
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
     await editTreeItemTask(readFile, item1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
@@ -177,10 +117,7 @@ describe("Command editTask", () => {
   });
 
   it("task `aaa` opened for editing and changed; we try to edit task `bbb` and answer `No` in the dialog; we continue to edit task `aaa`", async () => {
-    MockVSCodeInfo.configTasks?.set("path", [
-      new MockConfigTask("aaa", "test"),
-      new MockConfigTask("bbb", "test"),
-    ]);
+    MockVSCodeInfo.configTasks?.set("path", [new MockConfigTask("aaa", "test"), new MockConfigTask("bbb", "test")]);
     const task1: ConfiguredTask = {
       type: "test",
       label: "aaa",
@@ -191,14 +128,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "path",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -209,14 +139,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(
-      0,
-      "test",
-      "bbb",
-      "path",
-      TreeItemCollapsibleState.None,
-      command2
-    );
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
     await editTreeItemTask(readFile, item1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
@@ -228,10 +151,7 @@ describe("Command editTask", () => {
   });
 
   it("task `aaa` opened for editing and changed; we try to edit task `aaa` again; new view is not opened and we continue with an old one", async () => {
-    MockVSCodeInfo.configTasks?.set("path", [
-      new MockConfigTask("aaa", "test"),
-      new MockConfigTask("bbb", "test"),
-    ]);
+    MockVSCodeInfo.configTasks?.set("path", [new MockConfigTask("aaa", "test"), new MockConfigTask("bbb", "test")]);
     const task1: ConfiguredTask = {
       type: "test",
       label: "aaa",
@@ -257,10 +177,7 @@ describe("Command editTask", () => {
   });
 
   it("task not changed, no dialog happens", async () => {
-    MockVSCodeInfo.configTasks?.set("path", [
-      new MockConfigTask("aaa", "test"),
-      new MockConfigTask("bbb", "test"),
-    ]);
+    MockVSCodeInfo.configTasks?.set("path", [new MockConfigTask("aaa", "test"), new MockConfigTask("bbb", "test")]);
     const task1: ConfiguredTask = {
       type: "test",
       label: "aaa",
@@ -276,22 +193,13 @@ describe("Command editTask", () => {
   });
 
   it("task contains command without arguments", async () => {
-    MockVSCodeInfo.configTasks?.set("wsFolder1", [
-      new MockConfigTask("aaa", "test"),
-    ]);
+    MockVSCodeInfo.configTasks?.set("wsFolder1", [new MockConfigTask("aaa", "test")]);
     const command1 = {
       title: "Edit Task",
       command: "tasks-explorer.editTask",
       arguments: undefined,
     };
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "wsFolder1",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, command1);
 
     await editTreeItemTask(readFile, item1);
     expect(MockVSCodeInfo.configTasks?.get("wsFolder1")).to.not.empty;

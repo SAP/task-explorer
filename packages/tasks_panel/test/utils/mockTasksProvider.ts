@@ -1,8 +1,5 @@
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import {
-  ITasksEventHandler,
-  ITasksProvider,
-} from "../../src/services/definitions";
+import { ITasksEventHandler, ITasksProvider } from "../../src/services/definitions";
 
 export class MockTasksProvider implements ITasksProvider {
   constructor(private tasks: ConfiguredTask[]) {}

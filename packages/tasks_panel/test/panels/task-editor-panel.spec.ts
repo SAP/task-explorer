@@ -1,22 +1,10 @@
 import { expect } from "chai";
 import sinon = require("sinon");
-import {
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-} from "../utils/mockVSCode";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
 mockVscode("../../src/panels/task-editor-panel");
-import {
-  createLoggerWrapperMock,
-  getLoggerMessage,
-  resetLoggerMessage,
-} from "../utils/loggerWrapperMock";
+import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "../utils/loggerWrapperMock";
 import { messages } from "../../src/i18n/messages";
-import {
-  createTaskEditorPanel,
-  disposeTaskEditorPanel,
-  getTaskEditorPanel,
-} from "../../src/panels/panels-handler";
+import { createTaskEditorPanel, disposeTaskEditorPanel, getTaskEditorPanel } from "../../src/panels/panels-handler";
 import { TaskEditorPanel } from "../../src/panels/task-editor-panel";
 
 describe("TaskEditorPanel class", () => {

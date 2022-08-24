@@ -1,10 +1,5 @@
 import { expect } from "chai";
-import {
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-  testVscode,
-} from "../utils/mockVSCode";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 
 mockVscode("src/view/tasks-tree");
 import { TasksTree } from "../../src/view/tasks-tree";

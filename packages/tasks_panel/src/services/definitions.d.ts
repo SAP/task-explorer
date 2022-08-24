@@ -1,8 +1,5 @@
 import { Question } from "inquirer";
-import {
-  ConfiguredTask,
-  TaskEditorContributionAPI,
-} from "@sap_oss/task_contrib_types";
+import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 
 export interface IContributors {
   init(): Promise<void>;
@@ -10,9 +7,7 @@ export interface IContributors {
   getSupportedIntents(): string[];
   getIntentByType(type: string): string;
   registerEventHandler(eventHandler: ITaskTypeEventHandler): void;
-  getTaskEditorContributor(
-    type: string
-  ): TaskEditorContributionAPI<ConfiguredTask>;
+  getTaskEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask>;
   getTaskPropertyDescription(type: string, property: string): string;
   getExtensionNameByType(type: string): string;
 }
@@ -54,6 +49,4 @@ export interface TaskQuestion extends NamedQuestion {
   choices?: string[] | TaskChoice[];
 }
 
-export type validationFunction =
-  | ((value: string) => Promise<string | boolean> | string | boolean)
-  | undefined;
+export type validationFunction = ((value: string) => Promise<string | boolean> | string | boolean) | undefined;

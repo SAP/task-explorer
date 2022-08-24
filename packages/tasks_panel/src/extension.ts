@@ -1,10 +1,7 @@
 import { partial } from "lodash";
 import { commands, ExtensionContext, OutputChannel, window } from "vscode";
 import { SWATracker } from "@sap/swa-for-sapbas-vsx";
-import {
-  createExtensionLoggerAndSubscribeToLogSettingsChanges,
-  getLogger,
-} from "./logger/logger-wrapper";
+import { createExtensionLoggerAndSubscribeToLogSettingsChanges, getLogger } from "./logger/logger-wrapper";
 import { Contributors } from "./services/contributors";
 import { TasksProvider } from "./services/tasks-provider";
 import { TasksTree } from "./view/tasks-tree";
@@ -41,31 +38,19 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
 
-  commands.registerCommand(
-    "tasks-explorer.editTask",
-    partial(editTreeItemTask, readResource)
-  );
+  commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, readResource));
   commands.registerCommand("tasks-explorer.deleteTask", deleteTask);
   commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree);
-  commands.registerCommand(
-    "tasks-explorer.createTask",
-    partial(createTask, tasksProvider, readResource)
-  );
+  commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource));
 
   window.registerTreeDataProvider("tasksPanel", tasksTree);
 
   contributors.init();
 }
 
-function initializeLogger(
-  context: ExtensionContext,
-  outputChannel: OutputChannel
-): void {
+function initializeLogger(context: ExtensionContext, outputChannel: OutputChannel): void {
   try {
-    createExtensionLoggerAndSubscribeToLogSettingsChanges(
-      context,
-      outputChannel
-    );
+    createExtensionLoggerAndSubscribeToLogSettingsChanges(context, outputChannel);
   } catch (error) {
     outputChannel.appendLine(messages.LOGGER_NOT_AVAILABLE());
   }

@@ -11,32 +11,22 @@ export abstract class AbstractWebviewPanel<T> {
   protected htmlFileName: string;
   protected state: any;
 
-  protected constructor(
-    protected readonly readResource: (file: string) => Promise<string>
-  ) {
+  protected constructor(protected readonly readResource: (file: string) => Promise<string>) {
     this.mediaPath = join(getExtensionPath(), "dist", "media");
     this.htmlFileName = "index.html";
   }
 
-  protected abstract setWebviewPanel(
-    webviewPanel: WebviewPanel,
-    state?: T
-  ): void;
+  protected abstract setWebviewPanel(webviewPanel: WebviewPanel, state?: T): void;
 
   public loadWebviewPanel(state?: T): void {
     if (this.webViewPanel) {
       this.dispose();
     }
-    const webViewPanel = window.createWebviewPanel(
-      this.viewType,
-      this.viewTitle,
-      ViewColumn.One,
-      {
-        // Enable javascript in the webview
-        enableScripts: true,
-        localResourceRoots: [Uri.file(this.mediaPath)],
-      }
-    );
+    const webViewPanel = window.createWebviewPanel(this.viewType, this.viewTitle, ViewColumn.One, {
+      // Enable javascript in the webview
+      enableScripts: true,
+      localResourceRoots: [Uri.file(this.mediaPath)],
+    });
     this.setWebviewPanel(webViewPanel, state);
   }
 
@@ -77,25 +67,14 @@ export abstract class AbstractWebviewPanel<T> {
     if (this.webViewPanel === undefined) {
       return;
     }
-    let indexHtml = await this.readResource(
-      join(this.mediaPath, this.htmlFileName)
-    );
+    let indexHtml = await this.readResource(join(this.mediaPath, this.htmlFileName));
     // Local path to main script run in the webview
     const scriptPathOnDisk = Uri.file(join(this.mediaPath, sep));
     const scriptUri = this.webViewPanel.webview.asWebviewUri(scriptPathOnDisk);
 
-    indexHtml = indexHtml.replace(
-      /<link href="/g,
-      `<link href="${scriptUri.toString()}`
-    );
-    indexHtml = indexHtml.replace(
-      /<script src="/g,
-      `<script src="${scriptUri.toString()}`
-    );
-    indexHtml = indexHtml.replace(
-      /<img src="/g,
-      `<img src="${scriptUri.toString()}`
-    );
+    indexHtml = indexHtml.replace(/<link href="/g, `<link href="${scriptUri.toString()}`);
+    indexHtml = indexHtml.replace(/<script src="/g, `<script src="${scriptUri.toString()}`);
+    indexHtml = indexHtml.replace(/<img src="/g, `<img src="${scriptUri.toString()}`);
 
     this.webViewPanel.webview.html = indexHtml;
   }

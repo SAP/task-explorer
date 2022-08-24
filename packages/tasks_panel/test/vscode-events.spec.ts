@@ -1,11 +1,5 @@
 import { expect } from "chai";
-import {
-  MockConfigTask,
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-  testVscode,
-} from "./utils/mockVSCode";
+import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/vscode-events");
 import { VSCodeEvents } from "../src/vscode-events";
@@ -34,10 +28,7 @@ describe("the VscodeEvents class", () => {
   describe("executeTask method", () => {
     it("selects the task from the list of fetched tasks and calls vscode execution task functionality", async () => {
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
-      MockVSCodeInfo.allTasks = [
-        new MockConfigTask("task 1", "test"),
-        new MockConfigTask("task 2", "test"),
-      ];
+      MockVSCodeInfo.allTasks = [new MockConfigTask("task 1", "test"), new MockConfigTask("task 2", "test")];
       MockVSCodeInfo.allTasks[0].name = MockVSCodeInfo.allTasks[0].label;
       MockVSCodeInfo.allTasks[1].name = MockVSCodeInfo.allTasks[1].label;
       await vscodeEvents.executeTask(task);
@@ -62,9 +53,7 @@ describe("the VscodeEvents class", () => {
     it("logs error on try to update task with wrong index", async () => {
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
       MockVSCodeInfo.configTasks = new Map<string, MockConfigTask[]>();
-      MockVSCodeInfo.configTasks.set("path", [
-        new MockConfigTask("task one", "test"),
-      ]);
+      MockVSCodeInfo.configTasks.set("path", [new MockConfigTask("task one", "test")]);
       await vscodeEvents.updateTaskInConfiguration("path", task, 3);
       expect(MockVSCodeInfo.errorMsg).eq(messages.TASK_UPDATE_FAILED(3, 1));
     });
@@ -100,9 +89,7 @@ describe("the VscodeEvents class", () => {
       const contributor = new MockTaskTypeProvider();
       Contributors["instance"] = contributor;
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
-      expect(
-        await vscodeEvents.getTaskPropertyDescription("testType", "property")
-      ).eq("property");
+      expect(await vscodeEvents.getTaskPropertyDescription("testType", "property")).eq("property");
     });
   });
 });

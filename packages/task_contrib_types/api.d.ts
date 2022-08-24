@@ -55,9 +55,7 @@ export type isArrayFormPropertyValid = (
   value: string[]
 ) => Promise<string> | string;
 
-export type isFormPropertyValid =
-  | isSimpleFormPropertyValid
-  | isArrayFormPropertyValid;
+export type isFormPropertyValid = isSimpleFormPropertyValid | isArrayFormPropertyValid;
 
 /**
  * This interface defines the form property attributes that are relevant for any kind of property

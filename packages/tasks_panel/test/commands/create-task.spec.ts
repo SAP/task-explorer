@@ -1,16 +1,8 @@
 import { expect } from "chai";
-import {
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-} from "../utils/mockVSCode";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 mockVscode("src/panels/panels-handler");
-import {
-  disposeTaskEditorPanel,
-  disposeTaskSelectionPanel,
-  getTaskEditor,
-} from "../../src/panels/panels-handler";
+import { disposeTaskEditorPanel, disposeTaskSelectionPanel, getTaskEditor } from "../../src/panels/panels-handler";
 mockVscode("src/commands/create-task");
 import { createTask } from "../../src/commands/create-task";
 mockVscode("src/commands/edit-task");

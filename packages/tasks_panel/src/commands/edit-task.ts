@@ -3,11 +3,7 @@ import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
-import {
-  createTaskEditorPanel,
-  disposeTaskSelectionPanel,
-  getTaskInProcess,
-} from "../panels/panels-handler";
+import { createTaskEditorPanel, disposeTaskSelectionPanel, getTaskInProcess } from "../panels/panels-handler";
 
 export async function editTreeItemTask(
   readResource: (file: string) => Promise<string>,
@@ -20,10 +16,7 @@ export async function editTreeItemTask(
   await editTask(treeItem.command.arguments[0], readResource);
 }
 
-export async function editTask(
-  task: ConfiguredTask,
-  readResource: (file: string) => Promise<string>
-): Promise<void> {
+export async function editTask(task: ConfiguredTask, readResource: (file: string) => Promise<string>): Promise<void> {
   getSWA().track(messages.SWA_EDIT_TASK_EVENT(), [
     messages.SWA_TASK_EXPLORER_PARAM(),
     task.__intent,

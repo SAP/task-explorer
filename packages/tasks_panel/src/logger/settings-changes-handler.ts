@@ -8,14 +8,9 @@ import {
   SOURCE_TRACKING_CONFIG_PROP,
 } from "./settings";
 
-export function logLoggerDetails(
-  context: ExtensionContext,
-  configLogLevel: string
-): void {
+export function logLoggerDetails(context: ExtensionContext, configLogLevel: string): void {
   getLogger().info(`Start Logging in Log Level: <${configLogLevel}>`);
-  getLogger().info(
-    `Full Logs can be found in the <${context.logPath}> folder.`
-  );
+  getLogger().info(`Full Logs can be found in the <${context.logPath}> folder.`);
 }
 
 /**
@@ -38,8 +33,7 @@ export function listenToLogSettingsChanges(context: ExtensionContext): void {
   context.subscriptions.push(
     workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration(SOURCE_TRACKING_CONFIG_PROP)) {
-        const newSourceLocationTracking: boolean =
-          getSourceLocationTrackingSetting();
+        const newSourceLocationTracking: boolean = getSourceLocationTrackingSetting();
         getLogger().changeSourceLocationTracking(newSourceLocationTracking);
       }
     })

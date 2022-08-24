@@ -19,9 +19,7 @@
             prepend-icon="$expand"
           >
             <template v-slot:activator>
-              <v-list-item-title class="intent"
-                >{{ tasksGroup.intent }}
-              </v-list-item-title>
+              <v-list-item-title class="intent">{{ tasksGroup.intent }} </v-list-item-title>
             </template>
             <v-list-item-group>
               <v-list-item
@@ -85,10 +83,7 @@ export default {
       this.hoverTaskIndex = null;
     },
     isActive(tasksGroupIndex, taskIndex) {
-      return (
-        this.hoverTaskIndex === taskIndex &&
-        this.hoverTasksGroupIndex === tasksGroupIndex
-      );
+      return this.hoverTaskIndex === taskIndex && this.hoverTasksGroupIndex === tasksGroupIndex;
     },
   },
 };
@@ -133,8 +128,7 @@ export default {
 .tasksByIntent > .v-list-item {
   border-bottom: 2px solid var(--vscode-editorWidget-background, #252526);
 }
-.tasksByIntent
-  > .v-list-group__header.v-list-item--active:not(:hover):not(:focus):before {
+.tasksByIntent > .v-list-group__header.v-list-item--active:not(:hover):not(:focus):before {
   opacity: 0.12 !important;
 }
 .active_task_label {

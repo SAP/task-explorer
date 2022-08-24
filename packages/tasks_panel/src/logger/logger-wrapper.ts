@@ -8,14 +8,8 @@ import {
   IVSCodeExtLogger,
   LogLevel,
 } from "@vscode-logging/logger";
-import {
-  listenToLogSettingsChanges,
-  logLoggerDetails,
-} from "./settings-changes-handler";
-import {
-  getLoggingLevelSetting,
-  getSourceLocationTrackingSetting,
-} from "./settings";
+import { listenToLogSettingsChanges, logLoggerDetails } from "./settings-changes-handler";
+import { getLoggingLevelSetting, getSourceLocationTrackingSetting } from "./settings";
 import { EMPTY_LOGGER } from "./empty-logger";
 
 /**
@@ -58,18 +52,12 @@ function initLoggerWrapper(newLogger: IVSCodeExtLogger): void {
   logger = newLogger;
 }
 
-function createExtensionLogger(
-  context: ExtensionContext,
-  outputChannel: OutputChannel
-): void {
+function createExtensionLogger(context: ExtensionContext, outputChannel: OutputChannel): void {
   const contextLogPath = context.logPath;
   const logLevelSetting: LogLevel = getLoggingLevelSetting();
-  const sourceLocationTrackingSettings: boolean =
-    getSourceLocationTrackingSetting();
+  const sourceLocationTrackingSettings: boolean = getSourceLocationTrackingSetting();
 
-  const meta = JSON.parse(
-    readFileSync(resolve(context.extensionPath, PACKAGE_JSON), "utf8")
-  );
+  const meta = JSON.parse(readFileSync(resolve(context.extensionPath, PACKAGE_JSON), "utf8"));
 
   const extensionLoggerOpts: getExtensionLoggerOpts = {
     extName: meta.name,

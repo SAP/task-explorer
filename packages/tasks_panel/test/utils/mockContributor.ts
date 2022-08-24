@@ -1,12 +1,6 @@
-import {
-  ConfiguredTask,
-  TaskEditorContributionAPI,
-  FormProperty,
-} from "@sap_oss/task_contrib_types";
+import { ConfiguredTask, TaskEditorContributionAPI, FormProperty } from "@sap_oss/task_contrib_types";
 
-export class MockContributor
-  implements TaskEditorContributionAPI<ConfiguredTask>
-{
+export class MockContributor implements TaskEditorContributionAPI<ConfiguredTask> {
   static failOnValidate: boolean | undefined = false;
 
   updateTask(task: ConfiguredTask, changes: any): ConfiguredTask {

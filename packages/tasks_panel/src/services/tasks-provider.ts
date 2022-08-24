@@ -1,11 +1,7 @@
 import { cloneDeep, filter, map } from "lodash";
 import { Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import {
-  IContributors,
-  ITasksEventHandler,
-  ITasksProvider,
-} from "./definitions";
+import { IContributors, ITasksEventHandler, ITasksProvider } from "./definitions";
 
 let configuredTasksCache: ConfiguredTask[];
 
@@ -33,16 +29,13 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
       for (const wsFolder of workspace.workspaceFolders) {
         const wsFolderPath = wsFolder.uri.path;
         const configuration = workspace.getConfiguration("tasks", wsFolder.uri);
-        const configuredTasks: ConfiguredTask[] | undefined =
-          configuration.get("tasks");
+        const configuredTasks: ConfiguredTask[] | undefined = configuration.get("tasks");
 
         if (configuredTasks === undefined) {
           continue;
         }
 
-        const configuredContributedTasks = filter(configuredTasks, (_) =>
-          supportedTypes.includes(_.type)
-        );
+        const configuredContributedTasks = filter(configuredTasks, (_) => supportedTypes.includes(_.type));
 
         const extendedConfiguredTasks = cloneDeep(configuredContributedTasks);
         let index = 0;
@@ -50,9 +43,7 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
           task.__index = index;
           task.__wsFolder = wsFolderPath;
           task.__intent = this.taskTypesProvider.getIntentByType(task.type);
-          task.__extensionName = this.taskTypesProvider.getExtensionNameByType(
-            task.type
-          );
+          task.__extensionName = this.taskTypesProvider.getExtensionNameByType(task.type);
           index++;
         }
 
@@ -68,13 +59,9 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
 
     const supportedTypes = this.taskTypesProvider.getSupportedTypes();
 
-    const allContributedTasks: Task[] = filter(allTasks, (_) =>
-      this.isTaskAutodetected(_, supportedTypes)
-    );
+    const allContributedTasks: Task[] = filter(allTasks, (_) => this.isTaskAutodetected(_, supportedTypes));
 
-    return map(allContributedTasks, (_) =>
-      this.convertTaskToConfiguredTask(_, supportedTypes)
-    );
+    return map(allContributedTasks, (_) => this.convertTaskToConfiguredTask(_, supportedTypes));
   }
 
   isTaskAutodetected(task: Task, supportedTypes: string[]): boolean {
@@ -93,27 +80,17 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
     // According to VSCode API tasks's scope can be: TaskScope.Global | TaskScope.Workspace | WorkspaceFolder
     // currently we support only WorkspaceFolder
     // in future we have to examine if we need to support another cases
-    return instanceOfWorkspaceFolder(task.scope)
-      ? task.scope.uri.path
-      : undefined;
+    return instanceOfWorkspaceFolder(task.scope) ? task.scope.uri.path : undefined;
   }
 
-  convertTaskToConfiguredTask(
-    task: Task,
-    supportedTypes: string[]
-  ): ConfiguredTask {
+  convertTaskToConfiguredTask(task: Task, supportedTypes: string[]): ConfiguredTask {
     const path = TasksProvider.getTaskWorkspaceFolder(task);
 
-    if (
-      !supportedTypes.includes(task.definition.type) &&
-      supportedTypes.includes(task.definition.taskType)
-    ) {
+    if (!supportedTypes.includes(task.definition.type) && supportedTypes.includes(task.definition.taskType)) {
       // we are in Theia
       delete task.definition.id;
       delete task.definition.presentation;
-      const intent = this.taskTypesProvider.getIntentByType(
-        task.definition.taskType
-      );
+      const intent = this.taskTypesProvider.getIntentByType(task.definition.taskType);
       return {
         label: task.name,
         ...task.definition,
@@ -121,9 +98,7 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
         taskType: intent,
         __wsFolder: path,
         __intent: intent,
-        __extensionName: this.taskTypesProvider.getExtensionNameByType(
-          task.definition.taskType
-        ),
+        __extensionName: this.taskTypesProvider.getExtensionNameByType(task.definition.taskType),
       };
     } else {
       return {
@@ -131,22 +106,14 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
         label: task.name,
         __wsFolder: path,
         __intent: task.definition.taskType,
-        __extensionName: this.taskTypesProvider.getExtensionNameByType(
-          task.definition.type
-        ),
+        __extensionName: this.taskTypesProvider.getExtensionNameByType(task.definition.type),
       };
     }
   }
 }
 
-function instanceOfWorkspaceFolder(
-  object: undefined | TaskScope | WorkspaceFolder
-): object is WorkspaceFolder {
-  return (
-    object !== undefined &&
-    object !== TaskScope.Global &&
-    object !== TaskScope.Workspace
-  );
+function instanceOfWorkspaceFolder(object: undefined | TaskScope | WorkspaceFolder): object is WorkspaceFolder {
+  return object !== undefined && object !== TaskScope.Global && object !== TaskScope.Workspace;
 }
 
 export function getConfiguredTasksFromCache(): ConfiguredTask[] {

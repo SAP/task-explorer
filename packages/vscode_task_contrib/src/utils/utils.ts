@@ -20,9 +20,7 @@ export function getWorkspaceFolders(): string[] {
   return map(workspace.workspaceFolders, (_) => _.uri.fsPath);
 }
 
-export function getWorkspaceFolderByPath(
-  path: string
-): WorkspaceFolder | undefined {
+export function getWorkspaceFolderByPath(path: string): WorkspaceFolder | undefined {
   const wsFolders = workspace.workspaceFolders;
   if (wsFolders === undefined) {
     return undefined;

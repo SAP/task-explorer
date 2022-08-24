@@ -10,12 +10,7 @@ export function convertContributedPropertiesToQuestions(
   getPropertyDescription: Pick<AppEvents, "getTaskPropertyDescription">
 ): TaskQuestion[] {
   return map(properties, (property, index) =>
-    convertContributedPropertyToQuestion(
-      task,
-      property,
-      getPropertyDescription,
-      index
-    )
+    convertContributedPropertyToQuestion(task, property, getPropertyDescription, index)
   );
 }
 
@@ -27,13 +22,7 @@ function convertContributedPropertyToQuestion(
 ): TaskQuestion {
   const taskProperty = getTaskProperty(formProperty);
   const name = getName(formProperty, index);
-  const message = getQuestionMessage(
-    task,
-    taskProperty,
-    formProperty.message,
-    taskInfo,
-    name
-  );
+  const message = getQuestionMessage(task, taskProperty, formProperty.message, taskInfo, name);
   const type = getType(formProperty.type);
   const defaultValue = getDefault(formProperty.value, taskProperty, task);
 
@@ -79,22 +68,11 @@ function convertContributedPropertyToQuestion(
   return question;
 }
 
-function handleMandatoryField(
-  formProperty: FormProperty,
-  guiOptions: GuiOptions,
-  question: TaskQuestion
-): void {
+function handleMandatoryField(formProperty: FormProperty, guiOptions: GuiOptions, question: TaskQuestion): void {
   if (!formProperty.optional && !formProperty.readonly) {
     guiOptions.mandatory = true;
-    if (
-      question.type === "combobox" ||
-      question.type === "input" ||
-      question.type === "editor"
-    ) {
-      question.validate = combineValidationFunctions(
-        isValueProvided,
-        question.validate
-      );
+    if (question.type === "combobox" || question.type === "input" || question.type === "editor") {
+      question.validate = combineValidationFunctions(isValueProvided, question.validate);
     }
   }
 }
@@ -103,29 +81,20 @@ async function isValueProvided(value: string): Promise<string | boolean> {
   return value === "" ? messages.MANDATORY_FIELD() : true;
 }
 
-function handleCheckbox(
-  formProperty: FormProperty,
-  question: TaskQuestion
-): void {
+function handleCheckbox(formProperty: FormProperty, question: TaskQuestion): void {
   if (formProperty.type === "checkbox") {
     question.choices = formProperty.list;
     question.type = formProperty.type;
   }
 }
 
-function handleConfirm(
-  formProperty: FormProperty,
-  question: TaskQuestion
-): void {
+function handleConfirm(formProperty: FormProperty, question: TaskQuestion): void {
   if (formProperty.type === "confirm") {
     question.type = formProperty.type;
   }
 }
 
-function handleCombobox(
-  formProperty: FormProperty,
-  question: TaskQuestion
-): void {
+function handleCombobox(formProperty: FormProperty, question: TaskQuestion): void {
   if (formProperty.type === "combobox") {
     question.choices = formProperty.list;
     question.type = "list";
@@ -158,11 +127,7 @@ function getName(formProperty: FormProperty, index: number): string {
 }
 
 function getType(formPropertyType: string): string {
-  if (
-    formPropertyType === "label" ||
-    formPropertyType === "file" ||
-    formPropertyType === "folder"
-  ) {
+  if (formPropertyType === "label" || formPropertyType === "file" || formPropertyType === "folder") {
     return "input";
   }
   return formPropertyType;
@@ -195,22 +160,14 @@ function getQuestionMessage(
   return taskInfo.getTaskPropertyDescription(task.type, taskProperty);
 }
 
-function handleFileBrowser(
-  originalType: string,
-  question: TaskQuestion,
-  guiOptions: GuiOptions
-): void {
+function handleFileBrowser(originalType: string, question: TaskQuestion, guiOptions: GuiOptions): void {
   if (originalType === "file" && guiOptions.type !== "label") {
     guiOptions.type = "file-browser";
     question.getFilePath = "__Function";
   }
 }
 
-function handleFolderBrowser(
-  originalType: string,
-  question: TaskQuestion,
-  guiOptions: GuiOptions
-): void {
+function handleFolderBrowser(originalType: string, question: TaskQuestion, guiOptions: GuiOptions): void {
   if (originalType === "folder" && guiOptions.type !== "label") {
     guiOptions.type = "folder-browser";
     question.getPath = "__Function";
@@ -230,9 +187,6 @@ export function combineValidationFunctions(
   };
 }
 
-async function callValidationFunction(
-  func: validationFunction | undefined,
-  value: string
-): Promise<string | boolean> {
+async function callValidationFunction(func: validationFunction | undefined, value: string): Promise<string | boolean> {
   return func !== undefined ? func(value) : true;
 }

@@ -1,11 +1,5 @@
-import {
-  ConfiguredTask,
-  TaskEditorContributionAPI,
-} from "@sap_oss/task_contrib_types";
-import {
-  IContributors,
-  ITaskTypeEventHandler,
-} from "../../src/services/definitions";
+import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
+import { IContributors, ITaskTypeEventHandler } from "../../src/services/definitions";
 import { MockContributor } from "./mockContributor";
 
 export class MockTaskTypeProvider implements IContributors {
@@ -25,9 +19,7 @@ export class MockTaskTypeProvider implements IContributors {
     return ["testType"];
   }
 
-  getTaskEditorContributor(
-    type: string
-  ): TaskEditorContributionAPI<ConfiguredTask> {
+  getTaskEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {
     return new MockContributor();
   }
 

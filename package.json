@@ -16,9 +16,9 @@
     "compile": "lerna run clean && tsc --build",
     "compile:watch": "lerna run clean && tsc --build --watch",
     "coverage:merge": "node ./scripts/merge-coverage",
-    "format:fix": "prettier --write \"**/*.@(js|ts|json|md|vue)\" --ignore-path=.gitignore",
-    "format:fix:changelog": "prettier --write \"**/CHANGELOG.md\" --ignore-path=.gitignore && git status && git add \"**/CHANGELOG.md\"",
-    "format:validate": "prettier --check \"**/*.@(js|ts|json|md|vue)\" --ignore-path=.gitignore",
+    "format:fix": "prettier --print-width 120 --write \"**/*.@(js|ts|json|md|vue)\" --ignore-path=.gitignore",
+    "format:fix:changelog": "prettier --print-width 120 --write \"**/CHANGELOG.md\" --ignore-path=.gitignore && git status && git add \"**/CHANGELOG.md\"",
+    "format:validate": "prettier --print-width 120 --check \"**/*.@(js|ts|json|md|vue)\" --ignore-path=.gitignore",
     "postinstall": "patch-package",
     "legal:copy": "lerna exec \"shx cp -r ../../.reuse .reuse && shx cp -r ../../LICENSES LICENSES\"",
     "legal:delete": "lerna exec \"shx rm -rf .reuse LICENSES\" || true",
@@ -43,7 +43,7 @@
   },
   "lint-staged": {
     "*.{js,ts,json,md,vue}": [
-      "prettier --write"
+      "prettier --print-width 120 --write"
     ],
     "*.{ts,js,vue}": [
       "eslint --fix --max-warnings=0 --ignore-pattern=!.*"
