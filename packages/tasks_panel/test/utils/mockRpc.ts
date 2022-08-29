@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair -- suppresed: test scope
+/* eslint-disable @typescript-eslint/no-unused-vars -- suppresed: test scope */
 import { IRpc, IMethod } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 
 export class MockRpc implements IRpc {

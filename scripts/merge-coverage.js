@@ -19,11 +19,7 @@ glob.sync("packages/*/.nyc_output").forEach((nycOutput) => {
   const cwd = dirname(nycOutput);
   const { status, stderr } = spawnSync(
     resolve("node_modules", ".bin", "nyc"),
-    [
-      "merge",
-      ".nyc_output",
-      join(__dirname, "..", ".nyc_output", basename(cwd) + ".json"),
-    ],
+    ["merge", ".nyc_output", join(__dirname, "..", ".nyc_output", basename(cwd) + ".json")],
     {
       encoding: "utf8",
       shell: true,

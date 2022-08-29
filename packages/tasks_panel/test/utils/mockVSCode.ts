@@ -1,10 +1,5 @@
 import { resolve, join } from "path";
-import {
-  ConfiguredTask,
-  FormProperty,
-  TaskEditorContributionAPI,
-  TaskUserInput,
-} from "@sap_oss/task_contrib_types";
+import { ConfiguredTask, FormProperty, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
 
 const Module = require("module");
 const originalRequire = Module.prototype.require;
@@ -16,9 +11,7 @@ export class MockConfigTask {
 export class MockVSCodeInfo {
   public static allExtensions: any[];
   public static visiblePanel = false;
-  public static configTasks:
-    | Map<string, MockConfigTask[]>
-    | undefined = new Map<string, MockConfigTask[]>();
+  public static configTasks: Map<string, MockConfigTask[]> | undefined = new Map<string, MockConfigTask[]>();
   public static allTasks: any[] = [];
   public static fired = false;
   public static saveCalled = false;
@@ -52,10 +45,7 @@ export const testVscode: any = {
     },
     executeCommand: (command: string, ...rest: any[]): any => {
       MockVSCodeInfo.commandCalled = command;
-      if (
-        command === "setContext" &&
-        rest[0] === "is-task-explorer-view-visible"
-      ) {
+      if (command === "setContext" && rest[0] === "is-task-explorer-view-visible") {
         MockVSCodeInfo.visiblePanel = rest[1];
       }
     },
@@ -105,11 +95,7 @@ export const testVscode: any = {
     source: string;
     scope: any;
 
-    constructor(
-      public readonly definition: ConfiguredTask,
-      source?: string,
-      scope?: any
-    ) {
+    constructor(public readonly definition: ConfiguredTask, source?: string, scope?: any) {
       this.name = definition.label;
       this.source = source === undefined ? definition.type : source;
       this.scope = scope;
@@ -134,16 +120,14 @@ export const testVscode: any = {
     createWebviewPanel: (): any => {
       return new MockWebViewPanel();
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
     registerTreeDataProvider<T>(): void {
       MockVSCodeInfo.treeDataProviderRegistered = true;
     },
     createOutputChannel() {
       return new MockOutputChannel();
     },
-    showInformationMessage: async (
-      message: string,
-      options?: any
-    ): Promise<string> => {
+    showInformationMessage: async (message: string, options?: any): Promise<string> => {
       if (options !== undefined) {
         MockVSCodeInfo.dialogCalled = true;
       }
@@ -193,10 +177,7 @@ export const testVscode: any = {
 
 export const MockApi = {
   getTaskEditorContributors() {
-    const contributors = new Map<
-      string,
-      TaskEditorContributionAPI<ConfiguredTask>
-    >();
+    const contributors = new Map<string, TaskEditorContributionAPI<ConfiguredTask>>();
     const contributor = {
       async init(): Promise<void> {
         return;

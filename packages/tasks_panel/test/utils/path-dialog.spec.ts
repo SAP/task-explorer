@@ -23,15 +23,11 @@ describe("showOpenFileDialog function", () => {
 
   describe("handles errors", () => {
     it("when Uri.file function fails, homedir path is used for current path", async () => {
-      expect(await showOpenDialog("fail", true, false)).to.eq(
-        join(homedir(), "File1")
-      );
+      expect(await showOpenDialog("fail", true, false)).to.eq(join(homedir(), "File1"));
     });
 
     it("when showOpenDialog method fails, default path returns", async () => {
-      expect(await showOpenDialog("failDialog", true, false)).to.eq(
-        "failDialog"
-      );
+      expect(await showOpenDialog("failDialog", true, false)).to.eq("failDialog");
     });
   });
 
@@ -41,9 +37,7 @@ describe("showOpenFileDialog function", () => {
     };
 
     beforeEach(async () => {
-      stub(fs, "readFile").returns(
-        Promise.resolve(("buf" as unknown) as Buffer)
-      );
+      stub(fs, "readFile").returns(Promise.resolve("buf" as unknown as Buffer));
       const task1: ConfiguredTask = {
         type: "test",
         label: "task 1",
@@ -60,15 +54,11 @@ describe("showOpenFileDialog function", () => {
     });
 
     it("returns folder in the workspace path", async () => {
-      expect(await showOpenDialog("", false, true)).to.eq(
-        join("path", "Folder1")
-      );
+      expect(await showOpenDialog("", false, true)).to.eq(join("path", "Folder1"));
     });
 
     it("returns file in the workspace path", async () => {
-      expect(await showOpenDialog("", true, false)).to.eq(
-        join("path", "File1")
-      );
+      expect(await showOpenDialog("", true, false)).to.eq(join("path", "File1"));
     });
   });
 });

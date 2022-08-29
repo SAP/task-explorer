@@ -2,10 +2,7 @@ import { filter, groupBy, map } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 import { AppEvents } from "./app-events";
-import {
-  createTaskEditorPanel,
-  disposeTaskSelectionPanel,
-} from "./panels/panels-handler";
+import { createTaskEditorPanel, disposeTaskSelectionPanel } from "./panels/panels-handler";
 import { getSWA } from "./utils/swa";
 import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
@@ -48,40 +45,28 @@ export class TasksSelection {
     // consider only tasks that are contributed to Tasks Explorer
     const contributedTasks = filter(
       this.tasks,
-      (_) =>
-        _.taskType !== undefined &&
-        this.appEvents.getTasksEditorContributor(_.type) !== undefined
+      (_) => _.taskType !== undefined && this.appEvents.getTasksEditorContributor(_.type) !== undefined
     );
 
-    const contributedTasksWithImages: ConfiguredTask[] = map(
-      contributedTasks,
-      (_) => {
-        return {
-          ..._,
-          __image: this.getTaskImage(_.type),
-          label: _.label.replace("Template: ", ""),
-        };
-      }
-    );
+    const contributedTasksWithImages: ConfiguredTask[] = map(contributedTasks, (_) => {
+      return {
+        ..._,
+        __image: this.getTaskImage(_.type),
+        label: _.label.replace("Template: ", ""),
+      };
+    });
 
     // group tasks by intents
-    const tasksGroupedByIntent = groupBy(
-      contributedTasksWithImages,
-      (_) => _.taskType
-    );
+    const tasksGroupedByIntent = groupBy(contributedTasksWithImages, (_) => _.taskType);
 
     // prepare tasks for frontend: array of { intent, tasksByIntent }
-    const tasksFrontend: FrontendTasks[] = map(tasksGroupedByIntent, function (
-      value,
-      key
-    ) {
+    const tasksFrontend: FrontendTasks[] = map(tasksGroupedByIntent, function (value, key) {
       return { intent: key, tasksByIntent: value };
     });
 
-    const message =
-      tasksFrontend.length === 0 ? messages.MISSING_AUTO_DETECTED_TASKS() : "";
+    const message = tasksFrontend.length === 0 ? messages.MISSING_AUTO_DETECTED_TASKS() : "";
 
-    await this.rpc.invoke("setTasks", [tasksFrontend, message]);
+    return this.rpc.invoke("setTasks", [tasksFrontend, message]);
   }
 
   private async setSelectedTask(selectedTask: ConfiguredTask): Promise<void> {
@@ -92,24 +77,18 @@ export class TasksSelection {
     ]);
     const tasks = getConfiguredTasksFromCache();
     const existingLabels = map(tasks, (_) => _.label);
-    selectedTask.label = this.getUniqueTaskLabel(
-      selectedTask.label,
-      existingLabels
-    );
+    selectedTask.label = this.getUniqueTaskLabel(selectedTask.label, existingLabels);
     await disposeTaskSelectionPanel();
     const newTask = { ...selectedTask };
     delete selectedTask.__wsFolder;
     delete selectedTask.__image;
     delete selectedTask.__intent;
     delete selectedTask.__extensionName;
-    const index = await this.appEvents.addTaskToConfiguration(
-      newTask.__wsFolder,
-      selectedTask
-    );
+    const index = await this.appEvents.addTaskToConfiguration(newTask.__wsFolder, selectedTask);
     getLogger().debug(messages.CREATE_TASK(serializeTask(selectedTask)));
 
     newTask.__index = index;
-    await createTaskEditorPanel(newTask, this.readResource);
+    return createTaskEditorPanel(newTask, this.readResource);
   }
 
   private getUniqueTaskLabel(label: string, existingLabels: string[]): string {
@@ -123,6 +102,7 @@ export class TasksSelection {
     if (similarTasks.length > 0) {
       const similarTasksIndexes: number[] = map(similarTasks, (_) => {
         const matchArr = taskRegex.exec(_);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- TODO: verify
         return Number(matchArr![1].replace("(", "").replace(")", ""));
       });
       index = Math.max(...similarTasksIndexes) + 1;

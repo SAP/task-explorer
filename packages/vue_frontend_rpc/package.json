@@ -1,24 +1,21 @@
 {
   "name": "@vscode-tasks-explorer/vue_frontend_rpc",
   "version": "3.1.0",
-  "engines": {
-    "node": ">= 10.9.0"
-  },
   "private": true,
   "scripts": {
+    "backend:mock:editor": "node local-dev/run-fs-backend-mock-editor.js",
+    "backend:mock:selector": "node local-dev/run-fs-backend-mock-selector.js",
+    "build": "vue-cli-service build",
     "ci": "npm-run-all clean build coverage",
     "ci:artifacts_only": "npm-run-all clean build",
     "clean": "rimraf ./dist ./coverage",
-    "build": "vue-cli-service build",
-    "test": "vue-cli-service test:unit -t=0 ./test/**/*spec.js",
     "coverage": "nyc vue-cli-service test:unit -t=8000 ./test/**/*spec.js",
     "serve": "vue-cli-service serve --port=8090",
-    "backend:mock:editor": "node local-dev/run-fs-backend-mock-editor.js",
-    "backend:mock:selector": "node local-dev/run-fs-backend-mock-selector.js"
+    "test": "vue-cli-service test:unit -t=0 ./test/**/*spec.js"
   },
   "dependencies": {
     "@mdi/font": "^5.1.45",
-    "@sap-devx/inquirer-gui": "0.2.0",
+    "@sap-devx/inquirer-gui": "0.2.1",
     "@sap-devx/inquirer-gui-file-browser-plugin": "0.0.5",
     "@sap-devx/inquirer-gui-folder-browser-plugin": "0.0.3",
     "@sap-devx/inquirer-gui-label-plugin": "0.0.1",
@@ -37,11 +34,14 @@
     "@vue/test-utils": "^1.0.3",
     "get-port": "^5.1.1",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "lodash": "^4.17.20",
+    "lodash": "4.17.21",
     "p-defer": "^3.0.0",
     "sass": "^1.26.3",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11",
-    "ws": "^7.3.1"
+    "ws": "^7.4.6"
+  },
+  "engines": {
+    "node": ">= 10.9.0"
   }
 }

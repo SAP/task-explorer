@@ -103,9 +103,7 @@ describe("Create Task", () => {
       it("should display 'Configured' button only when hovering task", async () => {
         const listItem = wrapper.find('.tasksByIntent > [role="button"]');
         await listItem.trigger("click");
-        const task1 = wrapper
-          .findAll(".v-list-item__title.selection-task-label")
-          .at(0);
+        const task1 = wrapper.findAll(".v-list-item__title.selection-task-label").at(0);
         const button1 = wrapper.findAll("#configure").at(0);
         const button2 = wrapper.findAll("#configure").at(1);
         await task1.trigger("mouseover");

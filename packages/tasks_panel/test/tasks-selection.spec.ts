@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { mockVscode, MockVSCodeInfo, testVscode } from "./utils/mockVSCode";
+import { mockVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/tasks-selection");
 import { TasksSelection } from "../src/tasks-selection";
@@ -7,7 +7,6 @@ import { MockRpc } from "./utils/mockRpc";
 import { MockAppEvents } from "./utils/mockAppEvents";
 import { disposeTaskEditorPanel } from "../src/panels/panels-handler";
 import { messages } from "../src/i18n/messages";
-import { read } from "fs-extra";
 
 const taskContributed1 = {
   label: "Template: task1",
@@ -39,7 +38,7 @@ const taskNotContributed = {
   __extensionName: "testExtension",
 };
 
-const readFile = async function (path: string): Promise<string> {
+const readFile = async function (): Promise<string> {
   return "aaa";
 };
 
@@ -78,7 +77,7 @@ describe("the TasksSelection class", () => {
   });
 
   describe("the setSelectedTask method", () => {
-    const readFile = async function (path: string): Promise<string> {
+    const readFile = async function (): Promise<string> {
       return "aaa";
     };
 
@@ -89,12 +88,7 @@ describe("the TasksSelection class", () => {
     it("adds task addition to configuration", async () => {
       const rpc = new MockRpc();
       const appEvents = new MockAppEvents();
-      const tasksSelection = new TasksSelection(
-        rpc,
-        appEvents,
-        [taskContributed1, taskNotContributed],
-        readFile
-      );
+      const tasksSelection = new TasksSelection(rpc, appEvents, [taskContributed1, taskNotContributed], readFile);
       await tasksSelection["setSelectedTask"](taskContributed1);
       expect(appEvents.createCalled).to.be.true;
     });
@@ -104,24 +98,14 @@ describe("the TasksSelection class", () => {
     it("returns image when contributor defined", () => {
       const rpc = new MockRpc();
       const appEvents = new MockAppEvents();
-      const tasksSelection = new TasksSelection(
-        rpc,
-        appEvents,
-        [taskContributed1],
-        readFile
-      );
+      const tasksSelection = new TasksSelection(rpc, appEvents, [taskContributed1], readFile);
       expect(tasksSelection["getTaskImage"]("testType")).to.eq("image");
     });
 
     it("returns empty string when contributor is not defined", () => {
       const rpc = new MockRpc();
       const appEvents = new MockAppEvents();
-      const tasksSelection = new TasksSelection(
-        rpc,
-        appEvents,
-        [taskContributed1],
-        readFile
-      );
+      const tasksSelection = new TasksSelection(rpc, appEvents, [taskContributed1], readFile);
       expect(tasksSelection["getTaskImage"]("unknown")).to.eq("");
     });
   });
@@ -145,56 +129,31 @@ describe("the TasksSelection class", () => {
     });
 
     it("returns input value if it's unique", () => {
-      expect(
-        tasksSelection["getUniqueTaskLabel"]("newTask", ["someLabel"])
-      ).to.eq("newTask");
+      expect(tasksSelection["getUniqueTaskLabel"]("newTask", ["someLabel"])).to.eq("newTask");
     });
 
     it("returns input value with suffix (2) if it's not unique", () => {
-      expect(tasksSelection["getUniqueTaskLabel"]("task 2", ["task 2"])).to.eq(
-        "task 2 (2)"
-      );
+      expect(tasksSelection["getUniqueTaskLabel"]("task 2", ["task 2"])).to.eq("task 2 (2)");
     });
 
     it("returns input value with suffix (2) if it's not unique and contains special characters", () => {
-      expect(
-        tasksSelection["getUniqueTaskLabel"]("task (1) /path", [
-          "task (1) /path",
-        ])
-      ).to.eq("task (1) /path (2)");
+      expect(tasksSelection["getUniqueTaskLabel"]("task (1) /path", ["task (1) /path"])).to.eq("task (1) /path (2)");
     });
 
     it("returns input value with suffix (3) if 2 similar tasks found", () => {
-      expect(
-        tasksSelection["getUniqueTaskLabel"]("task 3", ["task 3", "task 3 (2)"])
-      ).to.eq("task 3 (3)");
+      expect(tasksSelection["getUniqueTaskLabel"]("task 3", ["task 3", "task 3 (2)"])).to.eq("task 3 (3)");
     });
 
     it("returns input value looking similar to existing but having some prefix", () => {
-      expect(
-        tasksSelection["getUniqueTaskLabel"]("my task 3", [
-          "task 3",
-          "task 3 (2)",
-        ])
-      ).to.eq("my task 3");
+      expect(tasksSelection["getUniqueTaskLabel"]("my task 3", ["task 3", "task 3 (2)"])).to.eq("my task 3");
     });
 
     it("returns input value looking similar to existing but having some suffix", () => {
-      expect(
-        tasksSelection["getUniqueTaskLabel"]("task 3 (2).", [
-          "task 3",
-          "task 3 (2)",
-        ])
-      ).to.eq("task 3 (2).");
+      expect(tasksSelection["getUniqueTaskLabel"]("task 3 (2).", ["task 3", "task 3 (2)"])).to.eq("task 3 (2).");
     });
 
     it("returns input value with suffix (11) if similar task with suffix (10) found", () => {
-      expect(
-        tasksSelection["getUniqueTaskLabel"]("task 3", [
-          "task 3",
-          "task 3 (10)",
-        ])
-      ).to.eq("task 3 (11)");
+      expect(tasksSelection["getUniqueTaskLabel"]("task 3", ["task 3", "task 3 (10)"])).to.eq("task 3 (11)");
     });
   });
 });

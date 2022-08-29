@@ -35,7 +35,7 @@ export async function createTask(
 
   await disposeTaskSelectionPanel();
 
-  await openViewForAutoDetectedTaskSelection(tasksProvider, readResource);
+  return openViewForAutoDetectedTaskSelection(tasksProvider, readResource);
 }
 
 async function openViewForAutoDetectedTaskSelection(
@@ -43,5 +43,5 @@ async function openViewForAutoDetectedTaskSelection(
   readResource: (file: string) => Promise<string>
 ): Promise<void> {
   const tasks = await tasksProvider.getAutoDectedTasks();
-  await createTasksSelectionPanel(tasks, readResource);
+  return createTasksSelectionPanel(tasks, readResource);
 }

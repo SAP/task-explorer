@@ -1,9 +1,6 @@
 import { commands, Extension, extensions } from "vscode";
 import { get, keys, map, uniq, zipObject } from "lodash";
-import {
-  ConfiguredTask,
-  TaskEditorContributionAPI,
-} from "@sap_oss/task_contrib_types";
+import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
 import { messages } from "../i18n/messages";
@@ -46,9 +43,7 @@ export class Contributors implements IContributors {
     this.eventHandlers.push(eventHandler);
   }
 
-  public getTaskEditorContributor(
-    type: string
-  ): TaskEditorContributionAPI<ConfiguredTask> {
+  public getTaskEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {
     return this.tasksEditorContributorsMap.get(type)?.provider;
   }
 
@@ -79,16 +74,11 @@ export class Contributors implements IContributors {
         continue;
       }
       const api = await this.getApi(extension, extensionId);
-      if (
-        api === undefined ||
-        typeof api.getTaskEditorContributors !== "function"
-      ) {
+      if (api === undefined || typeof api.getTaskEditorContributors !== "function") {
         continue;
       }
 
-      const tasksPropertyMessageMap = this.getTasksPropertyMessageMap(
-        currentPackageJSON
-      );
+      const tasksPropertyMessageMap = this.getTasksPropertyMessageMap(currentPackageJSON);
 
       const taskProviders = api.getTaskEditorContributors();
       taskProviders.forEach((provider: any, type: string) => {
@@ -110,29 +100,20 @@ export class Contributors implements IContributors {
         }
       });
     }
-    commands.executeCommand(
-      "setContext",
-      "is-task-explorer-view-visible",
-      isPanelVisible
-    );
+    commands.executeCommand("setContext", "is-task-explorer-view-visible", isPanelVisible);
     for (const eventHandler of this.eventHandlers) {
       eventHandler.onChange();
     }
   }
 
-  private getTasksPropertyMessageMap(
-    packageJSON: any
-  ): Record<string, Record<string, string>> {
+  private getTasksPropertyMessageMap(packageJSON: any): Record<string, Record<string, string>> {
     const contributions = get(packageJSON, "contributes");
     const tasksDefinitions = get(contributions, "taskDefinitions");
 
     const tasksTypes = map(tasksDefinitions, (_) => _.type);
     const tasksProperties = map(tasksDefinitions, (taskDefinition) => {
       const propertiesNames: string[] = keys(taskDefinition.properties);
-      const propertiesDescriptions: string[] = map(
-        propertiesNames,
-        (_) => taskDefinition.properties[_].description
-      );
+      const propertiesDescriptions: string[] = map(propertiesNames, (_) => taskDefinition.properties[_].description);
       return zipObject(propertiesNames, propertiesDescriptions);
     });
     return zipObject(tasksTypes, tasksProperties);

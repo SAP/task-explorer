@@ -1,16 +1,8 @@
 import { expect } from "chai";
-import {
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-} from "../utils/mockVSCode";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 mockVscode("src/panels/panels-handler");
-import {
-  disposeTaskEditorPanel,
-  disposeTaskSelectionPanel,
-  getTaskEditor,
-} from "../../src/panels/panels-handler";
+import { disposeTaskEditorPanel, disposeTaskSelectionPanel, getTaskEditor } from "../../src/panels/panels-handler";
 mockVscode("src/commands/create-task");
 import { createTask } from "../../src/commands/create-task";
 mockVscode("src/commands/edit-task");
@@ -35,6 +27,7 @@ describe("Command createTask", () => {
   ];
 
   let panelCreated = 0;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- leave unused args for reference
   const readFile = async function (path: string): Promise<string> {
     panelCreated++;
     return "aaa";
@@ -89,6 +82,7 @@ describe("Command createTask", () => {
     );
     // editor panel created
     expect(panelCreated).eq(1);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = getTaskEditor()!;
     taskEditor["changed"] = true;
     MockVSCodeInfo.dialogAnswer = "other";
@@ -109,6 +103,7 @@ describe("Command createTask", () => {
     );
     // editor panel initiated
     expect(panelCreated).eq(1);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = getTaskEditor()!;
     taskEditor["changed"] = true;
     MockVSCodeInfo.dialogAnswer = messages.DISCARD_CHANGES_BUTTON_TEXT();

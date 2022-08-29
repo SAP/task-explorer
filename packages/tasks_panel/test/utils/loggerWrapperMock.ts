@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair -- disable no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars -- suppressed: test scope */
 import * as loggerWrapper from "../../src/logger/logger-wrapper";
 import { IChildLogger, IVSCodeExtLogger } from "@vscode-logging/logger";
 
@@ -6,9 +8,7 @@ let message: string;
 export function createLoggerWrapperMock(sandbox: any): any {
   message = "";
   const loggerImpl: IVSCodeExtLogger = {
-    changeLevel(
-      newLevel: "off" | "fatal" | "error" | "warn" | "info" | "debug" | "trace"
-    ): void {
+    changeLevel(newLevel: "off" | "fatal" | "error" | "warn" | "info" | "debug" | "trace"): void {
       return;
     },
     changeSourceLocationTracking(newSourceLocation: boolean): void {

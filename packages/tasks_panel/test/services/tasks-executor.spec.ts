@@ -1,9 +1,5 @@
 import { expect } from "chai";
-import {
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-} from "../utils/mockVSCode";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
 mockVscode("src/services/tasks-executor");
 import { executeVScodeTask } from "../../src/services/tasks-executor";
 
@@ -16,6 +12,7 @@ describe("tasks executor - executeVScodeTask", () => {
     const myTask = { label: "aaa" };
     MockVSCodeInfo.allTasks = [{ name: "aaa", label: "aaa" }];
     await executeVScodeTask(myTask);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress rule for test scope
     expect(MockVSCodeInfo.taskParam!.label).eq("aaa");
     expect(MockVSCodeInfo.executeCalled).true;
   });

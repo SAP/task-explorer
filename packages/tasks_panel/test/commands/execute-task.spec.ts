@@ -39,14 +39,7 @@ describe("Command executeTaskFromTree", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "wsFolder1",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, command1);
 
     tasksMock
       .expects("fetchTasks")
@@ -59,14 +52,7 @@ describe("Command executeTaskFromTree", () => {
   });
 
   it("tree item task doesnt have command property -> tasks.fetchTasks is never called", async () => {
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "wsFolder1",
-      TreeItemCollapsibleState.None,
-      undefined
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, undefined);
 
     tasksMock.expects("fetchTasks").never();
 
@@ -81,14 +67,7 @@ describe("Command executeTaskFromTree", () => {
       arguments: [],
     };
 
-    const item1 = new TaskTreeItem(
-      0,
-      "test",
-      "aaa",
-      "wsFolder1",
-      TreeItemCollapsibleState.None,
-      command1
-    );
+    const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, command1);
 
     tasksMock.expects("fetchTasks").never();
 

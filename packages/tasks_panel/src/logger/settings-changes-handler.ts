@@ -8,14 +8,9 @@ import {
   SOURCE_TRACKING_CONFIG_PROP,
 } from "./settings";
 
-export function logLoggerDetails(
-  context: ExtensionContext,
-  configLogLevel: string
-): void {
+export function logLoggerDetails(context: ExtensionContext, configLogLevel: string): void {
   getLogger().info(`Start Logging in Log Level: <${configLogLevel}>`);
-  getLogger().info(
-    `Full Logs can be found in the <${context.logPath}> folder.`
-  );
+  getLogger().info(`Full Logs can be found in the <${context.logPath}> folder.`);
 }
 
 /**

@@ -1,22 +1,20 @@
 {
   "name": "vscode-task-contrib",
   "displayName": "VSCode Task Contributor Sample",
-  "private": true,
   "version": "3.1.0",
-  "publisher": "SAPSE",
-  "keywords": [],
+  "private": true,
   "categories": [],
+  "keywords": [],
+  "repository": "https://github.com/SAP/task-explorer",
+  "publisher": "SAPSE",
   "main": "./dist/src/extension",
-  "activationEvents": [
-    "*"
-  ],
-  "BASContributes": {
-    "tasksExplorer": [
-      {
-        "type": "npm-script",
-        "intent": "Miscellaneous"
-      }
-    ]
+  "scripts": {
+    "bundle": "webpack --mode production",
+    "ci": "npm-run-all clean compile bundle package",
+    "ci:artifacts_only": "npm-run-all clean compile bundle package",
+    "clean": "rimraf ./dist *.vsix",
+    "compile": "tsc",
+    "package": "node ./scripts/package-vsix.js"
   },
   "contributes": {
     "taskDefinitions": [
@@ -53,36 +51,38 @@
       }
     ]
   },
-  "repository": "https://github.com/SAP/task-explorer",
-  "engines": {
-    "vscode": "^1.50.0"
-  },
-  "scripts": {
-    "ci": "npm-run-all clean compile bundle package",
-    "ci:artifacts_only": "npm-run-all clean compile bundle package",
-    "clean": "rimraf ./dist *.vsix",
-    "compile": "tsc",
-    "bundle": "webpack --mode production",
-    "package": "node ./scripts/package-vsix.js"
-  },
+  "activationEvents": [
+    "*"
+  ],
   "dependencies": {
     "@sap_oss/task_contrib_types": "^3.1.0",
-    "comment-json": "2.1.0",
-    "datauri": "2.0.0",
-    "fs-extra": "7.0.1",
+    "comment-json": "4.2.3",
+    "datauri": "4.1.0",
+    "fs-extra": "10.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/comment-json": "2.4.2",
-    "@types/fs-extra": "9.0.11",
-    "@types/glob": "^7.1.1",
-    "@types/lodash": "^4.14.150",
-    "@types/mocha": "^8.2.2",
+    "@types/fs-extra": "9.0.13",
+    "@types/glob": "^7.2.0",
+    "@types/lodash": "^4.14.184",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^15.0.1",
-    "@types/vscode": "^1.40.0",
+    "@types/vscode": "^1.50.0",
     "proxyquire": "2.1.3",
-    "vsce": "1.88.0",
+    "vsce": "1.100.1",
     "webpack": "^5.3.0",
     "webpack-cli": "^4.1.0"
+  },
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "BASContributes": {
+    "tasksExplorer": [
+      {
+        "type": "npm-script",
+        "intent": "Miscellaneous"
+      }
+    ]
   }
 }

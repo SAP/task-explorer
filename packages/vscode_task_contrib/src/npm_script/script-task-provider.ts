@@ -1,19 +1,7 @@
 import { dirname } from "path";
-import {
-  ShellExecution,
-  Task,
-  TaskProvider,
-  TaskScope,
-  Uri,
-  workspace,
-  WorkspaceFolder,
-} from "vscode";
+import { ShellExecution, Task, TaskProvider, TaskScope, Uri, workspace, WorkspaceFolder } from "vscode";
 import { getTaskSources } from "../utils/task-source-provider";
-import {
-  NPM_SCRIPT_TASK_TYPE,
-  NPM_SCRIPT_TYPE,
-  NPMScriptDefinitionType,
-} from "./script-definitions";
+import { NPM_SCRIPT_TASK_TYPE, NPM_SCRIPT_TYPE, NPMScriptDefinitionType } from "./script-definitions";
 import { getWorkspaceFolderByPath } from "../utils/utils";
 
 // Script Task Provider
@@ -30,9 +18,8 @@ export class ScriptTaskProvider implements TaskProvider {
     let npmTasks: Task[] = [];
     const wsFolderSources = await getTaskSources("package.json");
     for (const wsFolderPath in wsFolderSources) {
-      const wsFolder: WorkspaceFolder = workspace.getWorkspaceFolder(
-        Uri.file(wsFolderPath)
-      )!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- TODO: verify
+      const wsFolder: WorkspaceFolder = workspace.getWorkspaceFolder(Uri.file(wsFolderPath))!;
       for (const packageJsonPath of wsFolderSources[wsFolderPath]) {
         const taskDefinition = this.createTaskDefinition(packageJsonPath);
         const task = new Task(
@@ -55,9 +42,7 @@ export class ScriptTaskProvider implements TaskProvider {
     if (npmTask.definition.type !== NPM_SCRIPT_TYPE) {
       return undefined;
     }
-    const wsFolder = getWorkspaceFolderByPath(
-      npmTask.definition.packageJSONPath
-    );
+    const wsFolder = getWorkspaceFolderByPath(npmTask.definition.packageJSONPath);
     if (wsFolder === undefined) {
       return undefined;
     }

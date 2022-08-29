@@ -14,7 +14,7 @@ export async function createTasksSelectionPanel(
   readResource: (file: string) => Promise<string>
 ): Promise<void> {
   taskSelectionPanel = new TaskSelectionPanel(tasks, readResource);
-  await taskSelectionPanel.initWebviewPanel();
+  return taskSelectionPanel.initWebviewPanel();
 }
 
 export async function disposeTaskSelectionPanel(): Promise<void> {

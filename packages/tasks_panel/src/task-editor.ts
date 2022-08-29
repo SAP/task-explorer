@@ -1,34 +1,17 @@
 import * as path from "path";
-import {
-  filter,
-  find,
-  get,
-  has,
-  isEmpty,
-  isFunction,
-  isUndefined,
-  map,
-  pick,
-} from "lodash";
+import { filter, find, get, has, isEmpty, isFunction, isUndefined, map, pick } from "lodash";
 import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
-import {
-  ConfiguredTask,
-  TaskEditorContributionAPI,
-  TaskUserInput,
-} from "@sap_oss/task_contrib_types";
+import { ConfiguredTask, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "./app-events";
 import { getSWA } from "./utils/swa";
 import { getClassLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { getExtensionPath } from "./extension";
 import { getConfiguredTasksFromCache } from "./services/tasks-provider";
-import {
-  combineValidationFunctions,
-  convertContributedPropertiesToQuestions,
-} from "./services/questions";
+import { combineValidationFunctions, convertContributedPropertiesToQuestions } from "./services/questions";
 import { TaskQuestion, validationFunction } from "./services/definitions";
 
-const datauri = require("datauri");
+const datauri = require("datauri/sync");
 
 const LOGGER_CLASS_NAME = "Task Editor";
 
@@ -42,16 +25,11 @@ export class TaskEditor {
   private readonly wsFolder = "";
   private readonly intent: string;
   private task: ConfiguredTask;
-  private readonly taskEditorContributor:
-    | TaskEditorContributionAPI<ConfiguredTask>
-    | undefined;
+  private readonly taskEditorContributor: TaskEditorContributionAPI<ConfiguredTask> | undefined;
   private readonly taskImage: string;
   private taskLabel: string;
   private readonly extensionName: string;
-  private readonly customQuestionEventHandlers: Map<
-    string,
-    Map<string, pathFieldHandler>
-  >;
+  private readonly customQuestionEventHandlers: Map<string, Map<string, pathFieldHandler>>;
 
   private static funcReplacer(key: any, value: any) {
     return isFunction(value) ? "__Function" : value;
@@ -78,11 +56,7 @@ export class TaskEditor {
     return this.wsFolder;
   }
 
-  constructor(
-    private readonly rpc: IRpc,
-    private readonly appEvents: AppEvents,
-    task: ConfiguredTask
-  ) {
+  constructor(private readonly rpc: IRpc, private readonly appEvents: AppEvents, task: ConfiguredTask) {
     this.index = task.__index;
     this.intent = task.__intent;
     this.wsFolder = task.__wsFolder;
@@ -123,34 +97,20 @@ export class TaskEditor {
       thisArg: this,
     });
 
-    this.taskEditorContributor = this.appEvents.getTasksEditorContributor(
-      this.task.type
-    );
-    this.taskImage =
-      this.taskEditorContributor !== undefined
-        ? this.taskEditorContributor.getTaskImage()
-        : "";
+    this.taskEditorContributor = this.appEvents.getTasksEditorContributor(this.task.type);
+    this.taskImage = this.taskEditorContributor !== undefined ? this.taskEditorContributor.getTaskImage() : "";
     this.customQuestionEventHandlers = new Map();
   }
 
-  public registerCustomQuestionEventHandler(
-    questionType: string,
-    methodName: string,
-    handler: pathFieldHandler
-  ): void {
+  public registerCustomQuestionEventHandler(questionType: string, methodName: string, handler: pathFieldHandler): void {
     if (!this.customQuestionEventHandlers.has(questionType)) {
       this.customQuestionEventHandlers.set(questionType, new Map());
     }
-    this.customQuestionEventHandlers
-      .get(questionType)!
-      .set(methodName, handler);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified above
+    this.customQuestionEventHandlers.get(questionType)!.set(methodName, handler);
   }
 
-  private async evaluateMethod(
-    params: any[],
-    questionName: string,
-    methodName: string
-  ): Promise<any> {
+  private async evaluateMethod(params: any[], questionName: string, methodName: string): Promise<any> {
     try {
       const evaluatedQuestions = this.taskFrontendMirror;
       if (!isEmpty(evaluatedQuestions)) {
@@ -158,69 +118,40 @@ export class TaskEditor {
           return get(question, "name") === questionName;
         });
         if (relevantQuestion) {
-          const guiType = get(
-            relevantQuestion,
-            "guiOptions.type",
-            relevantQuestion.guiType
-          );
+          const guiType = get(relevantQuestion, "guiOptions.type", relevantQuestion.guiType);
           const customQuestionEventHandler =
-            guiType === undefined
-              ? undefined
-              : this.getCustomQuestionEventHandler(guiType, methodName);
+            guiType === undefined ? undefined : this.getCustomQuestionEventHandler(guiType, methodName);
           return isUndefined(customQuestionEventHandler)
             ? await relevantQuestion[methodName].apply(this.gen, params)
             : await customQuestionEventHandler.apply(this.gen, params);
         }
 
         getClassLogger(LOGGER_CLASS_NAME).error(
-          messages.METHOD_NOT_FOUND(
-            methodName,
-            questionName,
-            JSON.stringify(params)
-          )
+          messages.METHOD_NOT_FOUND(methodName, questionName, JSON.stringify(params))
         );
       }
     } catch (error) {
       getClassLogger(LOGGER_CLASS_NAME).error(
-        messages.EVALUATED_METHOD_FAILURE(
-          methodName,
-          questionName,
-          JSON.stringify(params),
-          error
-        )
+        messages.EVALUATED_METHOD_FAILURE(methodName, questionName, JSON.stringify(params), error as Error)
       );
     }
 
     return undefined;
   }
 
-  private getCustomQuestionEventHandler(
-    questionType: string,
-    methodName: string
-  ): pathFieldHandler | undefined {
+  private getCustomQuestionEventHandler(questionType: string, methodName: string): pathFieldHandler | undefined {
     return this.customQuestionEventHandlers.get(questionType)?.get(methodName);
   }
 
   public async saveTask() {
     // report usage analytics on save
-    getSWA().track(messages.SWA_SAVE_TASK_EVENT(), [
-      messages.SWA_TASK_EDITOR_PARAM(),
-      this.intent,
-      this.extensionName,
-    ]);
+    getSWA().track(messages.SWA_SAVE_TASK_EVENT(), [messages.SWA_TASK_EDITOR_PARAM(), this.intent, this.extensionName]);
     const editedTask = { ...this.task };
     delete editedTask.__image;
-    if (
-      this.taskEditorContributor !== undefined &&
-      isFunction(this.taskEditorContributor.onSave)
-    ) {
+    if (this.taskEditorContributor !== undefined && isFunction(this.taskEditorContributor.onSave)) {
       await this.taskEditorContributor.onSave(this.task);
     }
-    await this.appEvents.updateTaskInConfiguration(
-      this.wsFolder,
-      editedTask,
-      this.index
-    );
+    await this.appEvents.updateTaskInConfiguration(this.wsFolder, editedTask, this.index);
     this.changed = false;
     this.taskLabel = this.task.label;
   }
@@ -232,7 +163,7 @@ export class TaskEditor {
       this.intent,
       this.extensionName,
     ]);
-    await this.appEvents.executeTask(this.task);
+    return this.appEvents.executeTask(this.task);
   }
 
   private async setAnswers(state: any): Promise<void> {
@@ -242,10 +173,7 @@ export class TaskEditor {
       // readonly question must have guiOptions property with { type: "label"} }
       (_) => _.guiOptions?.type !== "label"
     );
-    const notReadonlyPropertiesNames = map(
-      notReadonlyProperties,
-      (_) => _.name
-    );
+    const notReadonlyPropertiesNames = map(notReadonlyProperties, (_) => _.name);
     const answers = pick(state.answers, notReadonlyPropertiesNames);
 
     this.updateTaskFrontendMirror(answers);
@@ -253,13 +181,10 @@ export class TaskEditor {
     if (this.taskEditorContributor === undefined) {
       this.task = { ...this.task, ...answers };
     } else {
-      this.task = await this.taskEditorContributor.updateTask(
-        this.task,
-        answers
-      );
+      this.task = await this.taskEditorContributor.updateTask(this.task, answers);
     }
     this.changed = true;
-    await this.passTaskToFrontend(true);
+    return this.passTaskToFrontend(true);
   }
 
   private updateTaskFrontendMirror(answers: TaskUserInput): void {
@@ -275,10 +200,7 @@ export class TaskEditor {
       return true;
     }
     for (const [key, item] of updatedTask.entries()) {
-      if (
-        item.name !== this.taskFrontendMirror[key].name ||
-        item.default !== this.taskFrontendMirror[key].default
-      ) {
+      if (item.name !== this.taskFrontendMirror[key].name || item.default !== this.taskFrontendMirror[key].default) {
         return true;
       }
     }
@@ -288,8 +210,7 @@ export class TaskEditor {
   private convertTaskToFormInfo(): TaskQuestion[] {
     const taskFields = filter(
       Object.keys(this.task),
-      (_) =>
-        _ !== "type" && _ !== "taskType" && typeof this.task[_] === "string"
+      (_) => _ !== "type" && _ !== "taskType" && typeof this.task[_] === "string"
     );
     let formFields: any[] = [];
     for (const taskField of taskFields) {
@@ -310,10 +231,7 @@ export class TaskEditor {
   }
 
   private setLabelValidator(frontendTaskProperties: any[]): void {
-    const labelProperty = find(
-      frontendTaskProperties,
-      (_) => _["name"] === "label"
-    );
+    const labelProperty = find(frontendTaskProperties, (_) => _["name"] === "label");
     if (labelProperty !== undefined) {
       labelProperty["validate"] = combineValidationFunctions(
         labelProperty["validate"],
@@ -329,22 +247,16 @@ export class TaskEditor {
       frontendTask = this.convertTaskToFormInfo();
     } else {
       // get form properties from contributor
-      const contributedProperties = this.taskEditorContributor.convertTaskToFormProperties(
-        this.task
-      );
+      const contributedProperties = this.taskEditorContributor.convertTaskToFormProperties(this.task);
 
       // convert properties to gui inquirer format
-      frontendTask = convertContributedPropertiesToQuestions(
-        this.task,
-        contributedProperties,
-        this.appEvents
-      );
+      frontendTask = convertContributedPropertiesToQuestions(this.task, contributedProperties, this.appEvents);
     }
     return frontendTask;
   }
 
   private async onFrontendReady(): Promise<void> {
-    await this.passTaskToFrontend();
+    return this.passTaskToFrontend();
   }
 
   // this method is called in 2 cases:
@@ -372,9 +284,7 @@ export class TaskEditor {
     this.taskFrontendMirror = taskFrontendInfo;
 
     // normalize form properties, serializing functions
-    const normalizedTaskFrontendInfo = TaskEditor.normalizeFunctions(
-      taskFrontendInfo
-    );
+    const normalizedTaskFrontendInfo = TaskEditor.normalizeFunctions(taskFrontendInfo);
 
     const taskExecImage = this.getTaskExecutionImage();
 
@@ -386,24 +296,20 @@ export class TaskEditor {
       taskIntent: this.getExecutionIntent(),
     };
 
-    await this.rpc.invoke("setTask", [taskWithMetadata]);
+    return this.rpc.invoke("setTask", [taskWithMetadata]);
   }
 
   private getExecutionIntent(): string {
-    return this.intent === "Build" || this.intent === "Deploy"
-      ? this.intent
-      : "Run";
+    return this.intent === "Build" || this.intent === "Deploy" ? this.intent : "Run";
   }
 }
 
 function getImage(imagePath: string): string {
   let image;
   try {
-    image = datauri.sync(imagePath);
+    image = datauri(imagePath);
   } catch (error) {
-    getClassLogger(LOGGER_CLASS_NAME).error(
-      messages.GET_IMAGE_FAILURE(imagePath, error)
-    );
+    getClassLogger(LOGGER_CLASS_NAME).error(messages.GET_IMAGE_FAILURE(imagePath, error as Error));
   }
   return image;
 }
@@ -411,8 +317,6 @@ function getImage(imagePath: string): string {
 function getIsLabelUniqueFunction(taskIndex: number): validationFunction {
   return async function (value: string): Promise<string | boolean> {
     const tasks = getConfiguredTasksFromCache();
-    return find(tasks, (_) => _.label === value && taskIndex !== _.__index)
-      ? messages.LABEL_IS_NOT_UNIQUE()
-      : true;
+    return find(tasks, (_) => _.label === value && taskIndex !== _.__index) ? messages.LABEL_IS_NOT_UNIQUE() : true;
   };
 }

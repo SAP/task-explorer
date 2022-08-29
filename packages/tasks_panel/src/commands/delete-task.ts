@@ -5,10 +5,7 @@ import { TaskTreeItem } from "../view/task-tree-item";
 import { serializeTask } from "../utils/task-serializer";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
-import {
-  disposeTaskEditorPanel,
-  getTaskEditor,
-} from "../panels/panels-handler";
+import { disposeTaskEditorPanel, getTaskEditor } from "../panels/panels-handler";
 import { cleanTasks } from "../utils/ws-folder";
 
 export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
@@ -25,28 +22,18 @@ export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
   ]);
 
   const taskEditor = getTaskEditor();
-  if (
-    taskEditor !== undefined &&
-    taskEditor.getTask().label === treeItem.label
-  ) {
+  if (taskEditor !== undefined && taskEditor.getTask().label === treeItem.label) {
     disposeTaskEditorPanel();
   }
 
   const wsFolderPath = task.__wsFolder;
   const taskIndex = task.__index;
-  const tasksConfig = workspace.getConfiguration(
-    "tasks",
-    Uri.file(wsFolderPath)
-  );
+  const tasksConfig = workspace.getConfiguration("tasks", Uri.file(wsFolderPath));
   const tasks: ConfiguredTask[] = tasksConfig.get("tasks") ?? [];
   cleanTasks(tasks);
   if (tasks.length > taskIndex) {
     tasks.splice(taskIndex, 1);
-    await tasksConfig.update(
-      "tasks",
-      tasks,
-      ConfigurationTarget.WorkspaceFolder
-    );
+    await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);
     getLogger().debug(messages.DELETE_TASK(serializeTask(task)));
   } else {
     getLogger().error(messages.TASK_DELETE_FAILED(taskIndex, tasks.length));

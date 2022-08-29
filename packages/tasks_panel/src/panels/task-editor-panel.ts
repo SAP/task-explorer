@@ -13,15 +13,10 @@ export interface TaskEditorPanelState {
 
 const TASK_EDITOR_VIEW_TYPE = "Task Editor";
 
-export class TaskEditorPanel extends AbstractWebviewPanel<
-  TaskEditorPanelState
-> {
+export class TaskEditorPanel extends AbstractWebviewPanel<TaskEditorPanelState> {
   private taskEditor: TaskEditor | undefined;
 
-  public constructor(
-    task: ConfiguredTask,
-    readResource: (file: string) => Promise<string>
-  ) {
+  public constructor(task: ConfiguredTask, readResource: (file: string) => Promise<string>) {
     super(readResource);
     this.viewType = TASK_EDITOR_VIEW_TYPE;
     this.focusedKey = "tasksEditor.Focused";
@@ -29,26 +24,21 @@ export class TaskEditorPanel extends AbstractWebviewPanel<
   }
 
   public getTaskInProcess(): string | undefined {
-    return this.taskEditor?.isTaskChanged()
-      ? this.taskEditor.getTask().label
-      : undefined;
+    return this.taskEditor?.isTaskChanged() ? this.taskEditor.getTask().label : undefined;
   }
 
   public getTaskEditor(): TaskEditor | undefined {
     return this.taskEditor;
   }
 
-  public setWebviewPanel(
-    webviewPanel: WebviewPanel,
-    state: TaskEditorPanelState
-  ): void {
+  public setWebviewPanel(webviewPanel: WebviewPanel, state: TaskEditorPanelState): void {
     this.webViewPanel = webviewPanel;
     this.webViewPanel.title = state.task.label;
     this.state = state;
     const rpc = new RpcExtension(this.webViewPanel.webview);
     const vscodeEvents: AppEvents = new VSCodeEvents(this.webViewPanel);
     this.taskEditor = new TaskEditor(rpc, vscodeEvents, state.task);
-    this.webViewPanel.onDidDispose((e) => {
+    this.webViewPanel.onDidDispose(() => {
       this.taskEditor = undefined;
     });
     this.taskEditor.registerCustomQuestionEventHandler(

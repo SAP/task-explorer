@@ -1,8 +1,5 @@
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import {
-  ITasksEventHandler,
-  ITasksProvider,
-} from "../../src/services/definitions";
+import { ITasksEventHandler, ITasksProvider } from "../../src/services/definitions";
 
 export class MockTasksProvider implements ITasksProvider {
   constructor(private tasks: ConfiguredTask[]) {}
@@ -11,6 +8,7 @@ export class MockTasksProvider implements ITasksProvider {
     return this.tasks;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- leave unused args as a reference in test
   registerEventHandler(eventHandler: ITasksEventHandler): void {
     return;
   }

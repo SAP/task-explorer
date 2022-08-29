@@ -1,24 +1,12 @@
+/* eslint-disable eslint-comments/disable-enable-pair -- disable the next rule */
+/* eslint-disable @typescript-eslint/no-unused-vars -- leave unused args in function signatures as a reference */
 import { expect } from "chai";
-import {
-  ConfiguredTask,
-  FormProperty,
-  TaskEditorContributionAPI,
-} from "@sap_oss/task_contrib_types";
-import {
-  MockConfigTask,
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-  testVscode,
-} from "../utils/mockVSCode";
+import { ConfiguredTask, FormProperty, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
+import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 
 mockVscode("src/services/tasks-provider");
 import { TasksProvider } from "../../src/services/tasks-provider";
-import {
-  IContributors,
-  ITasksEventHandler,
-  ITaskTypeEventHandler,
-} from "../../src/services/definitions";
+import { IContributors, ITasksEventHandler, ITaskTypeEventHandler } from "../../src/services/definitions";
 
 describe("the TasksProvider class", () => {
   afterEach(
@@ -30,11 +18,7 @@ describe("the TasksProvider class", () => {
 
   describe("getTaskWorkspaceFolder method", () => {
     it("returns `undefined` for task with scope different from WorkspaceFolder", () => {
-      const task = new testVscode.Task(
-        { label: "aaa" },
-        undefined,
-        testVscode.TaskScope.Global
-      );
+      const task = new testVscode.Task({ label: "aaa" }, undefined, testVscode.TaskScope.Global);
       expect(TasksProvider["getTaskWorkspaceFolder"](task)).undefined;
     });
 
@@ -74,9 +58,7 @@ describe("the TasksProvider class", () => {
       const taskTypesProvider = new MockTaskTypeProvider();
       const taskProvider = new TasksProvider(taskTypesProvider);
       testVscode.workspace.workspaceFolders = [{ uri: { path: "path" } }];
-      MockVSCodeInfo.configTasks?.set("path", [
-        new MockConfigTask("task1", "type1"),
-      ]);
+      MockVSCodeInfo.configTasks?.set("path", [new MockConfigTask("task1", "type1")]);
       const tasks = await taskProvider.getConfiguredTasks();
       expect(tasks.length).eq(1);
       expect(tasks[0].__index).eq(0);
@@ -87,9 +69,7 @@ describe("the TasksProvider class", () => {
       const taskTypesProvider = new MockTaskTypeProvider();
       const taskProvider = new TasksProvider(taskTypesProvider);
       testVscode.workspace.workspaceFolders = [{ uri: { path: "path1" } }];
-      MockVSCodeInfo.configTasks?.set("path2", [
-        new MockConfigTask("task1", "type1"),
-      ]);
+      MockVSCodeInfo.configTasks?.set("path2", [new MockConfigTask("task1", "type1")]);
       const tasks = await taskProvider.getConfiguredTasks();
       expect(tasks.length).eq(0);
     });
@@ -107,10 +87,7 @@ describe("the TasksProvider class", () => {
           type: "type1",
           taskType: "taskType",
         }),
-        new testVscode.Task(
-          { label: "task2", type: "type1", taskType: "taskType" },
-          "Workspace"
-        ),
+        new testVscode.Task({ label: "task2", type: "type1", taskType: "taskType" }, "Workspace"),
       ];
       const tasks = await taskProvider.getAutoDectedTasks();
       expect(tasks.length).eq(1);
@@ -127,10 +104,7 @@ describe("the TasksProvider class", () => {
           type: "shell",
           taskType: "type1",
         }),
-        new testVscode.Task(
-          { label: "task2", type: "type1", taskType: "taskType" },
-          "Workspace"
-        ),
+        new testVscode.Task({ label: "task2", type: "type1", taskType: "taskType" }, "Workspace"),
       ];
       const tasks = await taskProvider.getAutoDectedTasks();
       expect(tasks.length).eq(1);
@@ -138,8 +112,7 @@ describe("the TasksProvider class", () => {
   });
 });
 
-class MockTaskEditorContribution
-  implements TaskEditorContributionAPI<ConfiguredTask> {
+class MockTaskEditorContribution implements TaskEditorContributionAPI<ConfiguredTask> {
   updateTask(task: ConfiguredTask, changes: any): ConfiguredTask {
     return task;
   }
@@ -174,9 +147,7 @@ class MockTaskTypeProvider implements IContributors {
     return ["type1"];
   }
 
-  getTaskEditorContributor(
-    type: string
-  ): TaskEditorContributionAPI<ConfiguredTask> {
+  getTaskEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {
     return new MockTaskEditorContribution();
   }
 

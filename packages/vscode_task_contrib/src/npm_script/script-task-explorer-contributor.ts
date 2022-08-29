@@ -19,8 +19,7 @@ import { executeCommand } from "../utils/exec";
 // contributor provides also 2 additional informational fields:
 // command, relating to the script
 // help of the command when user inputs invalid flags
-export class ScriptTaskExplorerContributor
-  implements TaskEditorContributionAPI<NPMScriptDefinitionType> {
+export class ScriptTaskExplorerContributor implements TaskEditorContributionAPI<NPMScriptDefinitionType> {
   private readonly flagRegex = /[-]{1,2}[a-z]+/g;
   private readonly invalidArgumentsMsg = "invalid arguments";
 
@@ -68,9 +67,7 @@ export class ScriptTaskExplorerContributor
   };
 
   constructor(private readonly extensionPath: string) {
-    this.image = getImage(
-      join(this.extensionPath, "resources", "npm_48px.svg")
-    );
+    this.image = getImage(join(this.extensionPath, "resources", "npm_48px.svg"));
   }
 
   // in the `init` method we make initializations
@@ -84,11 +81,7 @@ export class ScriptTaskExplorerContributor
   }
 
   convertTaskToFormProperties(task: NPMScriptDefinitionType): FormProperty[] {
-    const properties: FormProperty[] = [
-      this.labelProperty,
-      this.packageJSONPathProperty,
-      this.scriptProperty,
-    ];
+    const properties: FormProperty[] = [this.labelProperty, this.packageJSONPathProperty, this.scriptProperty];
     // properties visible only when script is selected
     if (task.script !== "") {
       properties.push(this.scriptContentProperty);
@@ -106,10 +99,7 @@ export class ScriptTaskExplorerContributor
   }
 
   // syncs task with user's input
-  async updateTask(
-    task: NPMScriptDefinitionType,
-    inputs: TaskUserInput
-  ): Promise<NPMScriptDefinitionType> {
+  async updateTask(task: NPMScriptDefinitionType, inputs: TaskUserInput): Promise<NPMScriptDefinitionType> {
     // set updated task properties
     task.label = inputs.label;
     task.arguments = inputs.arguments ?? "";
@@ -123,8 +113,7 @@ export class ScriptTaskExplorerContributor
     if (!isEmpty(script)) {
       this.scriptContentProperty.value = this.scripts[script];
       this.helpProperty.value = (await this.getCommandHelp(script)) ?? "";
-      this.possibleArguments =
-        this.helpProperty.value.match(this.flagRegex) ?? [];
+      this.possibleArguments = this.helpProperty.value.match(this.flagRegex) ?? [];
       this.argumentsValid = this.areArgumentsValid(args);
     } else {
       this.scriptContentProperty.value = "";

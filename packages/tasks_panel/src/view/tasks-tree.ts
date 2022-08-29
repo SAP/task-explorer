@@ -1,13 +1,6 @@
 import { filter, map, uniq } from "lodash";
 import { TaskTreeItem } from "./task-tree-item";
-import {
-  Event,
-  EventEmitter,
-  TreeDataProvider,
-  TreeItem,
-  TreeItemCollapsibleState,
-  workspace,
-} from "vscode";
+import { Event, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, workspace } from "vscode";
 import { ITasksProvider } from "../services/definitions";
 import { getClassLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
@@ -16,8 +9,7 @@ const LOGGER_CLASS_NAME = "Tasks Tree";
 
 export class TasksTree implements TreeDataProvider<TaskTreeItem> {
   private readonly _onDidChangeTreeData: EventEmitter<TaskTreeItem | null> = new EventEmitter<TaskTreeItem | null>();
-  readonly onDidChangeTreeData: Event<TaskTreeItem | null> = this
-    ._onDidChangeTreeData.event;
+  readonly onDidChangeTreeData: Event<TaskTreeItem | null> = this._onDidChangeTreeData.event;
 
   constructor(private readonly tasksProvider: ITasksProvider) {
     this.tasksProvider.registerEventHandler(this);
@@ -35,36 +27,21 @@ export class TasksTree implements TreeDataProvider<TaskTreeItem> {
     const tasks = await this.tasksProvider.getConfiguredTasks();
     if (element === undefined) {
       const intents = uniq(map(tasks, (_) => _.__intent));
-      getClassLogger(LOGGER_CLASS_NAME).debug(
-        messages.GET_TREE_INTENTS(intents.length)
-      );
-      return map(
-        intents,
-        (_) =>
-          new TaskTreeItem(0, "", _, "", TreeItemCollapsibleState.Collapsed)
-      );
+      getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_INTENTS(intents.length));
+      return map(intents, (_) => new TaskTreeItem(0, "", _, "", TreeItemCollapsibleState.Collapsed));
     }
     const intent = element.label;
     const tasksByIntent = filter(tasks, (_) => _.__intent === intent);
     const result = map(
       tasksByIntent,
       (task) =>
-        new TaskTreeItem(
-          task.__index,
-          task.type,
-          task.label,
-          task.__wsFolder,
-          TreeItemCollapsibleState.None,
-          {
-            command: "tasks-explorer.editTask",
-            title: "Edit Task",
-            arguments: [task],
-          }
-        )
+        new TaskTreeItem(task.__index, task.type, task.label, task.__wsFolder, TreeItemCollapsibleState.None, {
+          command: "tasks-explorer.editTask",
+          title: "Edit Task",
+          arguments: [task],
+        })
     );
-    getClassLogger(LOGGER_CLASS_NAME).debug(
-      messages.GET_TREE_CHILDREN_BY_INTENT(intent, result.length)
-    );
+    getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_CHILDREN_BY_INTENT(intent, result.length));
     return result;
   }
 

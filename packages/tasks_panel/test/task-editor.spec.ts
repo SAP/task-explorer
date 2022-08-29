@@ -1,41 +1,21 @@
 import { expect } from "chai";
 import sinon = require("sinon");
-import {
-  mockVscode,
-  MockVSCodeInfo,
-  resetTestVSCode,
-  testVscode,
-} from "./utils/mockVSCode";
-import {
-  createLoggerWrapperMock,
-  getLoggerMessage,
-  resetLoggerMessage,
-} from "./utils/loggerWrapperMock";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "./utils/mockVSCode";
+import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "./utils/loggerWrapperMock";
 
 mockVscode("/src/task-editor");
+import * as path from "path";
 import { TaskEditor } from "../src/task-editor";
 import { MockRpc } from "./utils/mockRpc";
 import { MockAppEvents } from "./utils/mockAppEvents";
-import {
-  MockContributor,
-  MockContributorWithOnSave,
-} from "./utils/mockContributor";
+import { MockContributor, MockContributorWithOnSave } from "./utils/mockContributor";
 import { messages } from "../src/i18n/messages";
 
 mockVscode("/src/services/tasks-providerr");
 import { TasksProvider } from "../src/services/tasks-provider";
 import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
 import { TaskQuestion } from "../src/services/definitions";
-
-const datauri = require("datauri");
-
-let failGetImage = false;
-datauri.sync = function () {
-  if (failGetImage) {
-    throw new Error("`dataUri.sync` failed");
-  }
-  return "image";
-};
+import * as extension from "../src/extension";
 
 const task = {
   label: "task 1",
@@ -219,9 +199,7 @@ describe("the TaskEditor class", () => {
       };
       taskEditor["updateTaskFrontendMirror"](answers);
       expect(taskEditor["taskFrontendMirror"][0].default).to.eq("newValue");
-      expect(taskEditor["taskFrontendMirror"][1].default).to.eq(
-        "prop1OldValue"
-      );
+      expect(taskEditor["taskFrontendMirror"][1].default).to.eq("prop1OldValue");
     });
   });
 
@@ -317,13 +295,13 @@ describe("the TaskEditor class", () => {
           default: "value 1",
         },
       ];
-      expect(taskEditor["isTaskFrontendMirrorChanged"](updatedTask)).to.be
-        .false;
+      expect(taskEditor["isTaskFrontendMirrorChanged"](updatedTask)).to.be.false;
     });
   });
 
   describe("evaluateMethod method", () => {
     let sandbox: any;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppress rule
     let loggerWrapperMock: any;
 
     beforeEach(() => {
@@ -343,13 +321,7 @@ describe("the TaskEditor class", () => {
         ...task,
         type: "testType",
       });
-      expect(
-        await taskEditor["evaluateMethod"](
-          [{ prop1: "v" }],
-          "prop1",
-          "validate"
-        )
-      ).to.be.undefined;
+      expect(await taskEditor["evaluateMethod"]([{ prop1: "v" }], "prop1", "validate")).to.be.undefined;
     });
 
     it("Calls relevant function being called when frontend is ready", async () => {
@@ -359,13 +331,9 @@ describe("the TaskEditor class", () => {
         type: "testType",
       });
       await taskEditor["onFrontendReady"]();
-      expect(
-        await taskEditor["evaluateMethod"](
-          [{ prop1: "v" }],
-          "prop1",
-          "validate"
-        )
-      ).to.eq("Enter at least 2 characters");
+      expect(await taskEditor["evaluateMethod"]([{ prop1: "v" }], "prop1", "validate")).to.eq(
+        "Enter at least 2 characters"
+      );
     });
 
     it("Calls function based of gui type being called when frontend is ready", async () => {
@@ -374,19 +342,9 @@ describe("the TaskEditor class", () => {
         ...task,
         type: "testType",
       });
-      taskEditor.registerCustomQuestionEventHandler(
-        "file-browser",
-        "getFilePath",
-        mockOpenFileDialog
-      );
+      taskEditor.registerCustomQuestionEventHandler("file-browser", "getFilePath", mockOpenFileDialog);
       await taskEditor["onFrontendReady"]();
-      expect(
-        await taskEditor["evaluateMethod"](
-          [{ prop2: "v" }],
-          "prop2",
-          "getFilePath"
-        )
-      ).to.eq("expectedPath");
+      expect(await taskEditor["evaluateMethod"]([{ prop2: "v" }], "prop2", "getFilePath")).to.eq("expectedPath");
     });
 
     it("Calls relevant function based of gui type when more than 1 handler defined for the same question type", async () => {
@@ -395,20 +353,10 @@ describe("the TaskEditor class", () => {
         ...task,
         type: "testType",
       });
-      taskEditor.registerCustomQuestionEventHandler(
-        "file-browser",
-        "method1",
-        mockMethod1
-      );
-      taskEditor.registerCustomQuestionEventHandler(
-        "file-browser",
-        "dialog",
-        mockOpenFileDialog
-      );
+      taskEditor.registerCustomQuestionEventHandler("file-browser", "method1", mockMethod1);
+      taskEditor.registerCustomQuestionEventHandler("file-browser", "dialog", mockOpenFileDialog);
       await taskEditor["onFrontendReady"]();
-      expect(
-        await taskEditor["evaluateMethod"]([{ prop2: "v" }], "prop2", "method1")
-      ).to.eq("expectedValue");
+      expect(await taskEditor["evaluateMethod"]([{ prop2: "v" }], "prop2", "method1")).to.eq("expectedValue");
     });
 
     it("Logs error when called with wrong question name", async () => {
@@ -417,18 +365,11 @@ describe("the TaskEditor class", () => {
         ...task,
         type: "testType",
       });
-      taskEditor.registerCustomQuestionEventHandler(
-        "file-browser",
-        "dialog",
-        mockOpenFileDialog
-      );
+      taskEditor.registerCustomQuestionEventHandler("file-browser", "dialog", mockOpenFileDialog);
       await taskEditor["onFrontendReady"]();
       const params = [{ prop2: "v" }];
-      expect(await taskEditor["evaluateMethod"](params, "propx", "dialog")).to
-        .be.undefined;
-      expect(getLoggerMessage()).to.include(
-        messages.METHOD_NOT_FOUND("dialog", "propx", JSON.stringify(params))
-      );
+      expect(await taskEditor["evaluateMethod"](params, "propx", "dialog")).to.be.undefined;
+      expect(getLoggerMessage()).to.include(messages.METHOD_NOT_FOUND("dialog", "propx", JSON.stringify(params)));
     });
 
     it("Returns undefined when called with wrong question", async () => {
@@ -438,13 +379,7 @@ describe("the TaskEditor class", () => {
         type: "testType",
       });
       await taskEditor["onFrontendReady"]();
-      expect(
-        await taskEditor["evaluateMethod"](
-          [{ prop1: "v" }],
-          "prop2",
-          "validate"
-        )
-      ).to.eq(undefined);
+      expect(await taskEditor["evaluateMethod"]([{ prop1: "v" }], "prop2", "validate")).to.eq(undefined);
     });
 
     it("Returns error when validate method failed with error", async () => {
@@ -493,16 +428,19 @@ describe("the TaskEditor class", () => {
 
   describe("getTaskExecutionImage method provides image for any intent", () => {
     let sandbox: any;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppress rule
     let loggerWrapperMock: any;
+    let extensionMock: sinon.SinonMock;
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
       loggerWrapperMock = createLoggerWrapperMock(sandbox);
+      extensionMock = sinon.mock(extension);
     });
 
     afterEach(() => {
-      failGetImage = false;
       sandbox.restore();
+      extensionMock.verify();
     });
 
     it("task with intent Deploy has an image", () => {
@@ -512,6 +450,7 @@ describe("the TaskEditor class", () => {
         type: "testType",
         __intent: "Deploy",
       });
+      extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", ".."));
       expect(taskEditor["getTaskExecutionImage"]()).to.be.not.empty;
     });
 
@@ -521,18 +460,19 @@ describe("the TaskEditor class", () => {
         ...task,
         type: "testType",
       });
+      extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", ".."));
       expect(taskEditor["getTaskExecutionImage"]()).to.be.not.empty;
     });
 
     it("Returns error when `getImage` method failed with error", () => {
-      failGetImage = true;
       const appEvents = new MockAppEvents();
       const taskEditor = new TaskEditor(rpc, appEvents, {
         ...task,
         type: "testType",
       });
+      extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", "wrong"));
       taskEditor["getTaskExecutionImage"]();
-      expect(getLoggerMessage()).to.include("Error: `dataUri.sync` failed");
+      expect(getLoggerMessage()).to.include(`was not found!`);
     });
   });
 
@@ -621,9 +561,7 @@ describe("the TaskEditor class", () => {
       });
 
       it("original validator succeeds but uniqueness fails", async () => {
-        expect(await frontendTask[0]["validate"]("task 2")).to.eq(
-          messages.LABEL_IS_NOT_UNIQUE()
-        );
+        expect(await frontendTask[0]["validate"]("task 2")).to.eq(messages.LABEL_IS_NOT_UNIQUE());
       });
     });
   });
