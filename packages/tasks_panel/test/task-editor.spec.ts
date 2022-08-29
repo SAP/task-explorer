@@ -4,6 +4,7 @@ import { mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "./utils
 import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "./utils/loggerWrapperMock";
 
 mockVscode("/src/task-editor");
+import * as path from "path";
 import { TaskEditor } from "../src/task-editor";
 import { MockRpc } from "./utils/mockRpc";
 import { MockAppEvents } from "./utils/mockAppEvents";
@@ -14,16 +15,7 @@ mockVscode("/src/services/tasks-providerr");
 import { TasksProvider } from "../src/services/tasks-provider";
 import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
 import { TaskQuestion } from "../src/services/definitions";
-
-const datauri = require("datauri");
-
-let failGetImage = false;
-datauri.sync = function () {
-  if (failGetImage) {
-    throw new Error("`dataUri.sync` failed");
-  }
-  return "image";
-};
+import * as extension from "../src/extension";
 
 const task = {
   label: "task 1",
@@ -438,15 +430,17 @@ describe("the TaskEditor class", () => {
     let sandbox: any;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars -- suppress rule
     let loggerWrapperMock: any;
+    let extensionMock: sinon.SinonMock;
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
       loggerWrapperMock = createLoggerWrapperMock(sandbox);
+      extensionMock = sinon.mock(extension);
     });
 
     afterEach(() => {
-      failGetImage = false;
       sandbox.restore();
+      extensionMock.verify();
     });
 
     it("task with intent Deploy has an image", () => {
@@ -456,6 +450,7 @@ describe("the TaskEditor class", () => {
         type: "testType",
         __intent: "Deploy",
       });
+      extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", ".."));
       expect(taskEditor["getTaskExecutionImage"]()).to.be.not.empty;
     });
 
@@ -465,18 +460,19 @@ describe("the TaskEditor class", () => {
         ...task,
         type: "testType",
       });
+      extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", ".."));
       expect(taskEditor["getTaskExecutionImage"]()).to.be.not.empty;
     });
 
     it("Returns error when `getImage` method failed with error", () => {
-      failGetImage = true;
       const appEvents = new MockAppEvents();
       const taskEditor = new TaskEditor(rpc, appEvents, {
         ...task,
         type: "testType",
       });
+      extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", "wrong"));
       taskEditor["getTaskExecutionImage"]();
-      expect(getLoggerMessage()).to.include("Error: `dataUri.sync` failed");
+      expect(getLoggerMessage()).to.include(`was not found!`);
     });
   });
 

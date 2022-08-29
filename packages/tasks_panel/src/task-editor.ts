@@ -11,7 +11,7 @@ import { getConfiguredTasksFromCache } from "./services/tasks-provider";
 import { combineValidationFunctions, convertContributedPropertiesToQuestions } from "./services/questions";
 import { TaskQuestion, validationFunction } from "./services/definitions";
 
-const datauri = require("datauri");
+const datauri = require("datauri/sync");
 
 const LOGGER_CLASS_NAME = "Task Editor";
 
@@ -307,7 +307,7 @@ export class TaskEditor {
 function getImage(imagePath: string): string {
   let image;
   try {
-    image = datauri.sync(imagePath);
+    image = datauri(imagePath);
   } catch (error) {
     getClassLogger(LOGGER_CLASS_NAME).error(messages.GET_IMAGE_FAILURE(imagePath, error as Error));
   }

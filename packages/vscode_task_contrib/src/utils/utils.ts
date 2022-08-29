@@ -1,12 +1,12 @@
 import { find, map } from "lodash";
 import { workspace, WorkspaceFolder } from "vscode";
 
-const datauri = require("datauri");
+const datauri = require("datauri/sync");
 
 export function getImage(imagePath: string): string {
   let image;
   try {
-    image = datauri.sync(imagePath);
+    image = datauri(imagePath);
   } catch (error) {
     // image = DEFAULT_IMAGE;
   }
