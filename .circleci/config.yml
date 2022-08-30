@@ -2,11 +2,22 @@ version: 2.1
 jobs:
   build-node16:
     docker:
-      - image: circleci/node:16-browsers
+      - image: cimg/node:16.16
     working_directory: ~/repo
     steps:
-      - run: sudo apt-get install libxss1
       - checkout
+      - run: yarn
+      - run: yarn run ci
+
+  build-node18:
+    docker:
+      - image: cimg/node:18.8
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: # workaround for OpenSSL issue with webpack5 on node17+ https://github.com/webpack/webpack/issues/14532
+          command: |
+            echo 'export NODE_OPTIONS=--openssl-legacy-provider' >> $BASH_ENV
       - run: yarn
       - run: yarn run ci
       - run:
@@ -23,9 +34,18 @@ jobs:
             COVERALLS_SERVICE_NAME: circle-ci
             COVERALLS_GIT_BRANCH: ${CIRCLE_BRANCH}
 
+  build-node14:
+    docker:
+      - image: cimg/node:14.18
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: yarn
+      - run: yarn run ci
+
   compliance:
     docker:
-      - image: circleci/python:3.6.4
+      - image: cimg/python:3.10.0
     working_directory: ~/workdir
     steps:
       - checkout
@@ -37,13 +57,9 @@ jobs:
 
   deploy-npm:
     docker:
-      - image: circleci/node:12-browsers
+      - image: cimg/node:16.16
     working_directory: ~/repo
     steps:
-      - run: sudo apt-get install libxss1
-      - add_ssh_keys: 
-          fingerprints:
-            - "41:3b:ea:19:f1:9c:0d:b6:bd:f4:de:07:8c:67:ce:bd"
       - checkout
       - run: yarn --pure-lockfile
       - run: yarn run ci
@@ -54,10 +70,9 @@ jobs:
 
   prepare-vsix:
     docker:
-      - image: circleci/node:12-browsers
+      - image: cimg/node:16.16
     working_directory: ~/repo
     steps:
-      - run: sudo apt-get install libxss1
       - checkout
       - run: yarn
       - run: yarn run ci
@@ -74,7 +89,7 @@ jobs:
 
   deploy-gh-releases:
     docker:
-      - image: circleci/golang:1.13
+      - image: cimg/go:1.16
     steps:
       - attach_workspace:
           at: ./artifacts
@@ -85,6 +100,7 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
+            echo 'export GOPATH=~/go' >> $BASH_ENV
             go get github.com/tcnksm/ghr
             VERSION=${CIRCLE_TAG}
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
@@ -93,8 +109,9 @@ workflows:
   version: 2
   voter:
     jobs:
-#   no tag for version 16 on https://hub.docker.com/r/circleci/node yet
+      - build-node14
       - build-node16
+      - build-node18
       - compliance
   release:
     jobs:
@@ -117,4 +134,4 @@ workflows:
             tags:
               only: /^v[0-9]+(\.[0-9]+)*/
             branches:
-              ignore: /.*/
+              ignore: /.*/ 
