@@ -471,7 +471,7 @@ describe("the TaskEditor class", () => {
         type: "testType",
       });
       extensionMock.expects("getExtensionPath").returns(path.resolve(__dirname, "..", "wrong"));
-      taskEditor["getTaskExecutionImage"]();
+      expect(taskEditor["getTaskExecutionImage"]()).to.be.empty;
       expect(getLoggerMessage()).to.include(`was not found!`);
     });
   });
