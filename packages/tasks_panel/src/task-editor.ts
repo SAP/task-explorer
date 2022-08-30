@@ -305,9 +305,9 @@ export class TaskEditor {
 }
 
 function getImage(imagePath: string): string {
-  let image;
+  let image = "";
   try {
-    image = datauri(imagePath);
+    image = datauri(imagePath).content;
   } catch (error) {
     getClassLogger(LOGGER_CLASS_NAME).error(messages.GET_IMAGE_FAILURE(imagePath, error as Error));
   }
