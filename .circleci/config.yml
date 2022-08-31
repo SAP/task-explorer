@@ -63,7 +63,7 @@ jobs:
       - checkout
       - run: yarn --pure-lockfile
       - run: yarn run ci
-      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TECH_TOKEN" >> ~/.npmrc
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
       # To help debug when lerna detects changes to the working tree and fails the publish
       - run: git status
       - run: yarn run release:publish
