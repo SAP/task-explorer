@@ -27,7 +27,7 @@
     "prepare": "husky install",
     "release:publish": "lerna publish from-git --yes",
     "release:version": "yarn worktree:update && lerna version --force-publish",
-    "version": "node ./scripts/update-root-version.js && git add package.json && yarn format:fix:changelog",
+    "version": "node ./scripts/update-root-version.js && yarn format:fix:changelog && git add package.json",
     "worktree:update": "yarn && git fetch && git rebase"
   },
   "husky": {
