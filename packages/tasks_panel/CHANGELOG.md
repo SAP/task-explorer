@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.5](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.0.5) (2022-08-31)
+
+### Bug Fixes
+
+- loading of task execution image fixed ([#146](https://github.com/SAP/task-explorer/issues/146)) ([2a11a0e](https://github.com/SAP/task-explorer/commit/2a11a0e043c2ac966c1b008e7e1f773ffcf4818b))
+
 ## [4.0.4](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.0.4) (2022-08-31)
 
 ### Bug Fixes
