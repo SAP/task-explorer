@@ -3,7 +3,6 @@
 [![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/SAP/task-explorer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SAP/task-explorer/context:javascript)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![DependentBot](https://api.dependabot.com/badges/status?host=github&repo=SAP/task-explorer)](https://dependabot.com/)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/task-explorer)](https://api.reuse.software/info/github.com/SAP/task-explorer)
 
 # Task Explorer
