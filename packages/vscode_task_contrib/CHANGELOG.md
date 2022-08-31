@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.0.0) (2022-08-31)
+
+**Note:** Version bump only for package vscode-task-contrib
+
 # [3.1.0](https://github.com/SAP/task-explorer/compare/v3.0.6...v3.1.0) (2021-05-18)
 
 **Note:** Version bump only for package vscode-task-contrib
