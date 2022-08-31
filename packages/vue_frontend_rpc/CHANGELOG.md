@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.6](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.0.6) (2022-08-31)
+
+**Note:** Version bump only for package @vscode-tasks-explorer/vue_frontend_rpc
+
 ## [4.0.5](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.0.5) (2022-08-31)
 
 **Note:** Version bump only for package @vscode-tasks-explorer/vue_frontend_rpc
