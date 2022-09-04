@@ -1,14 +1,12 @@
 import { partial } from "lodash";
 import { commands, ExtensionContext, OutputChannel, window } from "vscode";
-import { SWATracker } from "@sap/swa-for-sapbas-vsx";
-import { createExtensionLoggerAndSubscribeToLogSettingsChanges, getLogger } from "./logger/logger-wrapper";
+import { createExtensionLoggerAndSubscribeToLogSettingsChanges } from "./logger/logger-wrapper";
 import { Contributors } from "./services/contributors";
 import { TasksProvider } from "./services/tasks-provider";
 import { TasksTree } from "./view/tasks-tree";
 import { executeTaskFromTree } from "./commands/execute-task";
 import { deleteTask } from "./commands/delete-task";
 import { editTreeItemTask } from "./commands/edit-task";
-import { initSWA } from "./utils/swa";
 import { createTask } from "./commands/create-task";
 import { messages } from "./i18n/messages";
 import { TASKS_EXPLORER_ID } from "./logger/settings";
@@ -20,19 +18,19 @@ export async function activate(context: ExtensionContext): Promise<void> {
   extensionPath = context.extensionPath;
   const outputChannel = window.createOutputChannel(TASKS_EXPLORER_ID);
   initializeLogger(context, outputChannel);
-  const logger = getLogger();
-  const swa = new SWATracker(
-    "SAPSE",
-    "vscode-tasks-explorer-tasks-panel",
-    // We ignore error code `204` because it appears in every user interaction.
-    (err: string | number) => {
-      if (err !== 204) {
-        logger.error(err.toString());
-      }
-    }
-  );
+  // const logger = getLogger();
+  // const swa = new SWATracker(
+  //   "SAPSE",
+  //   "vscode-tasks-explorer-tasks-panel",
+  //   // We ignore error code `204` because it appears in every user interaction.
+  //   (err: string | number) => {
+  //     if (err !== 204) {
+  //       logger.error(err.toString());
+  //     }
+  //   }
+  // );
 
-  initSWA(swa);
+  // initSWA(swa);
 
   const contributors = Contributors.getInstance();
   const tasksProvider = new TasksProvider(contributors);
