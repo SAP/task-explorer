@@ -36,7 +36,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
 
-  commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, readResource));
+  commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource));
   commands.registerCommand("tasks-explorer.deleteTask", deleteTask);
   commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree);
   commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource));

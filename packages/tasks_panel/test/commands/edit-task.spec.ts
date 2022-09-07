@@ -3,21 +3,46 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- leave unsused arg for reference in test scope */
 import { expect } from "chai";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
+import { createSandbox } from "sinon";
 
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
+import { MockTasksProvider } from "../utils/mockTasksProvider";
 
 mockVscode("../../src/panels/task-editor-panel");
 import { editTask, editTreeItemTask } from "../../src/commands/edit-task";
 import { TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
 import { disposeTaskEditorPanel, getTaskEditor, getTaskEditorPanel } from "../../src/panels/panels-handler";
+import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "../utils/loggerWrapperMock";
+import { messages } from "../../src/i18n/messages";
+import { serializeTask } from "../../src/utils/task-serializer";
 
 describe("Command editTask", () => {
   const readFile = async function (path: string): Promise<string> {
     return "aaa";
   };
 
+  const tasks = [
+    {
+      label: "task 1",
+      type: "testType",
+      taskType: "Deploy",
+      prop1: "value 1.1",
+    },
+  ];
+
+  const mockTaskProvider = new MockTasksProvider(tasks);
+  let sandbox: any;
+  let loggerWrapperMock: any;
+
+  beforeEach(() => {
+    sandbox = createSandbox();
+    loggerWrapperMock = createLoggerWrapperMock(sandbox);
+  });
+
   afterEach(() => {
+    sandbox.restore();
+    resetLoggerMessage();
     disposeTaskEditorPanel();
     resetTestVSCode();
   });
@@ -34,7 +59,7 @@ describe("Command editTask", () => {
       arguments: [task1],
     };
     const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
-    await editTreeItemTask(readFile, item1);
+    await editTreeItemTask(mockTaskProvider, readFile, item1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -46,7 +71,7 @@ describe("Command editTask", () => {
       arguments: [task2],
     };
     const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
-    await editTreeItemTask(readFile, item2);
+    await editTreeItemTask(mockTaskProvider, readFile, item2);
     expect(MockVSCodeInfo.webViewCreated).eq(2);
   });
 
@@ -73,15 +98,15 @@ describe("Command editTask", () => {
       arguments: [task2],
     };
     const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
-    await editTreeItemTask(readFile, item1);
+    await editTreeItemTask(mockTaskProvider, readFile, item1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
-    await editTreeItemTask(readFile, item2);
+    await editTreeItemTask(mockTaskProvider, readFile, item2);
     expect(MockVSCodeInfo.webViewCreated).eq(2);
   });
 
   it("item misses command with task; view is not created", async () => {
     const item = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None);
-    await editTreeItemTask(readFile, item);
+    await editTreeItemTask(mockTaskProvider, readFile, item);
     expect(MockVSCodeInfo.webViewCreated).eq(0);
   });
 
@@ -109,12 +134,12 @@ describe("Command editTask", () => {
       arguments: [task2],
     };
     const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
-    await editTreeItemTask(readFile, item1);
+    await editTreeItemTask(mockTaskProvider, readFile, item1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
     taskEditor!["setAnswers"]({ answers: { label: "aa1" } });
     MockVSCodeInfo.dialogAnswer = "Discard Changes";
-    await editTreeItemTask(readFile, item2);
+    await editTreeItemTask(mockTaskProvider, readFile, item2);
     expect(MockVSCodeInfo.saveCalled).false;
     expect(MockVSCodeInfo.webViewCreated).eq(2);
   });
@@ -143,12 +168,12 @@ describe("Command editTask", () => {
       arguments: [task2],
     };
     const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
-    await editTreeItemTask(readFile, item1);
+    await editTreeItemTask(mockTaskProvider, readFile, item1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
     taskEditor?.["setAnswers"]({ answers: { label: "aa1" } });
     MockVSCodeInfo.dialogAnswer = "No";
-    await editTreeItemTask(readFile, item2);
+    await editTreeItemTask(mockTaskProvider, readFile, item2);
     expect(MockVSCodeInfo.saveCalled).false;
     expect(MockVSCodeInfo.webViewCreated).eq(1);
   });
@@ -204,8 +229,41 @@ describe("Command editTask", () => {
     };
     const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, command1);
 
-    await editTreeItemTask(readFile, item1);
+    await editTreeItemTask(mockTaskProvider, readFile, item1);
     expect(MockVSCodeInfo.configTasks?.get("wsFolder1")).to.not.empty;
+  });
+
+  describe("edit command programmatically", () => {
+    const item = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None);
+
+    it("edit command - task found", async () => {
+      const task: ConfiguredTask = {
+        type: tasks[0].type,
+        label: tasks[0].label,
+      };
+      item.command = {
+        title: "Edit Task",
+        command: "tasks-explorer.editTask",
+        arguments: [task],
+      };
+      await editTreeItemTask(mockTaskProvider, readFile, item);
+      expect(MockVSCodeInfo.webViewCreated).eq(1);
+    });
+
+    it("edit command - task not found", async () => {
+      const task: ConfiguredTask = {
+        type: "wrong",
+        label: tasks[0].label,
+      };
+      item.command = {
+        title: "Edit Task",
+        command: "tasks-explorer.editTask",
+        arguments: [task],
+      };
+      await editTreeItemTask(mockTaskProvider, readFile, item);
+      expect(MockVSCodeInfo.webViewCreated).eq(0);
+      expect(getLoggerMessage()).to.be.equal(messages.EDIT_TASK_NOT_FOUND(serializeTask(task)));
+    });
   });
 });
 
