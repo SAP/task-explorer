@@ -5,7 +5,11 @@
   "private": true,
   "categories": [],
   "keywords": [],
-  "repository": "https://github.com/SAP/task-explorer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/task-explorer",
+    "directory": "packages/vscode_task_contrib"
+  },
   "publisher": "SAPSE",
   "main": "./dist/src/extension",
   "scripts": {

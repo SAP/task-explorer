@@ -5,7 +5,11 @@
   "private": true,
   "categories": [],
   "keywords": [],
-  "repository": "https://github.com/SAP/task-explorer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/task-explorer",
+    "directory": "packages/tasks_panel"
+  },
   "license": "Apache-2.0",
   "publisher": "SAPSE",
   "main": "./dist/src/extension",
