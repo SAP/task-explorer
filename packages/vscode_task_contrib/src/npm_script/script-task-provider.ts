@@ -16,7 +16,7 @@ export class ScriptTaskProvider implements TaskProvider {
   // auto detection of tasks
   async provideTasks(): Promise<Task[]> {
     let npmTasks: Task[] = [];
-    const wsFolderSources = await getTaskSources("package.json");
+    const wsFolderSources = await getTaskSources("**/package.json");
     for (const wsFolderPath in wsFolderSources) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- TODO: verify
       const wsFolder: WorkspaceFolder = workspace.getWorkspaceFolder(Uri.file(wsFolderPath))!;

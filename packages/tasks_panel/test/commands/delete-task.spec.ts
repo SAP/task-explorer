@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
+import { MockTasksProvider } from "../utils/mockTasksProvider";
 
 mockVscode("../../src/panels/task-editor-panel");
 import { deleteTask } from "../../src/commands/delete-task";
@@ -13,6 +14,15 @@ describe("Command deleteTask", () => {
   const readFile = async function (): Promise<string> {
     return "aaa";
   };
+
+  const tasks = [
+    {
+      label: "task 1",
+      type: "testType",
+      taskType: "Deploy",
+      prop1: "value 1.1",
+    },
+  ];
 
   afterEach(() => {
     disposeTaskEditorPanel();
@@ -35,7 +45,7 @@ describe("Command deleteTask", () => {
     };
     const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, command1);
 
-    await editTreeItemTask(readFile, item1);
+    await editTreeItemTask(new MockTasksProvider(tasks), readFile, item1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
     await deleteTask(item1);
     expect(MockVSCodeInfo.configTasks?.get("wsFolder1")).to.empty;

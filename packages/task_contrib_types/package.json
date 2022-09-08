@@ -1,7 +1,11 @@
 {
   "name": "@sap_oss/task_contrib_types",
   "version": "4.0.6",
-  "repository": "https://github.com/SAP/task-explorer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAP/task-explorer",
+    "directory": "packages/task_contrib_types"
+  },
   "license": "Apache-2.0",
   "typings": "./api.d.ts",
   "files": [

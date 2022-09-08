@@ -19,6 +19,7 @@ export const messages = {
     `Click "Close" to return to the "${taskInProcess}" task or "Discard Changes" to continue.`,
   DELETE_TASK: (task: string): string => `tasks-explorer.deleteTask command. got task: ${task}`,
   EDIT_TASK: (task: string): string => `tasks-explorer.editTask command. got task: ${task}`,
+  EDIT_TASK_NOT_FOUND: (task: string): string => `tasks-explorer.editTask command. task: ${task} not found`,
   EXECUTE_TASK: (task: string): string => `Executed task: ${task}`,
   CREATE_TASK: (task: string): string => `Created task: ${task}`,
   MISSING_TYPE: (type: string): string => `The type "${type}" is missing.`,

@@ -4,16 +4,31 @@ import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
 import { createTaskEditorPanel, disposeTaskSelectionPanel, getTaskInProcess } from "../panels/panels-handler";
+import { ITasksProvider } from "../services/definitions";
+import { find, has } from "lodash";
+import { serializeTask } from "../utils/task-serializer";
+import { getLogger } from "../logger/logger-wrapper";
 
 export async function editTreeItemTask(
+  tasksProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
   treeItem: TaskTreeItem
 ): Promise<void> {
-  if (treeItem.command?.arguments === undefined) {
-    return;
+  function isConfiguredTask(task: ConfiguredTask): boolean {
+    return has(task, "__intent");
+  }
+  let task = treeItem.command?.arguments?.[0];
+
+  if (task && !isConfiguredTask(task)) {
+    // request for edit task programmatically
+    task = find(await tasksProvider.getConfiguredTasks(), { type: task.type, label: task.label });
   }
 
-  return editTask(treeItem.command.arguments[0], readResource);
+  if (task) {
+    return editTask(task, readResource);
+  } else {
+    getLogger().debug(messages.EDIT_TASK_NOT_FOUND(serializeTask(treeItem.command?.arguments?.[0])));
+  }
 }
 
 export async function editTask(task: ConfiguredTask, readResource: (file: string) => Promise<string>): Promise<void> {

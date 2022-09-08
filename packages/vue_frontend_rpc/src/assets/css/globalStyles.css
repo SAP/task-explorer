@@ -90,9 +90,9 @@ span.v-btn__content {
     text-transform: none;
 }
 
-.v-input.v-textarea.v-input--hide-details.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-text-field--enclosed.v-text-field--outlined > .v-input__control {
+/* .v-input.v-textarea.v-input--hide-details.v-input--dense.theme--light.v-text-field.v-text-field--is-booted.v-text-field--enclosed.v-text-field--outlined > .v-input__control {
     height: 5rem;
-}
+} */
 
 .v-list-group__header.v-list-item.v-list-item--link.theme--light {
     padding: 0;
@@ -168,9 +168,9 @@ form.inquirer-gui i.theme--light.v-icon {
     animation: none;
 }
 
-.v-textarea > .v-input__control {
+/* .v-textarea > .v-input__control {
     height: 9rem !important;
-}
+} */
 
 form.inquirer-gui > *:not(.tiles) {
     max-width: 66%;;
