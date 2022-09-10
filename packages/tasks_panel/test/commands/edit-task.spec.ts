@@ -140,7 +140,7 @@ describe("Command editTask", () => {
     taskEditor!["setAnswers"]({ answers: { label: "aa1" } });
     MockVSCodeInfo.dialogAnswer = "Discard Changes";
     await editTreeItemTask(mockTaskProvider, readFile, item2);
-    expect(MockVSCodeInfo.saveCalled).false;
+    expect(MockVSCodeInfo.updateCalled).to.be.undefined;
     expect(MockVSCodeInfo.webViewCreated).eq(2);
   });
 
@@ -174,7 +174,7 @@ describe("Command editTask", () => {
     taskEditor?.["setAnswers"]({ answers: { label: "aa1" } });
     MockVSCodeInfo.dialogAnswer = "No";
     await editTreeItemTask(mockTaskProvider, readFile, item2);
-    expect(MockVSCodeInfo.saveCalled).false;
+    expect(MockVSCodeInfo.updateCalled).to.be.undefined;
     expect(MockVSCodeInfo.webViewCreated).eq(1);
   });
 

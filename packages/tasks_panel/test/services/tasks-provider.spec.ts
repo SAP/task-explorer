@@ -1,6 +1,7 @@
 /* eslint-disable eslint-comments/disable-enable-pair -- disable the next rule */
 /* eslint-disable @typescript-eslint/no-unused-vars -- leave unused args in function signatures as a reference */
 import { expect } from "chai";
+import { createSandbox, SinonSandbox, SinonSpy } from "sinon";
 import { ConfiguredTask, FormProperty, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 
@@ -9,12 +10,16 @@ import { TasksProvider } from "../../src/services/tasks-provider";
 import { IContributors, ITasksEventHandler, ITaskTypeEventHandler } from "../../src/services/definitions";
 
 describe("the TasksProvider class", () => {
-  afterEach(
-    () =>
-      function () {
-        resetTestVSCode();
-      }
-  );
+  let sandbox: SinonSandbox;
+
+  before(() => {
+    sandbox = createSandbox();
+  });
+
+  afterEach(() => {
+    resetTestVSCode();
+    sandbox.restore();
+  });
 
   describe("getTaskWorkspaceFolder method", () => {
     it("returns `undefined` for task with scope different from WorkspaceFolder", () => {
@@ -42,6 +47,12 @@ describe("the TasksProvider class", () => {
   });
 
   describe("method getConfiguredTasks", () => {
+    let spyGetConfiguration: SinonSpy;
+
+    beforeEach(() => {
+      spyGetConfiguration = sandbox.spy(testVscode.workspace, "getConfiguration");
+    });
+
     afterEach(() => {
       resetTestVSCode();
     });
@@ -52,6 +63,7 @@ describe("the TasksProvider class", () => {
       testVscode.workspace.workspaceFolders = undefined;
       const tasks = await taskProvider.getConfiguredTasks();
       expect(tasks.length).eq(0);
+      expect(spyGetConfiguration.called).to.be.false;
     });
 
     it("returns configured task when it exists in workspace folder", async () => {
@@ -63,6 +75,8 @@ describe("the TasksProvider class", () => {
       expect(tasks.length).eq(1);
       expect(tasks[0].__index).eq(0);
       expect(tasks[0].__intent).eq("abc");
+      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.workspace.workspaceFolders[0].uri)).to.be
+        .true;
     });
 
     it("returns empty result, when tasks configuration does not exist in defined workspace folder", async () => {
@@ -72,6 +86,8 @@ describe("the TasksProvider class", () => {
       MockVSCodeInfo.configTasks?.set("path2", [new MockConfigTask("task1", "type1")]);
       const tasks = await taskProvider.getConfiguredTasks();
       expect(tasks.length).eq(0);
+      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.workspace.workspaceFolders[0].uri)).to.be
+        .true;
     });
   });
 

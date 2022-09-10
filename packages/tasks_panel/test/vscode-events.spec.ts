@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { createSandbox, SinonSandbox, SinonSpy } from "sinon";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/vscode-events");
@@ -18,9 +19,20 @@ const task = {
   __wsFolder: "path",
   __extensionName: "testExtension",
 };
+let sandbox: SinonSandbox;
+let spyGetConfiguration: SinonSpy;
 
 describe("the VscodeEvents class", () => {
+  before(() => {
+    sandbox = createSandbox();
+  });
+
+  beforeEach(() => {
+    spyGetConfiguration = sandbox.spy(testVscode.workspace, "getConfiguration");
+  });
+
   afterEach(() => {
+    sandbox.restore();
     resetTestVSCode();
   });
 
@@ -39,17 +51,23 @@ describe("the VscodeEvents class", () => {
 
   describe("updateTask method", () => {
     it("updates task in tasks configuration. `task 1` instead of `task two`", async () => {
+      const folderPath = "path";
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
       MockVSCodeInfo.configTasks = new Map<string, MockConfigTask[]>();
-      MockVSCodeInfo.configTasks.set("path", [
+      MockVSCodeInfo.configTasks.set(folderPath, [
         new MockConfigTask("task one", "test"),
         new MockConfigTask("task two", "test"),
       ]);
-      await vscodeEvents.updateTaskInConfiguration("path", task, 1);
+      await vscodeEvents.updateTaskInConfiguration(folderPath, task, 1);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
-      expect(MockVSCodeInfo.configTasks.get("path")![0].label).eq("task one");
+      expect(MockVSCodeInfo.configTasks.get(folderPath)![0].label).eq("task one");
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
-      expect(MockVSCodeInfo.configTasks.get("path")![1].label).eq("task 1");
+      expect(MockVSCodeInfo.configTasks.get(folderPath)![1].label).eq("task 1");
+      expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
+      expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
+        testVscode.ConfigurationTarget.WorkspaceFolder
+      );
+      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
     });
 
     it("logs error on try to update task with wrong index", async () => {
@@ -70,13 +88,19 @@ describe("the VscodeEvents class", () => {
 
   describe("createTask method", () => {
     it("adds new task to the existing configuration and returns its index", async () => {
+      const folderPath = "path";
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
       MockVSCodeInfo.configTasks = new Map<string, MockConfigTask[]>();
-      MockVSCodeInfo.configTasks.set("path", [
+      MockVSCodeInfo.configTasks.set(folderPath, [
         new MockConfigTask("task one", "test"),
         new MockConfigTask("task two", "test"),
       ]);
-      expect(await vscodeEvents.addTaskToConfiguration("path", task)).eq(2);
+      expect(await vscodeEvents.addTaskToConfiguration(folderPath, task)).eq(2);
+      expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
+      expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
+        testVscode.ConfigurationTarget.WorkspaceFolder
+      );
+      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
     });
 
     it("adds new task to the empty configuration and returns its index", async () => {

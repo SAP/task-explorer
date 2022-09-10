@@ -14,7 +14,7 @@ export class MockVSCodeInfo {
   public static configTasks: Map<string, MockConfigTask[]> | undefined = new Map<string, MockConfigTask[]>();
   public static allTasks: any[] = [];
   public static fired = false;
-  public static saveCalled = false;
+  public static updateCalled;
   public static executeCalled = false;
   public static disposeCalled = false;
   public static disposeCallback: any;
@@ -75,8 +75,8 @@ export const testVscode: any = {
         get: (): any => {
           return MockVSCodeInfo.configTasks?.get(wsFolder.path);
         },
-        update: async (section: string, value: any[]): Promise<void> => {
-          MockVSCodeInfo.saveCalled = true;
+        update: async (section: string, value: any[], configurationTarget?: number | boolean): Promise<void> => {
+          MockVSCodeInfo.updateCalled = { section, value, configurationTarget };
           MockVSCodeInfo.configTasks?.set(wsFolder.path, value);
         },
       };
@@ -244,7 +244,7 @@ export function resetTestVSCode(): void {
   testVscode.workspace.workspaceFolders = undefined;
   MockVSCodeInfo.configTasks = new Map<string, MockConfigTask[]>();
   MockVSCodeInfo.allTasks = [];
-  MockVSCodeInfo.saveCalled = false;
+  MockVSCodeInfo.updateCalled = undefined;
   MockVSCodeInfo.disposeCalled = false;
   MockVSCodeInfo.dialogCalled = false;
   MockVSCodeInfo.allExtensions = [];
