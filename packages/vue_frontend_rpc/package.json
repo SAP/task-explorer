@@ -30,7 +30,7 @@
     "@sap-devx/webview-rpc": "^0.2.2",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-unit-mocha": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "~5.0.8",
     "@vue/test-utils": "^1.0.3",
     "get-port": "^5.1.1",
     "istanbul-instrumenter-loader": "^3.0.1",
