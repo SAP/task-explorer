@@ -45,6 +45,30 @@
       "env": {
         "PORT": "8081"
       }
+    },
+    {
+      "name": "vue frontend unit tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "../../node_modules/@vue/cli-service/bin/vue-cli-service.js",
+        "test:unit",
+        "./test/**/*.spec.js"
+      ],
+      "cwd": "${workspaceFolder}/packages/vue_frontend_rpc",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "outFiles": ["${workspaceFolder}/packages/vue_frontend_rpc/test/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "task panel unit tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/mocha",
+      "args": ["--timeout", "999999", "--colors", "${workspaceFolder}/packages/tasks_panel/dist/test/**/*.spec.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

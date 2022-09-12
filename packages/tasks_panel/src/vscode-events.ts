@@ -45,7 +45,7 @@ export class VSCodeEvents implements AppEvents {
     let configuredTasks: ConfiguredTask[] = tasksConfig.get("tasks") ?? [];
     configuredTasks = configuredTasks.concat(task);
     cleanTasks(configuredTasks);
-    await tasksConfig.update("tasks", configuredTasks);
+    await tasksConfig.update("tasks", configuredTasks, ConfigurationTarget.WorkspaceFolder);
     return configuredTasks.length - 1;
   }
 
