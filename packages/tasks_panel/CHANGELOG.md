@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.1.0) (2022-09-14)
+
+### Bug Fixes
+
+- config target fixed due to add and update task flow ([#158](https://github.com/SAP/task-explorer/issues/158)) ([e217f60](https://github.com/SAP/task-explorer/commit/e217f603e83078dcb4fb970646d21a08c1c0443e))
+- loading of task execution image fixed ([#146](https://github.com/SAP/task-explorer/issues/146)) ([2a11a0e](https://github.com/SAP/task-explorer/commit/2a11a0e043c2ac966c1b008e7e1f773ffcf4818b))
+
+### Features
+
+- support to run edit-task command programmatically ([#149](https://github.com/SAP/task-explorer/issues/149)) ([8a6649d](https://github.com/SAP/task-explorer/commit/8a6649db0e87ce66cd127ccacf9b58c8c8a0d626))
+
 ## [4.0.6](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.0.6) (2022-08-31)
 
 ### Bug Fixes
