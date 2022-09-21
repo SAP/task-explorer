@@ -1,4 +1,4 @@
-import { cloneDeep, filter, map } from "lodash";
+import { cloneDeep, each, filter, map, set } from "lodash";
 import { Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IContributors, ITasksEventHandler, ITasksProvider } from "./definitions";
@@ -35,16 +35,16 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
           continue;
         }
 
-        const configuredContributedTasks = filter(configuredTasks, (_) => supportedTypes.includes(_.type));
+        const configuredContributedTasks = cloneDeep(configuredTasks);
+        // indexing all existing tasks, but not supported ones, just to provide consistent behavior
+        // for managing a specific task by index when editing/deleting
+        each(configuredContributedTasks, (task, i) => set(task, "__index", i));
+        const extendedConfiguredTasks = filter(configuredContributedTasks, (_) => supportedTypes.includes(_.type));
 
-        const extendedConfiguredTasks = cloneDeep(configuredContributedTasks);
-        let index = 0;
         for (const task of extendedConfiguredTasks) {
-          task.__index = index;
           task.__wsFolder = wsFolderPath;
           task.__intent = this.taskTypesProvider.getIntentByType(task.type);
           task.__extensionName = this.taskTypesProvider.getExtensionNameByType(task.type);
-          index++;
         }
 
         result = result.concat(extendedConfiguredTasks);
