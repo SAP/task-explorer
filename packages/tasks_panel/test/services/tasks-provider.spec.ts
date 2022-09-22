@@ -70,10 +70,14 @@ describe("the TasksProvider class", () => {
       const taskTypesProvider = new MockTaskTypeProvider();
       const taskProvider = new TasksProvider(taskTypesProvider);
       testVscode.workspace.workspaceFolders = [{ uri: { path: "path" } }];
-      MockVSCodeInfo.configTasks?.set("path", [new MockConfigTask("task1", "type1")]);
+      MockVSCodeInfo.configTasks?.set("path", [
+        new MockConfigTask("task", "unsupported"),
+        new MockConfigTask("task1", "type1"),
+        new MockConfigTask("task", "other"),
+      ]);
       const tasks = await taskProvider.getConfiguredTasks();
       expect(tasks.length).eq(1);
-      expect(tasks[0].__index).eq(0);
+      expect(tasks[0].__index).eq(1);
       expect(tasks[0].__intent).eq("abc");
       expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.workspace.workspaceFolders[0].uri)).to.be
         .true;
