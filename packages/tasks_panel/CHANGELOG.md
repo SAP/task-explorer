@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/SAP/task-explorer/compare/v4.1.0...v4.1.1) (2022-09-22)
+
+### Bug Fixes
+
+- messy task indexing when unsupported types exist ([#162](https://github.com/SAP/task-explorer/issues/162)) ([e650b9c](https://github.com/SAP/task-explorer/commit/e650b9c57b447c8e5c3ee139511d164f13e469a3))
+
 # [4.1.0](https://github.com/SAP/task-explorer/compare/v3.1.0...v4.1.0) (2022-09-14)
 
 ### Bug Fixes
