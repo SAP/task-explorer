@@ -136,9 +136,19 @@ export const testVscode: any = {
     showErrorMessage: async (msg: string): Promise<void> => {
       MockVSCodeInfo.errorMsg = msg;
     },
+    withProgress: (
+      options: {
+        location: number;
+        title: string;
+      },
+      task: (progress: any, token: any) => Promise<any>
+    ) => Promise.resolve(task({}, {})),
   },
   ViewColumn: {
     One: 1,
+  },
+  ProgressLocation: {
+    Notification: 15,
   },
   ExtensionContext: { extensionPath: "path" },
   TreeItem: class {},

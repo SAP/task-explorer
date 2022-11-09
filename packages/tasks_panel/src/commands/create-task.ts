@@ -1,4 +1,4 @@
-import { window } from "vscode";
+import { ProgressLocation, window } from "vscode";
 import { ITasksProvider } from "../services/definitions";
 import { messages } from "../i18n/messages";
 import {
@@ -35,7 +35,14 @@ export async function createTask(
 
   await disposeTaskSelectionPanel();
 
-  return openViewForAutoDetectedTaskSelection(tasksProvider, readResource);
+  // display progress, it might take a while
+  return window.withProgress(
+    {
+      location: ProgressLocation.Notification,
+      title: messages.OPENING_SELECTION_VIEW,
+    },
+    () => openViewForAutoDetectedTaskSelection(tasksProvider, readResource)
+  );
 }
 
 async function openViewForAutoDetectedTaskSelection(
