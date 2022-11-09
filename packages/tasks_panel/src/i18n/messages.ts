@@ -40,4 +40,5 @@ export const messages = {
   SWA_EDIT_TASK_EVENT: (): string => `Edit`,
   SWA_TASK_EXPLORER_PARAM: (): string => `Explorer`,
   SWA_TASK_EDITOR_PARAM: (): string => `Editor`,
+  OPENING_SELECTION_VIEW: `Collecting the tasks...`,
 };
