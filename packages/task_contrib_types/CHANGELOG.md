@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/SAP/task-explorer/compare/v4.1.1...v4.1.2) (2022-11-16)
+
+**Note:** Version bump only for package @sap_oss/task_contrib_types
+
 ## [4.1.1](https://github.com/SAP/task-explorer/compare/v4.1.0...v4.1.1) (2022-09-22)
 
 **Note:** Version bump only for package @sap_oss/task_contrib_types
