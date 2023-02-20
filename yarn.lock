@@ -14418,10 +14418,10 @@ vuetify@2.3.10:
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.3.10.tgz#c8cbc77ee1224b5a132f501a3762dee6d8c95a06"
   integrity sha512-KzL/MhZ7ajubm9kwbdCoA/cRV50RX+a5Hcqiwt7Am1Fni2crDtl2no05UNwKroTfscrYYf07gq3WIFSurPsnCA==
 
-vuetify@^2.2.22:
-  version "2.4.11"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.4.11.tgz#3aba19a32cd89c5dce523260f589cf95d90e2dce"
-  integrity sha512-xFNwr95tFRfbyGNg5DBuUkWaKazMBr+ptzoSSL4PGrI0qItY5Vuusxh+ETPtjUXxwz76v5zVtGvF5rWvGQjy7A==
+vuetify@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.1.5.tgz#6cf56891f2fa7502feec1a7b50bef6aa4bc4623e"
+  integrity sha512-6DJYNuKrbxuL+MThmj+VbtvK9X3mY+s8Rqj1juj4RyeLSIAhE3byZf8Bo2/GxrU5Jv3zR07LZdpiq4wIl0ONzA==
 
 w3c-hr-time@^1.0.1:
   version "1.0.2"
