@@ -139,7 +139,7 @@
         {
           "id": "tasksPanel",
           "name": "",
-          "when": "is-task-explorer-view-visible"
+          "when": "ext.isViewVisible"
         }
       ]
     },
@@ -147,12 +147,19 @@
       "activitybar": [
         {
           "id": "tasks-explorer",
-          "title": "TASK EXPLORER",
+          "title": "Task Explorer",
           "icon": "resources/task_explorer.svg",
-          "when": "is-task-explorer-view-visible"
+          "when": "ext.isViewVisible"
         }
       ]
-    }
+    },
+    "viewsWelcome": [
+      {
+        "view": "tasksPanel",
+        "contents": "There are no tasks available.\nLearn more about the [Task Explorer](https://github.com/SAP/task-explorer/blob/main/README.md)\n[Create a Task](command:tasks-explorer.createTask)",
+        "when": "ext.isNoTasksFound"
+      }
+    ]
   },
   "activationEvents": [
     "*"
@@ -174,7 +181,7 @@
     "@types/lodash": "^4.14.184",
     "@types/sinon": "^10.0.13",
     "@types/vscode": "1.50.0",
-    "@types/ws": "^8.5.3",
+    "@types/ws": "^7.2.3",
     "@vscode-tasks-explorer/vue_frontend_rpc": "^4.1.2",
     "proxyquire": "2.1.3",
     "sinon": "^14.0.0",
