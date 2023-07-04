@@ -4,6 +4,12 @@
       "path": "./packages/task_contrib_types"
     },
     {
+      "path": "./packages/fiori_task_contrib"
+    },
+    {
+      "path": "./packages/vscode_task_contrib"
+    },
+    {
       "path": "./packages/tasks_panel"
     }
   ],
