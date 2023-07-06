@@ -63,7 +63,7 @@ export class Contributors implements IContributors {
 
   public async init(): Promise<void> {
     const allExtensions: readonly Extension<any>[] = extensions.all;
-    let isPanelVisible = false;
+    let editorContributors = 0;
     for (const extension of allExtensions) {
       const currentPackageJSON: any = get(extension, "packageJSON");
       const extensionName: string = get(currentPackageJSON, "name");
@@ -96,11 +96,11 @@ export class Contributors implements IContributors {
             extensionName: extensionName,
             properties: tasksPropertyMessageMap[type],
           });
-          isPanelVisible = true;
+          editorContributors++;
         }
       });
     }
-    commands.executeCommand("setContext", "is-task-explorer-view-visible", isPanelVisible);
+    commands.executeCommand("setContext", "ext.isViewVisible", editorContributors > 0);
     for (const eventHandler of this.eventHandlers) {
       eventHandler.onChange();
     }

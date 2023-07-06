@@ -1,5 +1,5 @@
-import { cloneDeep, each, filter, map, set } from "lodash";
-import { Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
+import { cloneDeep, each, filter, isEmpty, map, set } from "lodash";
+import { commands, Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IContributors, ITasksEventHandler, ITasksProvider } from "./definitions";
 
@@ -51,6 +51,7 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
       }
     }
     configuredTasksCache = result;
+    commands.executeCommand("setContext", "ext.isNoTasksFound", isEmpty(result));
     return result;
   }
 
