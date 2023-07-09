@@ -18,19 +18,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
   extensionPath = context.extensionPath;
   const outputChannel = window.createOutputChannel(TASKS_EXPLORER_ID);
   initializeLogger(context, outputChannel);
-  // const logger = getLogger();
-  // const swa = new SWATracker(
-  //   "SAPSE",
-  //   "vscode-tasks-explorer-tasks-panel",
-  //   // We ignore error code `204` because it appears in every user interaction.
-  //   (err: string | number) => {
-  //     if (err !== 204) {
-  //       logger.error(err.toString());
-  //     }
-  //   }
-  // );
-
-  // initSWA(swa);
 
   const contributors = Contributors.getInstance();
   const tasksProvider = new TasksProvider(contributors);

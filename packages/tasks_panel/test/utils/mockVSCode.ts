@@ -45,7 +45,7 @@ export const testVscode: any = {
     },
     executeCommand: (command: string, ...rest: any[]): any => {
       MockVSCodeInfo.commandCalled = command;
-      if (command === "setContext" && rest[0] === "is-task-explorer-view-visible") {
+      if (command === "setContext" && rest[0] === "ext.isViewVisible") {
         MockVSCodeInfo.visiblePanel = rest[1];
       }
     },
