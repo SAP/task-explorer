@@ -7,13 +7,46 @@
     {
       "type": "extensionHost",
       "request": "launch",
+      "name": "Launch Tasks Panel",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/tasks_panel",
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/fiori_task_contrib"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/packages/tasks_panel/dist/src/**/*.js",
+        "${workspaceRoot}/packages/fiori_task_contrib/dist/src/**/*.js"
+      ]
+    },
+    {
+      "type": "extensionHost",
+      "request": "launch",
+      "name": "Launch Tasks Panel XS deployer",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/tasks_panel",
+        "--extensionDevelopmentPath=/Users/i051950/repos/vsc-xs-tools/vsix-xs-tools",
+        "--extensionDevelopmentPath=/Users/i051950/repos/lcap_deploy_contrib-main/extension"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/packages/tasks_panel/dist/src/**/*.js",
+        "/Users/i051950/repos/vsc-xs-tools/vsix-xs-tools/out/src/**/*.js",
+        "/Users/i051950/repos/lcap_deploy_contrib-main/extension/dist/src/**/*.js"
+      ]
+    },
+    {
+      "type": "extensionHost",
+      "request": "launch",
       "name": "Launch Tasks Panel with Sample Task Contributor",
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/tasks_panel",
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode_task_contrib"
       ],
-      "outFiles": ["${workspaceRoot}/dist/src/**/*.js"]
+      "outFiles": [
+        "${workspaceRoot}/packages/tasks_panel/dist/src/**/*.js",
+        "${workspaceRoot}/packages/vscode_task_contrib/dist/src/**/*.js"
+      ]
     },
     {
       "type": "node",
@@ -54,7 +87,7 @@
         "--inspect-brk",
         "../../node_modules/@vue/cli-service/bin/vue-cli-service.js",
         "test:unit",
-        "./test/**/*.spec.js"
+        "${workspaceFolder}/packages/vue_frontend_rpc/test/**/*.spec.js"
       ],
       "cwd": "${workspaceFolder}/packages/vue_frontend_rpc",
       "console": "integratedTerminal",
