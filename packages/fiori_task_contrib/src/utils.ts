@@ -1,6 +1,3 @@
-import { find, map } from "lodash";
-import { workspace, WorkspaceFolder } from "vscode";
-
 const datauri = require("datauri/sync");
 
 export function getImage(imagePath: string): string {

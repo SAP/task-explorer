@@ -149,7 +149,7 @@ export class TaskEditor {
     const editedTask = { ...this.task };
     delete editedTask.__image;
     if (this.taskEditorContributor !== undefined && isFunction(this.taskEditorContributor.onSave)) {
-      await this.taskEditorContributor.onSave(this.task);
+      await this.taskEditorContributor.onSave(editedTask);
     }
     await this.appEvents.updateTaskInConfiguration(this.wsFolder, editedTask, this.index);
     this.changed = false;

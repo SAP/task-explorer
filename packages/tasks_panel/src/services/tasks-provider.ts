@@ -1,5 +1,5 @@
 import { cloneDeep, compact, each, filter, isEmpty, map, set } from "lodash";
-import { commands, Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
+import { commands, Task, TaskDefinition, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IContributors, ITasksEventHandler, ITasksProvider } from "./definitions";
 
@@ -84,15 +84,13 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
     return instanceOfWorkspaceFolder(task.scope) ? task.scope.uri.path : undefined;
   }
 
-  convertTaskToConfiguredTask(task: Task, supportedTypes: string[]): ConfiguredTask|undefined {
-    const path = TasksProvider.getTaskWorkspaceFolder(task);
-    patchFioriNpmTasks(task, supportedTypes);
-
+  convertTaskToConfiguredTask(task: Task, supportedTypes: string[]): ConfiguredTask | undefined {
     if (supportedTypes.includes(task.definition.type)) {
+      task = patchNpmTasks(task);
       return {
         ...task.definition,
         label: task.name,
-        __wsFolder: path,
+        __wsFolder: TasksProvider.getTaskWorkspaceFolder(task),
         __intent: task.definition.taskType,
         __extensionName: this.taskTypesProvider.getExtensionNameByType(task.definition.type),
       };
@@ -108,11 +106,19 @@ export function getConfiguredTasksFromCache(): ConfiguredTask[] {
   return cloneDeep(configuredTasksCache);
 }
 
-function patchFioriNpmTasks(task: Task, supportedTypes: string[]): Task {
-  if (supportedTypes.includes(task.definition.type)) {
-    if (task.definition.type === "npm" && !task.definition.taskType) {
-      set(task, "definition.taskType", "Miscellaneous");
+function patchNpmTasks(task: Task): Task {
+  const allocateTaskType = (taskDefinition: TaskDefinition): string => {
+    if (/^deploy/i.test(taskDefinition.script)) {
+      return "Deploy";
+    } else if (/^build/i.test(taskDefinition.script)) {
+      return "Build";
+    } else {
+      return "Miscellaneous";
     }
+  };
+
+  if (task.definition.type === "npm" && !task.definition.taskType) {
+    task.definition.taskType = allocateTaskType(task.definition);
   }
   return task;
 }
