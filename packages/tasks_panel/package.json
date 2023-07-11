@@ -57,6 +57,14 @@
       {
         "command": "tasks-explorer.deleteTask",
         "title": "Delete"
+      },
+      {
+        "command": "tasks-explorer.revealTask",
+        "title": "Show in File"
+      },
+      {
+        "command": "tasks-explorer.duplicateTask",
+        "title": "Duplicate"
       }
     ],
     "configuration": {
@@ -103,11 +111,19 @@
           "when": "false"
         },
         {
+          "command": "tasks-explorer.revealTask",
+          "when": "false"
+        },
+        {
           "command": "tasks-explorer.executeTask",
           "when": "false"
         },
         {
           "command": "tasks-explorer.createTask",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.duplicateTask",
           "when": "false"
         }
       ],
@@ -125,6 +141,14 @@
         },
         {
           "command": "tasks-explorer.deleteTask",
+          "when": "viewItem == task"
+        },
+        {
+          "command": "tasks-explorer.revealTask",
+          "when": "viewItem == task"
+        },
+        {
+          "command": "tasks-explorer.duplicateTask",
           "when": "viewItem == task"
         },
         {

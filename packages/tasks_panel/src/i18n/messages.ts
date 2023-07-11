@@ -41,4 +41,7 @@ export const messages = {
   SWA_TASK_EXPLORER_PARAM: (): string => `Explorer`,
   SWA_TASK_EDITOR_PARAM: (): string => `Editor`,
   OPENING_SELECTION_VIEW: `Collecting the tasks...`,
+  delete_task_confirmation: (name: string) => `Are you sure you want to delete '${name}'?`,
+  resource_open_could_not_open_editor: "Could not open editor for required resource",
+  configuration_task_not_found: (label: string) => `Could not find configuration "${label}"`,
 };
