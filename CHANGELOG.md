@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/SAP/task-explorer/compare/v4.1.2...v4.2.0) (2023-07-12)
+
+### Features
+
+- [DEVXBAS-974] Empty state ([#266](https://github.com/SAP/task-explorer/issues/266)) ([1bd24b4](https://github.com/SAP/task-explorer/commit/1bd24b46e818b2864aeb26c3772bb4082422ed52))
+
 ## [4.1.2](https://github.com/SAP/task-explorer/compare/v4.1.1...v4.1.2) (2022-11-16)
 
 **Note:** Version bump only for package vscode-tasks-explorer
