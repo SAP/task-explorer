@@ -156,7 +156,7 @@
     "viewsWelcome": [
       {
         "view": "tasksPanel",
-        "contents": "You have not created a task yet.\nLearn more about the [Task Explorer](https://github.com/SAP/task-explorer/blob/main/README.md).\n[Create Task](command:tasks-explorer.createTask)",
+        "contents": "You have not created a task yet.\nLearn more about the [Task Explorer](https://help.sap.com/docs/bas/sap-business-application-studio/task-explorer?version=Cloud).\n[Create Task](command:tasks-explorer.createTask)",
         "when": "ext.isNoTasksFound"
       }
     ]
