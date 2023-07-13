@@ -91,7 +91,8 @@ export class TasksSelection {
     // hack: allow task definitions to be configured before they are serialized
     const contributor = this.appEvents.getTasksEditorContributor(selectedTask.type);
     if (isFunction(contributor?.onSave)) {
-      await contributor?.onSave(selectedTask);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- confirmed by previous line
+      await contributor!.onSave(selectedTask);
     }
 
     const index = await this.appEvents.addTaskToConfiguration(newTask.__wsFolder, selectedTask);

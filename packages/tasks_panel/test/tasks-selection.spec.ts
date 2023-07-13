@@ -7,6 +7,7 @@ import { MockRpc } from "./utils/mockRpc";
 import { MockAppEvents } from "./utils/mockAppEvents";
 import { disposeTaskEditorPanel } from "../src/panels/panels-handler";
 import { messages } from "../src/i18n/messages";
+import { MockContributorWithOnSave } from "./utils/mockContributor";
 
 const taskContributed1 = {
   label: "Template: task1",
@@ -20,7 +21,7 @@ const taskContributed1 = {
 
 const taskContributed2 = {
   label: "Template: task2",
-  type: "testType",
+  type: "extendedTestType",
   prop1: "value1",
   taskType: "testIntent",
   __intent: "testIntent",
@@ -90,6 +91,23 @@ describe("the TasksSelection class", () => {
       const appEvents = new MockAppEvents();
       const tasksSelection = new TasksSelection(rpc, appEvents, [taskContributed1, taskNotContributed], readFile);
       await tasksSelection["setSelectedTask"](taskContributed1);
+      expect(appEvents.createCalled).to.be.true;
+    });
+
+    it("adds task addition to configuration, contributer with 'onSave'", async () => {
+      const rpc = new MockRpc();
+      const appEvents = new MockAppEvents();
+      const tasksSelection = new TasksSelection(rpc, appEvents, [taskContributed2, taskNotContributed], readFile);
+      await tasksSelection["setSelectedTask"](taskContributed2);
+      expect(MockContributorWithOnSave.onSaveCalled).to.be.true;
+      expect(appEvents.createCalled).to.be.true;
+    });
+
+    it("adds task [not contibuted] addition to configuration", async () => {
+      const rpc = new MockRpc();
+      const appEvents = new MockAppEvents();
+      const tasksSelection = new TasksSelection(rpc, appEvents, [taskContributed2, taskNotContributed], readFile);
+      await tasksSelection["setSelectedTask"](taskNotContributed);
       expect(appEvents.createCalled).to.be.true;
     });
   });
