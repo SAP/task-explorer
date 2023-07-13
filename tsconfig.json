@@ -7,7 +7,7 @@
       "path": "./packages/tasks_panel"
     },
     {
-      "path": "./packages/fiori_task_contrib"
+      "path": "./packages/npm_task_contrib"
     },
     {
       "path": "./packages/vscode_task_contrib"

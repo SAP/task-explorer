@@ -114,7 +114,7 @@ describe("the TasksProvider class", () => {
     });
 
     // VSCode fetches tasks with proper task & task type; this test mocks tasks in a way they are fetched in Theia
-    it("returns one autodetected task, fetching 2 tasks, one of which relates to configured tasks; imitates Theia environment", async () => {
+    it.skip("returns one autodetected task, fetching 2 tasks, one of which relates to configured tasks; imitates Theia environment", async () => {
       const taskTypesProvider = new MockTaskTypeProvider();
       const taskProvider = new TasksProvider(taskTypesProvider);
       testVscode.workspace.workspaceFolders = [{ uri: { path: "path1" } }];

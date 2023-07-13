@@ -1,6 +1,6 @@
 {
-  "name": "fiori-task-contrib",
-  "displayName": "Fiori Task Contributor",
+  "name": "npm-task-contrib",
+  "displayName": "Npm Task Contributor",
   "version": "0.0.1",
   "private": true,
   "categories": [],
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/SAP/task-explorer",
-    "directory": "packages/fiori_task_contrib"
+    "directory": "packages/npm_task_contrib"
   },
   "publisher": "SAPSE",
   "main": "./dist/src/extension",
@@ -71,7 +71,7 @@
     "tasksExplorer": [
       {
         "type": "npm",
-        "intent": "npm-scripts"
+        "intent": "npm"
       }
     ]
   }

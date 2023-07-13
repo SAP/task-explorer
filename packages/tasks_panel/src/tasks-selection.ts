@@ -1,4 +1,4 @@
-import { filter, groupBy, isFunction, map } from "lodash";
+import { filter, groupBy, isFunction, map, sortBy } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 import { AppEvents } from "./app-events";
@@ -60,9 +60,12 @@ export class TasksSelection {
     const tasksGroupedByIntent = groupBy(contributedTasksWithImages, (_) => _.taskType);
 
     // prepare tasks for frontend: array of { intent, tasksByIntent }
-    const tasksFrontend: FrontendTasks[] = map(tasksGroupedByIntent, function (value, key) {
-      return { intent: key, tasksByIntent: value };
-    });
+    const tasksFrontend: FrontendTasks[] = sortBy(
+      map(tasksGroupedByIntent, function (value, key) {
+        return { intent: key, tasksByIntent: value };
+      }),
+      "intent"
+    );
 
     const message = tasksFrontend.length === 0 ? messages.MISSING_AUTO_DETECTED_TASKS() : "";
 
