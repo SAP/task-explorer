@@ -14,11 +14,13 @@
   "main": "./dist/src/extension",
   "scripts": {
     "bundle": "webpack --mode production",
-    "ci": "npm-run-all clean compile bundle package",
+    "ci": "npm-run-all clean compile coverage bundle package",
     "ci:artifacts_only": "npm-run-all clean compile bundle package",
     "clean": "rimraf ./dist *.vsix",
     "compile": "tsc",
-    "package": "node ./scripts/package-vsix.js"
+    "coverage": "nyc mocha",
+    "package": "node ./scripts/package-vsix.js",
+    "test": "mocha"
   },
   "contributes": {
     "taskDefinitions": [

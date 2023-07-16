@@ -1,7 +1,7 @@
 import { ExtensionContext } from "vscode";
 import { ConfiguredTask, TaskEditorContributorExtensionAPI } from "@sap_oss/task_contrib_types";
 import { NPM_TYPE } from "./definitions";
-import { TaskExplorerContributor } from "./npm-task-explorer-contributor";
+import { TaskExplorerContributor } from "./npm-contributor";
 
 export function activate(context: ExtensionContext): TaskEditorContributorExtensionAPI<ConfiguredTask> {
   // extension that contributes to Tasks Explorer has to provide:
