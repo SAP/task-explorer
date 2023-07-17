@@ -23,12 +23,17 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
 
-  commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource));
-  commands.registerCommand("tasks-explorer.deleteTask", deleteTask);
-  commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree);
-  commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource));
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource))
+  );
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.deleteTask", deleteTask));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree));
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource))
+  );
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.tree.refresh", () => tasksTree.onChange()));
 
-  window.registerTreeDataProvider("tasksPanel", tasksTree);
+  context.subscriptions.push(window.registerTreeDataProvider("tasksPanel", tasksTree));
 
   contributors.init();
 }

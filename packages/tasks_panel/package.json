@@ -57,6 +57,11 @@
       {
         "command": "tasks-explorer.deleteTask",
         "title": "Delete"
+      },
+      {
+        "command": "tasks-explorer.tree.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
       }
     ],
     "configuration": {
@@ -109,6 +114,10 @@
         {
           "command": "tasks-explorer.createTask",
           "when": "false"
+        },
+        {
+          "command": "tasks-explorer.tree.refresh",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -116,20 +125,25 @@
           "command": "tasks-explorer.createTask",
           "when": "view == tasksPanel",
           "group": "navigation"
+        },
+        {
+          "command": "tasks-explorer.tree.refresh",
+          "when": "view == tasksPanel",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "tasks-explorer.editTask",
-          "when": "viewItem == task"
+          "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.deleteTask",
-          "when": "viewItem == task"
+          "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.executeTask",
-          "when": "viewItem == task",
+          "when": "viewItem =~ /^task--idle$/",
           "group": "inline"
         }
       ]
