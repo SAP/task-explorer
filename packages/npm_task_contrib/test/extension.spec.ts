@@ -45,7 +45,7 @@ describe("extension", () => {
     it("extension pack contributes taskDefinitions", () => {
       const tasksDefinition = packageJson.contributes.taskDefinitions[0];
       expect(tasksDefinition.type).to.be.equal("npm");
-      expect(tasksDefinition.required).to.be.deep.equal(["label", "path", "script"]);
+      expect(tasksDefinition.required).to.be.deep.equal(["label", "script"]);
       expect(keys(tasksDefinition.properties)).to.be.deep.equal(["label", "path", "script"]);
       expect(tasksDefinition.properties.label).to.be.deep.equal({
         type: "string",

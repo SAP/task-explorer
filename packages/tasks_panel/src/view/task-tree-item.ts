@@ -1,6 +1,5 @@
 import { find } from "lodash";
-import { getLogger } from "../logger/logger-wrapper";
-import { TreeItem, TreeItemCollapsibleState, Command, Task, tasks } from "vscode";
+import { TreeItem, TreeItemCollapsibleState, Command, tasks } from "vscode";
 
 type TaskStatus = "idle" | "running";
 

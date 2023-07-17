@@ -50,6 +50,14 @@ describe("TasksTree class", () => {
       expect(items[0].label).eq("task3");
       expect(items[1].label).eq("task4");
     });
+
+    it("Broken tree structure - intent label missing", async () => {
+      const tasksTree = new TasksTree(new MockTasksProvider(tasks));
+      const rootItems = await tasksTree.getChildren();
+      const item = rootItems[1];
+      delete item.label;
+      expect((await tasksTree.getChildren(item)).length).to.eq(0);
+    });
   });
 
   describe("configuration change event", () => {

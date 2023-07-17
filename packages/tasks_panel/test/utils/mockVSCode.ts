@@ -5,7 +5,19 @@ const Module = require("module");
 const originalRequire = Module.prototype.require;
 
 export class MockConfigTask {
-  constructor(public label: string, public type: string) {}
+  constructor(
+    public label: string,
+    public type: string,
+    public definition?: {
+      script: string;
+      path: string;
+    },
+    public scope?: {
+      uri: {
+        path: string;
+      };
+    }
+  ) {}
 }
 
 export class MockVSCodeInfo {
@@ -28,7 +40,7 @@ export class MockVSCodeInfo {
   public static executionFailed = false;
   public static errorMsg = "";
   public static registeredCommand = new Map();
-  public static treeDataProviderRegistered = false;
+  public static treeDataProvider = new Map();
   public static onDidChangeConfigurationCallback: any;
   public static commandCalled = "";
 }
@@ -121,8 +133,8 @@ export const testVscode: any = {
       return new MockWebViewPanel();
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
-    registerTreeDataProvider<T>(): void {
-      MockVSCodeInfo.treeDataProviderRegistered = true;
+    registerTreeDataProvider<T>(k, v): void {
+      MockVSCodeInfo.treeDataProvider.set(k, v);
     },
     createOutputChannel() {
       return new MockOutputChannel();
@@ -150,7 +162,10 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: { extensionPath: "path" },
+  ExtensionContext: {
+    extensionPath: "path",
+    subscriptions: [],
+  },
   TreeItem: class {},
   EventEmitter: class {
     fire(): void {
@@ -182,6 +197,21 @@ export const testVscode: any = {
       }
       MockVSCodeInfo.taskParam = task;
     },
+    onDidEndTask: (l: (e) => void) => {
+      setTimeout(
+        () =>
+          l({
+            execution: {
+              task: MockVSCodeInfo.taskParam,
+            },
+          }),
+        100
+      );
+      return {
+        dispose: () => true,
+      };
+    },
+    taskExecutions: [],
   },
 };
 
@@ -268,7 +298,7 @@ export function resetTestVSCode(): void {
   MockVSCodeInfo.errorMsg = "";
   MockVSCodeInfo.dialogAnswer = "";
   MockVSCodeInfo.registeredCommand.clear();
-  MockVSCodeInfo.treeDataProviderRegistered = false;
+  MockVSCodeInfo.treeDataProvider.clear();
   MockVSCodeInfo.disposeCallback = undefined;
   MockVSCodeInfo.onDidChangeConfigurationCallback = undefined;
   MockVSCodeInfo.changeViewStateCallback = undefined;

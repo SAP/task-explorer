@@ -163,6 +163,7 @@ export class TaskEditor {
       this.intent,
       this.extensionName,
     ]);
+    // force to propogate `__wsFolder` property in favor of `npm` task
     return this.appEvents.executeTask(merge({ ...this.task }, { __wsFolder: this.wsFolder }));
   }
 
