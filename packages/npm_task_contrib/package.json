@@ -28,7 +28,6 @@
         "type": "npm",
         "required": [
           "label",
-          "path",
           "script"
         ],
         "properties": {
