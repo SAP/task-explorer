@@ -30,7 +30,9 @@ export class TaskExplorerContributor implements TaskEditorContributionAPI<NpmDef
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- future use
   async init(wsFolder: string, task: NpmDefinitionType): Promise<void> {
-    return Promise.resolve();
+    if (!task.path) {
+      this.pathProperty.value = ".";
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- future use
