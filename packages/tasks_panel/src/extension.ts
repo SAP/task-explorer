@@ -11,6 +11,7 @@ import { createTask } from "./commands/create-task";
 import { messages } from "./i18n/messages";
 import { TASKS_EXPLORER_ID } from "./logger/settings";
 import { readResource } from "./utils/resource-reader";
+import { terminateTaskFromTree } from "./commands/terminate-task";
 
 let extensionPath = "";
 
@@ -28,6 +29,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   );
   context.subscriptions.push(commands.registerCommand("tasks-explorer.deleteTask", deleteTask));
   context.subscriptions.push(commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.stopTask", terminateTaskFromTree));
   context.subscriptions.push(
     commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource))
   );

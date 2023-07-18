@@ -62,6 +62,11 @@
         "command": "tasks-explorer.tree.refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "tasks-explorer.stopTask",
+        "title": "Stop",
+        "icon": "$(stop-circle)"
       }
     ],
     "configuration": {
@@ -112,6 +117,10 @@
           "when": "false"
         },
         {
+          "command": "tasks-explorer.stopTask",
+          "when": "false"
+        },
+        {
           "command": "tasks-explorer.createTask",
           "when": "false"
         },
@@ -144,6 +153,11 @@
         {
           "command": "tasks-explorer.executeTask",
           "when": "viewItem =~ /^task--idle$/",
+          "group": "inline"
+        },
+        {
+          "command": "tasks-explorer.stopTask",
+          "when": "viewItem =~ /^task--running$/",
           "group": "inline"
         }
       ]

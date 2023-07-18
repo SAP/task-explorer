@@ -44,3 +44,17 @@ export async function executeVScodeTask(task: any): Promise<void> {
     void window.showErrorMessage(error.message);
   }
 }
+
+export async function terminateVScodeTask(task: any): Promise<void> {
+  try {
+    const execution = find(tasks.taskExecutions, (_) => {
+      return _.task.name === task.label;
+    });
+    if (!execution) {
+      throw new Error(messages.TASK_NOT_FOUND(task.label));
+    }
+    execution.terminate();
+  } catch (e: any) {
+    throw new Error(messages.TERMINATE_FAILURE(serializeTask(task), e.toString()));
+  }
+}
