@@ -5,7 +5,19 @@ const Module = require("module");
 const originalRequire = Module.prototype.require;
 
 export class MockConfigTask {
-  constructor(public label: string, public type: string) {}
+  constructor(
+    public label: string,
+    public type: string,
+    public definition?: {
+      script: string;
+      path: string;
+    },
+    public scope?: {
+      uri: {
+        path: string;
+      };
+    }
+  ) {}
 }
 
 export class MockVSCodeInfo {
@@ -24,6 +36,7 @@ export class MockVSCodeInfo {
   public static dialogCalled = false;
   public static asWebviewUriCalled = false;
   public static taskParam: any = undefined;
+  public static taskProvider = new Map();
   public static fail = false;
   public static executionFailed = false;
   public static errorMsg = "";
@@ -182,6 +195,12 @@ export const testVscode: any = {
       }
       MockVSCodeInfo.taskParam = task;
     },
+    registerTaskProvider: (k, v): void => {
+      MockVSCodeInfo.taskProvider.set(k, v);
+    },
+  },
+  ShellExecution: class {
+    constructor(public script: string, public options?: { cwd?: string }) {}
   },
 };
 
@@ -264,6 +283,7 @@ export function resetTestVSCode(): void {
   MockVSCodeInfo.executeCalled = false;
   MockVSCodeInfo.asWebviewUriCalled = false;
   MockVSCodeInfo.taskParam = undefined;
+  MockVSCodeInfo.taskProvider.clear();
   MockVSCodeInfo.fail = false;
   MockVSCodeInfo.errorMsg = "";
   MockVSCodeInfo.dialogAnswer = "";

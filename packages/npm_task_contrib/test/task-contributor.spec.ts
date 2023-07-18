@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { join } from "path";
 import { NpmDefinitionType } from "../src/definitions";
-import { TaskExplorerContributor } from "../src/npm-contributor";
+import { TaskExplorerContributor } from "../src/task-contributor";
 import { getImage } from "../src/utils";
 import { TaskUserInput } from "@sap_oss/task_contrib_types";
 import { clone } from "lodash";
@@ -21,7 +21,16 @@ describe("TaskExplorerContributor unit test scope", () => {
   });
 
   it("init", async () => {
-    expect(await instance.init("", task)).to.be.undefined;
+    await instance.init("", task);
+    expect(instance["pathProperty"].value).to.be.undefined;
+  });
+
+  it("init, task definition path property is missing", async () => {
+    const cloned = clone(task);
+    delete cloned.path;
+    const other = new TaskExplorerContributor(extensionPath);
+    await other.init("", cloned);
+    expect(other["pathProperty"].value).to.be.equal(".");
   });
 
   it("convertTaskToFormProperties", async () => {

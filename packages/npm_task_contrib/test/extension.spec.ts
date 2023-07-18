@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { mockVscode, resetTestVSCode, testVscode } from "./utils/mockVSCode";
+import { MockVSCodeInfo, mockVscode, resetTestVSCode, testVscode } from "./utils/mockVSCode";
 
 mockVscode("src/extension");
 import { activate } from "../src/extension";
@@ -18,6 +18,7 @@ describe("extension", () => {
       expect(contirbutors.size).to.be.eq(1);
       const npmContributer = contirbutors.get(NPM_TYPE);
       expect(npmContributer).to.be.ok;
+      expect(MockVSCodeInfo.taskProvider.get(NPM_TYPE)).to.be.exist;
     });
   });
 
