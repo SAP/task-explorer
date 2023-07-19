@@ -48,7 +48,7 @@ describe("TaskTreeItem class", () => {
   });
 
   it("TaskTreeItem instance, with command, running", () => {
-    stub(testVscode.tasks, "taskExecutions").value([{ task: { name: label, source: type } }]);
+    stub(testVscode.tasks, "taskExecutions").value([{ task: { name: label, definition: { type } } }]);
     const command = { title: "title", command: "command", arguments: [{ label, type }] };
     const item = new TaskTreeItem(index, type, label, wsFolder, state, command);
     expect(item.contextValue).to.be.equal("task--running");

@@ -28,7 +28,7 @@ export class TaskTreeItem extends TreeItem {
 
 function getTaskStatus(task: any): TaskStatus {
   return find(tasks.taskExecutions, (_) => {
-    return _.task.name === task.label && _.task.source === task.type;
+    return _.task.name === task.label && _.task.definition.type === task.type;
   })
     ? "running"
     : "idle";

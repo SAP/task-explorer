@@ -7,7 +7,6 @@ import { VSCodeEvents } from "../src/vscode-events";
 import { messages } from "../src/i18n/messages";
 import { Contributors } from "../src/services/contributors";
 import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
-import { clone, merge } from "lodash";
 
 const task = {
   label: "task 1",
@@ -55,30 +54,6 @@ describe("the VscodeEvents class", () => {
       MockVSCodeInfo.allTasks[1].name = MockVSCodeInfo.allTasks[1].label;
       mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.refresh").twice().resolves();
       await vscodeEvents.executeTask(task);
-      await new Promise((resolve) => setTimeout(() => resolve(true), 500)); // 0.5 sec delay to get the flow finish asynchronously
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
-      expect(MockVSCodeInfo.taskParam!.label).eq("task 1");
-      expect(MockVSCodeInfo.executeCalled).true;
-    });
-
-    it("not found in list of fetched tasks, corrected by `npm hack` and calls vscode execution task functionality", async () => {
-      const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
-      const npmTask = merge(clone(task), { script: "npm script", path: "path 1" });
-      npmTask.label = "task - run npm srcipt";
-      npmTask.type = "npm";
-      MockVSCodeInfo.allTasks = [
-        new MockConfigTask(
-          "task 1",
-          "npm",
-          { script: npmTask.script, path: npmTask.path },
-          { uri: { path: npmTask.__wsFolder } }
-        ),
-        new MockConfigTask("task 2", "npm"),
-      ];
-      MockVSCodeInfo.allTasks[0].name = MockVSCodeInfo.allTasks[0].label;
-      MockVSCodeInfo.allTasks[1].name = MockVSCodeInfo.allTasks[1].label;
-      mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.refresh").twice().resolves();
-      await vscodeEvents.executeTask(npmTask);
       await new Promise((resolve) => setTimeout(() => resolve(true), 500)); // 0.5 sec delay to get the flow finish asynchronously
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
       expect(MockVSCodeInfo.taskParam!.label).eq("task 1");

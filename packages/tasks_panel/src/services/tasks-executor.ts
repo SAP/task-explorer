@@ -1,31 +1,15 @@
-import { Task, WorkspaceFolder, commands, tasks, window } from "vscode";
+import { commands, tasks, window } from "vscode";
 import { find } from "lodash";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
 import { serializeTask } from "../utils/task-serializer";
 
 export async function executeVScodeTask(task: any): Promise<void> {
-  const findConfiguredNpmTask = (tasks: Task[]): Task | void => {
-    if (task.type === "npm") {
-      return find(tasks, (_) => {
-        return (
-          _.definition.script === task.script &&
-          _.definition.path === task.path &&
-          (_.scope instanceof Object ? (_.scope as WorkspaceFolder).uri.path === task.__wsFolder : false)
-        );
-      });
-    }
-  };
   const allTasks = await tasks.fetchTasks({ type: task.type });
-
-  const taskForExecution = find(allTasks, ["name", task.label]) || findConfiguredNpmTask(allTasks);
+  const taskForExecution = find(allTasks, ["name", task.label]);
 
   try {
     if (taskForExecution !== undefined) {
-      if (taskForExecution.name !== task.label) {
-        // implementation hack to support `npm` tasks
-        taskForExecution.name = task.label;
-      }
       const listener = tasks.onDidEndTask((e) => {
         if (e.execution.task.name === taskForExecution.name) {
           // update the tree items context value [running -> idle]
