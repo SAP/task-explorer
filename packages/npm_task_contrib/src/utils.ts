@@ -5,7 +5,6 @@ export function getImage(imagePath: string): string {
   try {
     image = datauri(imagePath);
   } catch (error) {
-    // image = DEFAULT_IMAGE;
   }
   return image;
 }
