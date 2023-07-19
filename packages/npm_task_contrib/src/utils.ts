@@ -5,6 +5,7 @@ export function getImage(imagePath: string): string {
   try {
     image = datauri(imagePath);
   } catch (error) {
+    // TODO log the error
   }
   return image;
 }

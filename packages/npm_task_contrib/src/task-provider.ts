@@ -21,6 +21,8 @@ export class NpmTaskProvider implements TaskProvider {
   }
 
   private resolveCwd(task: Task): string | undefined {
+    // attempt to resolve a cwd, where task will run, by the next strategy:
+    // try take it from task.scope if it declared, else attempt to get a workspace root (or first root)
     let resolved: string | undefined;
     if (task.scope instanceof Object) {
       resolved = (task.scope as WorkspaceFolder).uri.path;
