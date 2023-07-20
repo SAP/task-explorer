@@ -1,5 +1,14 @@
-import { TreeItem, TreeItemCollapsibleState, Command } from "vscode";
+import { find } from "lodash";
+import { TreeItem, TreeItemCollapsibleState, Command, tasks } from "vscode";
 
+type TaskStatus = "idle" | "running";
+
+export class IntentTreeItem extends TreeItem {
+  constructor(public label: string, public collapsibleState: TreeItemCollapsibleState) {
+    super(label, collapsibleState);
+    this.contextValue = "intent";
+  }
+}
 export class TaskTreeItem extends TreeItem {
   constructor(
     public index: number,
@@ -10,8 +19,17 @@ export class TaskTreeItem extends TreeItem {
     public command?: Command
   ) {
     super(label, collapsibleState);
-    if (command !== undefined) {
-      this.contextValue = "task";
+    const task = this.command?.arguments?.[0];
+    if (task) {
+      this.contextValue = `task--${getTaskStatus(task)}`;
     }
   }
+}
+
+function getTaskStatus(task: any): TaskStatus {
+  return find(tasks.taskExecutions, (_) => {
+    return _.task.name === task.label && _.task.definition.type === task.type;
+  })
+    ? "running"
+    : "idle";
 }

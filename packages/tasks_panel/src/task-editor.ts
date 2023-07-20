@@ -1,5 +1,5 @@
 import * as path from "path";
-import { filter, find, get, has, isEmpty, isFunction, isUndefined, map, pick } from "lodash";
+import { filter, find, get, has, isEmpty, isFunction, isUndefined, map, merge, pick } from "lodash";
 import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 import { ConfiguredTask, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "./app-events";
@@ -149,7 +149,7 @@ export class TaskEditor {
     const editedTask = { ...this.task };
     delete editedTask.__image;
     if (this.taskEditorContributor !== undefined && isFunction(this.taskEditorContributor.onSave)) {
-      await this.taskEditorContributor.onSave(this.task);
+      await this.taskEditorContributor.onSave(editedTask);
     }
     await this.appEvents.updateTaskInConfiguration(this.wsFolder, editedTask, this.index);
     this.changed = false;
@@ -163,7 +163,8 @@ export class TaskEditor {
       this.intent,
       this.extensionName,
     ]);
-    return this.appEvents.executeTask(this.task);
+    // force to propogate `__wsFolder` property in favor of `npm` task
+    return this.appEvents.executeTask(merge({ ...this.task }, { __wsFolder: this.wsFolder }));
   }
 
   private async setAnswers(state: any): Promise<void> {

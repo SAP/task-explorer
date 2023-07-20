@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { createSandbox, SinonSandbox, SinonSpy } from "sinon";
+import { createSandbox, SinonMock, SinonSandbox, SinonSpy } from "sinon";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/vscode-events");
@@ -37,12 +37,24 @@ describe("the VscodeEvents class", () => {
   });
 
   describe("executeTask method", () => {
+    let mockCommands: SinonMock;
+
+    beforeEach(() => {
+      mockCommands = sandbox.mock(testVscode.commands);
+    });
+
+    afterEach(() => {
+      mockCommands.verify();
+    });
+
     it("selects the task from the list of fetched tasks and calls vscode execution task functionality", async () => {
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
       MockVSCodeInfo.allTasks = [new MockConfigTask("task 1", "test"), new MockConfigTask("task 2", "test")];
       MockVSCodeInfo.allTasks[0].name = MockVSCodeInfo.allTasks[0].label;
       MockVSCodeInfo.allTasks[1].name = MockVSCodeInfo.allTasks[1].label;
+      mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.refresh").twice().resolves();
       await vscodeEvents.executeTask(task);
+      await new Promise((resolve) => setTimeout(() => resolve(true), 500)); // 0.5 sec delay to get the flow finish asynchronously
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
       expect(MockVSCodeInfo.taskParam!.label).eq("task 1");
       expect(MockVSCodeInfo.executeCalled).true;

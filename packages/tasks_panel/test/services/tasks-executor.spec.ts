@@ -1,7 +1,11 @@
 import { expect } from "chai";
-import { mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
+import { fail } from "assert";
+import { mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 mockVscode("src/services/tasks-executor");
-import { executeVScodeTask } from "../../src/services/tasks-executor";
+import { executeVScodeTask, terminateVScodeTask } from "../../src/services/tasks-executor";
+import { stub } from "sinon";
+import { messages } from "../../src/i18n/messages";
+import { serializeTask } from "../../src/utils/task-serializer";
 
 describe("tasks executor - executeVScodeTask", () => {
   afterEach(() => {
@@ -31,5 +35,57 @@ describe("tasks executor - executeVScodeTask", () => {
     await executeVScodeTask(myTask);
     expect(MockVSCodeInfo.executeCalled).true;
     expect(MockVSCodeInfo.errorMsg).eq("test");
+  });
+});
+
+describe("tasks executor - terminateVScodeTask", () => {
+  afterEach(() => {
+    resetTestVSCode();
+  });
+
+  it("executed task found -> terminateVScodeTask is called", async () => {
+    const myTask = { label: "label" };
+    let state = "running";
+    const execution = {
+      task: { name: "label" },
+      terminate: () => {
+        state = "stop";
+      },
+    };
+    stub(testVscode.tasks, "taskExecutions").value([execution]);
+    await terminateVScodeTask(myTask);
+    expect(state).to.be.equal("stop");
+  });
+
+  it("executed task not found", async () => {
+    const task: any = { label: "label" };
+    stub(testVscode.tasks, "taskExecutions").value([{ task: { name: "name" } }]);
+    try {
+      await terminateVScodeTask(task);
+      fail("should fail");
+    } catch (e: any) {
+      expect(e.message).to.be.equal(
+        messages.TERMINATE_FAILURE(serializeTask(task), new Error(messages.TASK_NOT_FOUND(task.label)).toString())
+      );
+    }
+  });
+
+  it("executed task found - termination failed", async () => {
+    const task: any = { label: "label" };
+    const error = new Error("runtime error");
+    stub(testVscode.tasks, "taskExecutions").value([
+      {
+        task: { name: "label" },
+        terminate: () => {
+          throw error;
+        },
+      },
+    ]);
+    try {
+      await terminateVScodeTask(task);
+      fail("should fail");
+    } catch (e: any) {
+      expect(e.message).to.be.equal(messages.TERMINATE_FAILURE(serializeTask(task), error.toString()));
+    }
   });
 });
