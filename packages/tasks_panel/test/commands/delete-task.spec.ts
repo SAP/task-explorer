@@ -7,7 +7,7 @@ import { MockTasksProvider } from "../utils/mockTasksProvider";
 mockVscode("../../src/panels/task-editor-panel");
 import { deleteTask } from "../../src/commands/delete-task";
 import { editTreeItemTask } from "../../src/commands/edit-task";
-import { TaskTreeItem } from "../../src/view/task-tree-item";
+import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";
 
@@ -42,6 +42,8 @@ describe("Command deleteTask", () => {
     sandbox.restore();
   });
 
+  const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
+
   it("task already opened for editing, task panel will be disposed and task deleted", async () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
     const task1: ConfiguredTask = {
@@ -56,7 +58,7 @@ describe("Command deleteTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await editTreeItemTask(new MockTasksProvider(tasks), readFile, item1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
@@ -80,7 +82,7 @@ describe("Command deleteTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await deleteTask(item1);
     expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
@@ -103,7 +105,7 @@ describe("Command deleteTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await deleteTask(item1);
     expect(MockVSCodeInfo.updateCalled).be.undefined;
@@ -124,7 +126,7 @@ describe("Command deleteTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(2, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(2, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await deleteTask(item1);
     expect(MockVSCodeInfo.updateCalled).be.undefined;
@@ -138,7 +140,7 @@ describe("Command deleteTask", () => {
       command: "tasks-explorer.editTask",
       arguments: undefined,
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await deleteTask(item1);
     expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.not.empty;
@@ -147,7 +149,7 @@ describe("Command deleteTask", () => {
 
   it("item does not contain command", async () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem);
 
     await deleteTask(item1);
     expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.not.empty;

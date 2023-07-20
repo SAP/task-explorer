@@ -7,3 +7,15 @@ export function cleanTasks(tasks: ConfiguredTask[]): void {
     delete _.index;
   });
 }
+
+export const DEPLOY = "Deploy";
+export const BUILD = "Build";
+export const MISC = "Miscellaneous";
+
+export function isMatchDeploy(intent: string): boolean {
+  return /^deploy.*$/gi.test(intent);
+}
+
+export function isMatchBuild(intent: string): boolean {
+  return /^build.*$/gi.test(intent);
+}

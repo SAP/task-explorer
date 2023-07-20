@@ -1,27 +1,47 @@
 import { find } from "lodash";
-import { TreeItem, TreeItemCollapsibleState, Command, tasks } from "vscode";
+import { TreeItem, TreeItemCollapsibleState, Command, tasks, ThemeIcon } from "vscode";
+import { isMatchBuild, isMatchDeploy } from "../../src/utils/ws-folder";
 
 type TaskStatus = "idle" | "running";
 
-export class IntentTreeItem extends TreeItem {
-  constructor(public label: string, public collapsibleState: TreeItemCollapsibleState) {
+class BranchTreeItem extends TreeItem {
+  constructor(
+    label: string,
+    collapsibleState: TreeItemCollapsibleState,
+    context: string,
+    public readonly parent?: TreeItem
+  ) {
     super(label, collapsibleState);
-    this.contextValue = "intent";
+    this.contextValue = context;
   }
 }
+export class ProjectTreeItem extends BranchTreeItem {
+  constructor(label: string, public fqn: string, collapsibleState: TreeItemCollapsibleState) {
+    super(label, collapsibleState, "branch");
+  }
+}
+export class IntentTreeItem extends BranchTreeItem {
+  constructor(label: string, collapsibleState: TreeItemCollapsibleState, parent?: TreeItem) {
+    super(label, collapsibleState, "intent", parent);
+  }
+}
+
 export class TaskTreeItem extends TreeItem {
   constructor(
     public index: number,
     public type: string,
-    public label: string,
+    label: string,
     public wsFolder: string,
-    public collapsibleState: TreeItemCollapsibleState,
-    public command?: Command
+    collapsibleState: TreeItemCollapsibleState,
+    public readonly parent: TreeItem,
+    command?: Command
   ) {
     super(label, collapsibleState);
+    this.command = command;
     const task = this.command?.arguments?.[0];
     if (task) {
       this.contextValue = `task--${getTaskStatus(task)}`;
+      this.iconPath = getIcon(task.__intent);
     }
   }
 }
@@ -32,4 +52,15 @@ function getTaskStatus(task: any): TaskStatus {
   })
     ? "running"
     : "idle";
+}
+
+function getIcon(intent: string): ThemeIcon {
+  if (isMatchDeploy(intent)) {
+    return new ThemeIcon("rocket");
+  } else if (isMatchBuild(intent)) {
+    return new ThemeIcon("package");
+  } else {
+    // misc
+    return new ThemeIcon("inspect");
+  }
 }
