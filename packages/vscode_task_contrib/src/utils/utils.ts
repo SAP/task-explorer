@@ -6,7 +6,7 @@ const datauri = require("datauri/sync");
 export function getImage(imagePath: string): string {
   let image;
   try {
-    image = datauri(imagePath);
+    image = datauri(imagePath).content;
   } catch (error) {
     // image = DEFAULT_IMAGE;
   }
