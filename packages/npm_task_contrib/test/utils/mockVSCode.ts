@@ -36,11 +36,12 @@ export class MockVSCodeInfo {
   public static dialogCalled = false;
   public static asWebviewUriCalled = false;
   public static taskParam: any = undefined;
+  public static taskProvider = new Map();
   public static fail = false;
   public static executionFailed = false;
   public static errorMsg = "";
   public static registeredCommand = new Map();
-  public static treeDataProvider = new Map();
+  public static treeDataProviderRegistered = false;
   public static onDidChangeConfigurationCallback: any;
   public static commandCalled = "";
 }
@@ -72,9 +73,6 @@ export const testVscode: any = {
       }
       return { path: args[0] };
     },
-    joinPath(root: any, ...args: string[]): any {
-      return { path: join(root.path, ...args) };
-    },
   },
   workspace: {
     workspaceFolders: undefined,
@@ -98,12 +96,6 @@ export const testVscode: any = {
     },
   },
 
-  Selection: class {
-    constructor(public readonly anchor: any, public readonly active: any) {}
-  },
-  Range: class {
-    constructor(public readonly start: any, public readonly end: any) {}
-  },
   ConfigurationTarget: {
     WorkspaceFolder: 3,
   },
@@ -142,8 +134,8 @@ export const testVscode: any = {
       return new MockWebViewPanel();
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
-    registerTreeDataProvider<T>(k, v): void {
-      MockVSCodeInfo.treeDataProvider.set(k, v);
+    registerTreeDataProvider<T>(): void {
+      MockVSCodeInfo.treeDataProviderRegistered = true;
     },
     createOutputChannel() {
       return new MockOutputChannel();
@@ -156,9 +148,6 @@ export const testVscode: any = {
     },
     showErrorMessage: async (msg: string): Promise<void> => {
       MockVSCodeInfo.errorMsg = msg;
-    },
-    showTextDocument: async () => {
-      throw new Error("not implemented");
     },
     withProgress: (
       options: {
@@ -174,10 +163,7 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: {
-    extensionPath: "path",
-    subscriptions: [],
-  },
+  ExtensionContext: { extensionPath: "path" },
   TreeItem: class {},
   EventEmitter: class {
     fire(): void {
@@ -209,21 +195,12 @@ export const testVscode: any = {
       }
       MockVSCodeInfo.taskParam = task;
     },
-    onDidEndTask: (l: (e) => void) => {
-      setTimeout(
-        () =>
-          l({
-            execution: {
-              task: MockVSCodeInfo.taskParam,
-            },
-          }),
-        100
-      );
-      return {
-        dispose: () => true,
-      };
+    registerTaskProvider: (k, v): void => {
+      MockVSCodeInfo.taskProvider.set(k, v);
     },
-    taskExecutions: [],
+  },
+  ShellExecution: class {
+    constructor(public script: string, public options?: { cwd?: string }) {}
   },
 };
 
@@ -306,11 +283,12 @@ export function resetTestVSCode(): void {
   MockVSCodeInfo.executeCalled = false;
   MockVSCodeInfo.asWebviewUriCalled = false;
   MockVSCodeInfo.taskParam = undefined;
+  MockVSCodeInfo.taskProvider.clear();
   MockVSCodeInfo.fail = false;
   MockVSCodeInfo.errorMsg = "";
   MockVSCodeInfo.dialogAnswer = "";
   MockVSCodeInfo.registeredCommand.clear();
-  MockVSCodeInfo.treeDataProvider.clear();
+  MockVSCodeInfo.treeDataProviderRegistered = false;
   MockVSCodeInfo.disposeCallback = undefined;
   MockVSCodeInfo.onDidChangeConfigurationCallback = undefined;
   MockVSCodeInfo.changeViewStateCallback = undefined;

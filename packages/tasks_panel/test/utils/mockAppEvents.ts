@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "../../src/app-events";
 import { MockContributor, MockContributorWithOnSave } from "./mockContributor";
+import { keys, without } from "lodash";
 
 export class MockAppEvents implements AppEvents {
   public saveCalled = false;
@@ -43,9 +44,9 @@ export class MockAppEvents implements AppEvents {
 
 function expectTaskHasNoTechnicalFields(task: ConfiguredTask | undefined) {
   expect(task).exist;
+  // in favor of `npm` task support force to propogate "__wsFolder" property
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: test scope
-  const keys = Object.keys(task!);
-  for (const key of keys) {
+  for (const key of without(keys(task!), "__wsFolder")) {
     expect(key).not.contains("__");
   }
 }

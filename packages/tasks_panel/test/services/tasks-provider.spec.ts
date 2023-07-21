@@ -8,6 +8,7 @@ import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode
 mockVscode("src/services/tasks-provider");
 import { TasksProvider } from "../../src/services/tasks-provider";
 import { IContributors, ITasksEventHandler, ITaskTypeEventHandler } from "../../src/services/definitions";
+import { find } from "lodash";
 
 describe("the TasksProvider class", () => {
   let sandbox: SinonSandbox;
@@ -127,7 +128,25 @@ describe("the TasksProvider class", () => {
         new testVscode.Task({ label: "task2", type: "type1", taskType: "taskType" }, "Workspace"),
       ];
       const tasks = await taskProvider.getAutoDectedTasks();
-      expect(tasks.length).eq(1);
+      expect(tasks).to.be.empty;
+    });
+
+    it("returns autodetected tasks, fetching 3 'npm' tasks with npmPatchTasks() applied", async () => {
+      const taskTypesProvider = new MockTaskTypeProvider();
+      taskTypesProvider.getSupportedTypes = () => ["npm"];
+      const taskProvider = new TasksProvider(taskTypesProvider);
+      testVscode.workspace.workspaceFolders = [{ uri: { path: "path1" } }];
+      MockVSCodeInfo.allTasks = [
+        new testVscode.Task({ label: "task1", type: "npm", script: "build-test" }),
+        new testVscode.Task({ label: "task1", type: "npm", script: "depLoy" }),
+        new testVscode.Task({ label: "task1", type: "npm", script: "install" }),
+        new testVscode.Task({ label: "task2", type: "type1", taskType: "taskType" }, "Workspace"),
+      ];
+      const tasks = await taskProvider.getAutoDectedTasks();
+      expect(tasks.length).eq(3);
+      expect(find(tasks, ["script", "build-test"])?.taskType).to.be.equal("Build");
+      expect(find(tasks, ["script", "depLoy"])?.taskType).to.be.equal("Deploy");
+      expect(find(tasks, ["script", "install"])?.taskType).to.be.equal("Miscellaneous");
     });
   });
 });

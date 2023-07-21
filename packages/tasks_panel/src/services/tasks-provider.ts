@@ -1,5 +1,5 @@
-import { cloneDeep, each, filter, isEmpty, map, set } from "lodash";
-import { commands, Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
+import { cloneDeep, compact, each, filter, isEmpty, map, set } from "lodash";
+import { commands, Task, TaskDefinition, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IContributors, ITasksEventHandler, ITasksProvider } from "./definitions";
 
@@ -62,7 +62,7 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
 
     const allContributedTasks: Task[] = filter(allTasks, (_) => this.isTaskAutodetected(_, supportedTypes));
 
-    return map(allContributedTasks, (_) => this.convertTaskToConfiguredTask(_, supportedTypes));
+    return compact(map(allContributedTasks, (_) => this.convertTaskToConfiguredTask(_, supportedTypes)));
   }
 
   isTaskAutodetected(task: Task, supportedTypes: string[]): boolean {
@@ -84,28 +84,13 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
     return instanceOfWorkspaceFolder(task.scope) ? task.scope.uri.path : undefined;
   }
 
-  convertTaskToConfiguredTask(task: Task, supportedTypes: string[]): ConfiguredTask {
-    const path = TasksProvider.getTaskWorkspaceFolder(task);
-
-    if (!supportedTypes.includes(task.definition.type) && supportedTypes.includes(task.definition.taskType)) {
-      // we are in Theia
-      delete task.definition.id;
-      delete task.definition.presentation;
-      const intent = this.taskTypesProvider.getIntentByType(task.definition.taskType);
-      return {
-        label: task.name,
-        ...task.definition,
-        type: task.definition.taskType,
-        taskType: intent,
-        __wsFolder: path,
-        __intent: intent,
-        __extensionName: this.taskTypesProvider.getExtensionNameByType(task.definition.taskType),
-      };
-    } else {
+  convertTaskToConfiguredTask(task: Task, supportedTypes: string[]): ConfiguredTask | undefined {
+    if (supportedTypes.includes(task.definition.type)) {
+      task = patchNpmTasks(task);
       return {
         ...task.definition,
         label: task.name,
-        __wsFolder: path,
+        __wsFolder: TasksProvider.getTaskWorkspaceFolder(task),
         __intent: task.definition.taskType,
         __extensionName: this.taskTypesProvider.getExtensionNameByType(task.definition.type),
       };
@@ -119,4 +104,21 @@ function instanceOfWorkspaceFolder(object: undefined | TaskScope | WorkspaceFold
 
 export function getConfiguredTasksFromCache(): ConfiguredTask[] {
   return cloneDeep(configuredTasksCache);
+}
+
+function patchNpmTasks(task: Task): Task {
+  const allocateTaskType = (taskDefinition: TaskDefinition): string => {
+    if (/^deploy/i.test(taskDefinition.script)) {
+      return "Deploy";
+    } else if (/^build/i.test(taskDefinition.script)) {
+      return "Build";
+    } else {
+      return "Miscellaneous";
+    }
+  };
+
+  if (task.definition.type === "npm" && !task.definition.taskType) {
+    task.definition.taskType = allocateTaskType(task.definition);
+  }
+  return task;
 }

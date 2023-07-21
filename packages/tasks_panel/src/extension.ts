@@ -13,6 +13,7 @@ import { TASKS_EXPLORER_ID } from "./logger/settings";
 import { readResource } from "./utils/resource-reader";
 import { revealTask } from "./commands/reveal-task";
 import { duplicateTask } from "./commands/duplicate-task";
+import { terminateTaskFromTree } from "./commands/terminate-task";
 
 let extensionPath = "";
 
@@ -25,14 +26,20 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
 
-  commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource));
-  commands.registerCommand("tasks-explorer.deleteTask", deleteTask);
-  commands.registerCommand("tasks-explorer.revealTask", revealTask);
-  commands.registerCommand("tasks-explorer.duplicateTask", duplicateTask);
-  commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree);
-  commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource));
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource))
+  );
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.deleteTask", deleteTask));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.revealTask", revealTask));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.duplicateTask", duplicateTask));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.stopTask", terminateTaskFromTree));
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource))
+  );
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.tree.refresh", () => tasksTree.onChange()));
 
-  window.registerTreeDataProvider("tasksPanel", tasksTree);
+  context.subscriptions.push(window.registerTreeDataProvider("tasksPanel", tasksTree));
 
   contributors.init();
 }
