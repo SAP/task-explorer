@@ -4,7 +4,7 @@ import { getLogger } from "../logger/logger-wrapper";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { cleanTasks } from "../utils/ws-folder";
-import { clone, filter, find, map } from "lodash";
+import { cloneDeep, filter, find, map } from "lodash";
 
 export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
   try {
@@ -24,7 +24,7 @@ export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
       while (labels.includes(copyName)) {
         copyName = `copy of ${copyName}`;
       }
-      const copyTask = clone(found);
+      const copyTask = cloneDeep(found);
       copyTask.label = copyName;
       tasks.push(copyTask);
       await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);

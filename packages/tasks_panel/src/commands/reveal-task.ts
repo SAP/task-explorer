@@ -20,7 +20,7 @@ export async function revealTask(treeItem: TaskTreeItem): Promise<void> {
     const resource = Uri.joinPath(Uri.file(task.__wsFolder), ".vscode", "tasks.json");
     const docEditor = await window.showTextDocument(resource, { preview: false });
     if (docEditor) {
-      const regEx = new RegExp(`"${task.label}"`, "g");
+      const regEx = new RegExp(`"${task.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`, "g");
       const found = regEx.exec(docEditor.document.getText());
       if (found) {
         const startIndex = found.index + 1; /* skip \" character */
