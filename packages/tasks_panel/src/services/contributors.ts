@@ -1,5 +1,5 @@
 import { commands, Extension, extensions } from "vscode";
-import { get, keys, map, uniq, zipObject } from "lodash";
+import { each, get, keys, map, set, uniq, zipObject } from "lodash";
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
@@ -47,13 +47,13 @@ export class Contributors implements IContributors {
     return this.tasksEditorContributorsMap.get(type)?.provider;
   }
 
-  private async getApi(extension: Extension<any>, extensionId: string) {
+  private async getApi(extension: Extension<any>, extensionId: string): Promise<any> {
     let api: any;
     if (!extension.isActive) {
       try {
         api = await extension.activate();
-      } catch (error) {
-        getLogger().error(messages.ACTIVATE_CONTRIB_EXT_ERROR(extensionId));
+      } catch (error: any) {
+        throw new Error(`${messages.ACTIVATE_CONTRIB_EXT_ERROR(extensionId)}:${error.toString()}`);
       }
     } else {
       api = extension.exports;
@@ -62,67 +62,70 @@ export class Contributors implements IContributors {
   }
 
   public async init(): Promise<void> {
-    const allExtensions: readonly Extension<any>[] = extensions.all;
-    let editorContributors = 0;
-    for (const extension of allExtensions) {
-      const currentPackageJSON: any = get(extension, "packageJSON");
-      const extensionName: string = get(currentPackageJSON, "name");
-      const extensionPublisher: string = get(currentPackageJSON, "publisher");
-      const extensionId = `${extensionPublisher}.${extensionName}`;
-      const contributedTypes = this.getTypesInfo(currentPackageJSON);
-      if (contributedTypes.size === 0) {
-        continue;
-      }
-      const api = await this.getApi(extension, extensionId);
-      if (api === undefined || typeof api.getTaskEditorContributors !== "function") {
-        continue;
-      }
-
-      const tasksPropertyMessageMap = this.getTasksPropertyMessageMap(currentPackageJSON);
-
-      const taskProviders = api.getTaskEditorContributors();
-      taskProviders.forEach((provider: any, type: string) => {
-        const typeInfo = contributedTypes.get(type);
-        if (typeInfo === undefined) {
-          getLogger().error(messages.MISSING_TYPE(type));
-          return;
-        }
-        if (this.tasksEditorContributorsMap.has(type)) {
-          getLogger().error(messages.DUPLICATED_TYPE(type));
-        } else {
-          this.tasksEditorContributorsMap.set(type, {
-            provider: provider,
-            intent: typeInfo["intent"],
-            extensionName: extensionName,
-            properties: tasksPropertyMessageMap[type],
-          });
-          editorContributors++;
-        }
+    // performance: attempt to scan the extensions simultaneously (but not one by one)
+    return Promise.all(
+      map(extensions.all, (extension) => {
+        return Promise.resolve().then(() => {
+          const currentPackageJSON: any = get(extension, "packageJSON");
+          const contributedTypes = this.getTypesInfo(currentPackageJSON);
+          if (contributedTypes && contributedTypes.size > 0) {
+            const extensionName: string = get(currentPackageJSON, "name");
+            return this.getApi(extension, `${get(currentPackageJSON, "publisher")}.${extensionName}`).then((api) => {
+              if (typeof api?.getTaskEditorContributors === "function") {
+                const tasksPropertyMessageMap = this.getTasksPropertyMessageMap(currentPackageJSON);
+                api.getTaskEditorContributors().forEach((provider: any, type: string) => {
+                  const typeInfo = contributedTypes.get(type);
+                  if (typeInfo) {
+                    if (!this.tasksEditorContributorsMap.has(type)) {
+                      this.tasksEditorContributorsMap.set(type, {
+                        provider: provider,
+                        intent: typeInfo["intent"],
+                        extensionName: extensionName,
+                        properties: tasksPropertyMessageMap[type],
+                      });
+                    } else {
+                      throw new Error(messages.DUPLICATED_TYPE(type));
+                    }
+                  } else {
+                    throw new Error(messages.MISSING_TYPE(type));
+                  }
+                });
+              }
+            });
+          }
+        });
+      })
+    )
+      .then(() => {
+        setTimeout(() => {
+          for (const eventHandler of this.eventHandlers) {
+            eventHandler.onChange();
+          }
+        });
+      })
+      .catch((e) => {
+        getLogger().error(e.toString());
+      })
+      .finally(() => {
+        void commands.executeCommand("setContext", "ext.isViewVisible", this.tasksEditorContributorsMap.size > 0);
       });
-    }
-    commands.executeCommand("setContext", "ext.isViewVisible", editorContributors > 0);
-    for (const eventHandler of this.eventHandlers) {
-      eventHandler.onChange();
-    }
   }
 
   private getTasksPropertyMessageMap(packageJSON: any): Record<string, Record<string, string>> {
-    const contributions = get(packageJSON, "contributes");
-    const tasksDefinitions = get(contributions, "taskDefinitions");
-
-    const tasksTypes = map(tasksDefinitions, (_) => _.type);
-    const tasksProperties = map(tasksDefinitions, (taskDefinition) => {
+    const tasksProperties = {};
+    each(packageJSON.contributes.taskDefinitions, (taskDefinition) => {
       const propertiesNames: string[] = keys(taskDefinition.properties);
       const propertiesDescriptions: string[] = map(propertiesNames, (_) => taskDefinition.properties[_].description);
-      return zipObject(propertiesNames, propertiesDescriptions);
+      set(tasksProperties, taskDefinition.type, zipObject(propertiesNames, propertiesDescriptions));
     });
-    return zipObject(tasksTypes, tasksProperties);
+    return tasksProperties;
   }
 
-  private getTypesInfo(packageJSON: Record<string, any>): Map<string, any> {
-    const info = new Map();
+  private getTypesInfo(packageJSON: Record<string, any>): Map<string, any> | undefined {
+    let info: Map<string, any> | undefined;
     const tasksExplorerContribution = packageJSON.BASContributes?.tasksExplorer;
-    if (tasksExplorerContribution !== undefined) {
+    if (tasksExplorerContribution) {
+      info = new Map();
       for (const typeInfo of tasksExplorerContribution) {
         info.set(typeInfo["type"], typeInfo);
       }

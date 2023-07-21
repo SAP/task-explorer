@@ -130,6 +130,10 @@ describe("Contributors", () => {
       const eventHandler = new MockTaskTypeEventHandler();
       contributor.registerEventHandler(eventHandler);
       await contributor.init();
+      // wait to complete initialization async (*.onChange events triggers)
+      await new Promise((resolve) => {
+        setTimeout(() => resolve(true), 100);
+      });
       expect(eventHandler.onChangeCalled).to.be.true;
       expect(MockVSCodeInfo.visiblePanel).to.be.true;
       const supportedIntents = contributor.getSupportedIntents();
@@ -144,6 +148,70 @@ describe("Contributors", () => {
       const supportedTypes = contributor.getSupportedTypes();
       expect(supportedTypes.length).to.eq(1);
       expect(supportedTypes[0]).to.eq("test-deploy");
+    });
+
+    it("inactive extension exists but its api not comply to the expected interface", async () => {
+      testVscode.extensions.all = [
+        {
+          packageJSON: {
+            id: "test",
+            name: "test",
+
+            BASContributes: {
+              tasksExplorer: [
+                {
+                  type: "test-deploy",
+                  intent: "Deploy",
+                },
+              ],
+            },
+            contributes: tasksDefinition,
+          },
+          isActive: false,
+          getApi: MockApi,
+          activate: (): any => {
+            return { getTaskEditorContributors: true };
+          },
+          extensionPath: "path",
+        },
+      ];
+      const contributor = Contributors.getInstance();
+      const eventHandler = new MockTaskTypeEventHandler();
+      contributor.registerEventHandler(eventHandler);
+      await contributor.init();
+      expect(MockVSCodeInfo.visiblePanel).to.be.false;
+    });
+
+    it("inactive extension exists but its api not comply to the expected interface (cont.)", async () => {
+      testVscode.extensions.all = [
+        {
+          packageJSON: {
+            id: "test",
+            name: "test",
+
+            BASContributes: {
+              tasksExplorer: [
+                {
+                  type: "test-deploy",
+                  intent: "Deploy",
+                },
+              ],
+            },
+            contributes: tasksDefinition,
+          },
+          isActive: false,
+          getApi: MockApi,
+          activate: (): any => {
+            return;
+          },
+          extensionPath: "path",
+        },
+      ];
+      const contributor = Contributors.getInstance();
+      const eventHandler = new MockTaskTypeEventHandler();
+      contributor.registerEventHandler(eventHandler);
+      await contributor.init();
+      expect(MockVSCodeInfo.visiblePanel).to.be.false;
     });
 
     it("inactive extension exists that contributes to tasks explorer panel; activate method fails", async () => {
