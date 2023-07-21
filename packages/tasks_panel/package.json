@@ -168,11 +168,11 @@
         },
         {
           "command": "tasks-explorer.revealTask",
-          "when": "viewItem == task"
+          "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.duplicateTask",
-          "when": "viewItem == task"
+          "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.executeTask",
