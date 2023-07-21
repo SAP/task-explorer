@@ -222,12 +222,12 @@
     "@vscode-logging/logger": "1.2.3",
     "datauri": "4.1.0",
     "escape-string-regexp": "4.0.0",
-    "fs-extra": "10.1.0",
     "lodash": "4.17.21",
     "strip-ansi": "7.0.1",
     "ws": "8.8.1"
   },
   "devDependencies": {
+    "fs-extra": "10.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.184",

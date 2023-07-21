@@ -1,6 +1,6 @@
 import { join } from "path";
 import { homedir } from "os";
-import * as fs from "fs-extra";
+import * as fs from "fs/promises";
 import { expect } from "chai";
 import { restore, stub } from "sinon";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";

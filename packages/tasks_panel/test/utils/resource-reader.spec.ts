@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { fail } from "assert";
-import * as fsextra from "fs-extra";
+import * as fs from "fs/promises";
 import { mock, SinonMock } from "sinon";
 import { readResource } from "../../src/utils/resource-reader";
 
@@ -8,7 +8,7 @@ describe("The resource-reader utils", () => {
   const file = "/my/path/file";
   let mockFsextra: SinonMock;
   beforeEach(() => {
-    mockFsextra = mock(fsextra);
+    mockFsextra = mock(fs);
   });
 
   afterEach(() => {
