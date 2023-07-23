@@ -20,6 +20,8 @@ export async function revealTask(treeItem: TaskTreeItem): Promise<void> {
     const resource = Uri.joinPath(Uri.file(task.__wsFolder), ".vscode", "tasks.json");
     const docEditor = await window.showTextDocument(resource, { preview: false });
     if (docEditor) {
+      // compose a search pattern, escaping possible special characters that might be part of the task label,
+      // example: "my task (.$ name $.)" -> the correct pattern should be: "my task \(\.\$ name \$\.\)"
       const regEx = new RegExp(`"${task.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`, "g");
       const found = regEx.exec(docEditor.document.getText());
       if (found) {

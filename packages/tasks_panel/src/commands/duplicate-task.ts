@@ -15,6 +15,7 @@ export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
 
     const tasksConfig = workspace.getConfiguration("tasks", Uri.file(task.__wsFolder));
     const tasks: ConfiguredTask[] = tasksConfig.get("tasks") ?? [];
+    // clean an extra (internal) properties, that should not be copied
     cleanTasks(tasks);
     const tasksByType = filter(tasks, ["type", task.type]);
     const found = find(tasksByType, ["label", task.label]);
