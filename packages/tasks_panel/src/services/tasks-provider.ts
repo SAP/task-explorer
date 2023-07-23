@@ -1,7 +1,8 @@
 import { cloneDeep, compact, each, filter, isEmpty, map, set } from "lodash";
-import { commands, Task, TaskDefinition, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
+import { commands, Task, tasks, TaskScope, workspace, WorkspaceFolder } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { IContributors, ITasksEventHandler, ITasksProvider } from "./definitions";
+import { BUILD, DEPLOY, MISC, isMatchBuild, isMatchDeploy } from "../../src/utils/ws-folder";
 
 let configuredTasksCache: ConfiguredTask[];
 
@@ -23,6 +24,11 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
   }
 
   public async getConfiguredTasks(): Promise<ConfiguredTask[]> {
+    const getTaskIntent = (task: ConfiguredTask): string => {
+      // support to 'npm' task: reassign task.__intent according to the task.script name/purpose
+      return task.type === "npm" ? asignNpmTaskType(task.script) : this.taskTypesProvider.getIntentByType(task.type);
+    };
+
     let result: ConfiguredTask[] = [];
     if (workspace.workspaceFolders !== undefined) {
       const supportedTypes = this.taskTypesProvider.getSupportedTypes();
@@ -43,7 +49,7 @@ export class TasksProvider implements ITasksProvider, ITasksEventHandler {
 
         for (const task of extendedConfiguredTasks) {
           task.__wsFolder = wsFolderPath;
-          task.__intent = this.taskTypesProvider.getIntentByType(task.type);
+          task.__intent = getTaskIntent(task);
           task.__extensionName = this.taskTypesProvider.getExtensionNameByType(task.type);
         }
 
@@ -107,18 +113,20 @@ export function getConfiguredTasksFromCache(): ConfiguredTask[] {
 }
 
 function patchNpmTasks(task: Task): Task {
-  const allocateTaskType = (taskDefinition: TaskDefinition): string => {
-    if (/^deploy/i.test(taskDefinition.script)) {
-      return "Deploy";
-    } else if (/^build/i.test(taskDefinition.script)) {
-      return "Build";
-    } else {
-      return "Miscellaneous";
-    }
-  };
-
+  // support to `npm` task: assign task.taskType according to the task.script name/purpose
   if (task.definition.type === "npm" && !task.definition.taskType) {
-    task.definition.taskType = allocateTaskType(task.definition);
+    task.definition.taskType = asignNpmTaskType(task.definition.script);
   }
   return task;
+}
+
+// `npm` task support
+function asignNpmTaskType(script: string): string {
+  if (isMatchDeploy(script)) {
+    return DEPLOY;
+  } else if (isMatchBuild(script)) {
+    return BUILD;
+  } else {
+    return MISC;
+  }
 }

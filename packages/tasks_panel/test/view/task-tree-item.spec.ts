@@ -29,9 +29,10 @@ describe("TaskTreeItem class", () => {
   const type = "myType";
   const wsFolder = "/my/path";
   const state = TreeItemCollapsibleState.Expanded;
+  const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
 
   it("TaskTreeItem instance structure", () => {
-    const item = new TaskTreeItem(index, type, label, wsFolder, state);
+    const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem);
     expect(item.collapsibleState).to.be.equal(state);
     expect(item.label).to.be.equal(label);
     expect(item.type).to.be.equal(type);
@@ -42,7 +43,7 @@ describe("TaskTreeItem class", () => {
 
   it("TaskTreeItem instance, with command", () => {
     const command = { title: "title", command: "command", arguments: [{ name: "name" }] };
-    const item = new TaskTreeItem(index, type, label, wsFolder, state, command);
+    const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem, command);
     expect(item.command).to.be.deep.equal(command);
     expect(item.contextValue).to.be.equal("task--idle");
   });
@@ -50,7 +51,7 @@ describe("TaskTreeItem class", () => {
   it("TaskTreeItem instance, with command, running", () => {
     stub(testVscode.tasks, "taskExecutions").value([{ task: { name: label, definition: { type } } }]);
     const command = { title: "title", command: "command", arguments: [{ label, type }] };
-    const item = new TaskTreeItem(index, type, label, wsFolder, state, command);
+    const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem, command);
     expect(item.contextValue).to.be.equal("task--running");
   });
 });
