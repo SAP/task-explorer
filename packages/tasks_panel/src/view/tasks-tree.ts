@@ -47,10 +47,10 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
     getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_BRANCHES("workspace", wsFolders.length));
     return map(
       wsFolders,
-      (_) =>
+      (wsFolder) =>
         new ProjectTreeItem(
-          workspace.getWorkspaceFolder(Uri.file(_))?.name ?? "",
-          _,
+          workspace.getWorkspaceFolder(Uri.file(wsFolder))?.name ?? "",
+          wsFolder,
           TreeItemCollapsibleState.Collapsed
         )
     );
