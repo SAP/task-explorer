@@ -41,7 +41,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   context.subscriptions.push(window.registerTreeDataProvider("tasksPanel", tasksTree));
 
-  contributors.init();
+  void contributors.init();
 }
 
 function initializeLogger(context: ExtensionContext, outputChannel: OutputChannel): void {

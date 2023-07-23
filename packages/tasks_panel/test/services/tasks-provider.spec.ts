@@ -8,13 +8,89 @@ import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode
 mockVscode("src/services/tasks-provider");
 import { TasksProvider } from "../../src/services/tasks-provider";
 import { IContributors, ITasksEventHandler, ITaskTypeEventHandler } from "../../src/services/definitions";
-import { find } from "lodash";
+import { cloneDeep, find } from "lodash";
+
+const scopeDataTemplate = {
+  taskType: "abc",
+  extensionName: "testextension",
+  intents: ["abc"],
+  types: ["type1"],
+};
+
+let scopeData;
+function resetMockData() {
+  scopeData = cloneDeep(scopeDataTemplate);
+}
+
+class MockTaskEditorContribution implements TaskEditorContributionAPI<ConfiguredTask> {
+  updateTask(task: ConfiguredTask, changes: any): ConfiguredTask {
+    return task;
+  }
+
+  convertTaskToFormProperties(task: ConfiguredTask): FormProperty[] {
+    return [];
+  }
+
+  getTaskImage(): string {
+    return "";
+  }
+
+  async init(wsFolder: string, task: ConfiguredTask): Promise<void> {
+    return;
+  }
+}
+
+class MockTaskTypeProvider implements IContributors {
+  getIntentByType(type: string): string {
+    return scopeData.taskType;
+  }
+
+  getExtensionNameByType(type: string): string {
+    return scopeData.extensionName;
+  }
+
+  getSupportedIntents(): string[] {
+    return scopeData.intents;
+  }
+
+  getSupportedTypes(): string[] {
+    return scopeData.types;
+  }
+
+  getTaskEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {
+    return new MockTaskEditorContribution();
+  }
+
+  async init(): Promise<void> {
+    return;
+  }
+
+  registerEventHandler(eventHandler: ITaskTypeEventHandler): void {
+    return;
+  }
+
+  getTaskPropertyDescription(type: string, property: string): string {
+    return property;
+  }
+}
+
+class MockTasksEventHandler implements ITasksEventHandler {
+  public changed = false;
+
+  async onChange(): Promise<void> {
+    this.changed = true;
+  }
+}
 
 describe("the TasksProvider class", () => {
   let sandbox: SinonSandbox;
 
   before(() => {
     sandbox = createSandbox();
+  });
+
+  beforeEach(() => {
+    resetMockData();
   });
 
   afterEach(() => {
@@ -94,6 +170,24 @@ describe("the TasksProvider class", () => {
       expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.workspace.workspaceFolders[0].uri)).to.be
         .true;
     });
+
+    it("returns configured npm task when it exists in workspace folder", async () => {
+      scopeData.types = ["other", "npm"];
+      const taskTypesProvider = new MockTaskTypeProvider();
+      const taskProvider = new TasksProvider(taskTypesProvider);
+      testVscode.workspace.workspaceFolders = [{ uri: { path: "path" } }];
+      MockVSCodeInfo.configTasks?.set("path", [
+        new MockConfigTask("task", "unsupported"),
+        new MockConfigTask("task1", "npm", "deploy"),
+        new MockConfigTask("task2", "npm", "bUilD-config"),
+      ]);
+      const tasks = await taskProvider.getConfiguredTasks();
+      expect(tasks.length).eq(2);
+      expect((find(tasks, ["label", "task1"]) as any).__intent).to.be.equal("Deploy");
+      expect((find(tasks, ["label", "task2"]) as any).__intent).to.be.equal("Build");
+      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.workspace.workspaceFolders[0].uri)).to.be
+        .true;
+    });
   });
 
   describe("method getAutodectedTasks", () => {
@@ -150,63 +244,3 @@ describe("the TasksProvider class", () => {
     });
   });
 });
-
-class MockTaskEditorContribution implements TaskEditorContributionAPI<ConfiguredTask> {
-  updateTask(task: ConfiguredTask, changes: any): ConfiguredTask {
-    return task;
-  }
-
-  convertTaskToFormProperties(task: ConfiguredTask): FormProperty[] {
-    return [];
-  }
-
-  getTaskImage(): string {
-    return "";
-  }
-
-  async init(wsFolder: string, task: ConfiguredTask): Promise<void> {
-    return;
-  }
-}
-
-class MockTaskTypeProvider implements IContributors {
-  getIntentByType(type: string): string {
-    return "abc";
-  }
-
-  getExtensionNameByType(type: string): string {
-    return "testextension";
-  }
-
-  getSupportedIntents(): string[] {
-    return ["abc"];
-  }
-
-  getSupportedTypes(): string[] {
-    return ["type1"];
-  }
-
-  getTaskEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {
-    return new MockTaskEditorContribution();
-  }
-
-  async init(): Promise<void> {
-    return;
-  }
-
-  registerEventHandler(eventHandler: ITaskTypeEventHandler): void {
-    return;
-  }
-
-  getTaskPropertyDescription(type: string, property: string): string {
-    return property;
-  }
-}
-
-class MockTasksEventHandler implements ITasksEventHandler {
-  public changed = false;
-
-  async onChange(): Promise<void> {
-    this.changed = true;
-  }
-}

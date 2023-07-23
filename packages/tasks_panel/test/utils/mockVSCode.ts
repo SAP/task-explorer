@@ -8,15 +8,13 @@ export class MockConfigTask {
   constructor(
     public label: string,
     public type: string,
-    public definition?: {
-      script: string;
-      path: string;
-    },
+    public script?: string,
     public scope?: {
       uri: {
         path: string;
       };
-    }
+    },
+    public path?: string
   ) {}
 }
 
@@ -95,6 +93,9 @@ export const testVscode: any = {
           MockVSCodeInfo.configTasks?.set(wsFolder.path, value);
         },
       };
+    },
+    getWorkspaceFolder: (v) => {
+      return { name: v.path };
     },
   },
 
@@ -178,7 +179,9 @@ export const testVscode: any = {
     extensionPath: "path",
     subscriptions: [],
   },
-  TreeItem: class {},
+  TreeItem: class {
+    constructor(public label: string, public collapsibleState: any) {}
+  },
   EventEmitter: class {
     fire(): void {
       MockVSCodeInfo.fired = true;
@@ -224,6 +227,9 @@ export const testVscode: any = {
       };
     },
     taskExecutions: [],
+  },
+  ThemeIcon: class {
+    constructor(public readonly id: string) {}
   },
 };
 

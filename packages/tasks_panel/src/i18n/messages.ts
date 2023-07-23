@@ -9,7 +9,7 @@ export const messages = {
   MISSING_AUTO_DETECTED_TASKS: (): string =>
     `There are currently no tasks that are relevant for your workspace content.`,
   CONFIG_CHANGED: (): string => `The configuration has been changed.`,
-  GET_TREE_INTENTS: (intents: number): string => `${intents} intents retrieved.`,
+  GET_TREE_BRANCHES: (name: string, intents: number): string => `${intents} ${name} retrieved.`,
   GET_TREE_CHILDREN_BY_INTENT: (intent: string, tasks: number): string =>
     `${tasks} tasks retrieved for intent ${intent}.`,
   ACTIVATE_CONTRIB_EXT_ERROR: (extensionId: string): string => `Could not activate the ${extensionId} extension.`,

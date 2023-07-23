@@ -7,7 +7,7 @@ import { MockTasksProvider } from "../utils/mockTasksProvider";
 mockVscode("../../src/panels/task-editor-panel");
 import { revealTask } from "../../src/commands/reveal-task";
 import { editTreeItemTask } from "../../src/commands/edit-task";
-import { TaskTreeItem } from "../../src/view/task-tree-item";
+import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState, Uri } from "vscode";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";
 import { messages } from "../../src/i18n/messages";
@@ -80,9 +80,11 @@ describe("Command revealTask", () => {
     revealRange: () => null,
   };
 
+  const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
+
   it("task already opened for editing, task panel will be disposed and task reveal in 'tasks.json'", async () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
-    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await editTreeItemTask(new MockTasksProvider(tasks), readFile, item1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
@@ -94,7 +96,7 @@ describe("Command revealTask", () => {
   });
 
   it("task reveal in 'tasks.json'", async () => {
-    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
     const resource = Uri.joinPath(Uri.file(task1.__wsFolder), ".vscode", "tasks.json");
     mockWindow.expects("showTextDocument").withExactArgs(resource, { preview: false }).resolves(docEditor);
     await revealTask(item1);
@@ -102,14 +104,14 @@ describe("Command revealTask", () => {
   });
 
   it("command wrong", async () => {
-    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None);
+    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, parentItem);
     mockWindow.expects("showTextDocument").never();
     await revealTask(item1);
     expect(MockVSCodeInfo.disposeCalled).eq(false);
   });
 
   it("task item info wrong", async () => {
-    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
     const resource = Uri.joinPath(Uri.file(task1.__wsFolder), ".vscode", "tasks.json");
     mockWindow.expects("showTextDocument").withExactArgs(resource, { preview: false }).resolves();
     mockWindow
@@ -120,7 +122,7 @@ describe("Command revealTask", () => {
   });
 
   it("task configuration wrong or broken", async () => {
-    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
     const resource = Uri.joinPath(Uri.file(task1.__wsFolder), ".vscode", "tasks.json");
     text = JSON.stringify({
       version: "2.0.0",

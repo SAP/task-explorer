@@ -2,13 +2,13 @@ import { expect } from "chai";
 import { join } from "path";
 import { NpmDefinitionType } from "../src/definitions";
 import { TaskExplorerContributor } from "../src/task-contributor";
-import { getImage } from "../src/utils";
 import { TaskUserInput } from "@sap_oss/task_contrib_types";
-import { clone } from "lodash";
+import { clone, isString } from "lodash";
+const datauri = require("datauri/sync");
 
 describe("TaskExplorerContributor unit test scope", () => {
   let instance: TaskExplorerContributor;
-  const extensionPath = join(__dirname, "..");
+  const extensionPath = join(__dirname, "..", "..");
   const task: NpmDefinitionType = {
     script: "script",
     path: "path",
@@ -52,7 +52,9 @@ describe("TaskExplorerContributor unit test scope", () => {
   });
 
   it("getTaskImage", async () => {
-    expect(instance.getTaskImage()).to.be.equal(getImage(join(extensionPath, "resources", "npm_48px.svg")));
+    const image = instance.getTaskImage();
+    expect(isString(image)).to.be.true;
+    expect(image).to.be.equal(datauri(join(extensionPath, "resources", "npm_48px.svg")).content);
   });
 
   it("updateTask", async () => {

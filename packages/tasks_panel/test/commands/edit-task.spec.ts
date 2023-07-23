@@ -5,12 +5,12 @@ import { expect } from "chai";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { createSandbox } from "sinon";
 
-import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
+import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 
 mockVscode("../../src/panels/task-editor-panel");
 import { editTask, editTreeItemTask } from "../../src/commands/edit-task";
-import { TaskTreeItem } from "../../src/view/task-tree-item";
+import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
 import { disposeTaskEditorPanel, getTaskEditor, getTaskEditorPanel } from "../../src/panels/panels-handler";
 import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "../utils/loggerWrapperMock";
@@ -47,6 +47,8 @@ describe("Command editTask", () => {
     resetTestVSCode();
   });
 
+  const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
+
   it("task already opened for editing, not changed, new panel will be opened", async () => {
     const task1: ConfiguredTask = {
       type: "test",
@@ -58,7 +60,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, parentItem, command1);
     await editTreeItemTask(mockTaskProvider, readFile, item1);
     const task2: ConfiguredTask = {
       type: "test",
@@ -70,7 +72,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, parentItem, command2);
     await editTreeItemTask(mockTaskProvider, readFile, item2);
     expect(MockVSCodeInfo.webViewCreated).eq(2);
   });
@@ -86,7 +88,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, parentItem, command1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -97,7 +99,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, parentItem, command2);
     await editTreeItemTask(mockTaskProvider, readFile, item1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
     await editTreeItemTask(mockTaskProvider, readFile, item2);
@@ -105,7 +107,7 @@ describe("Command editTask", () => {
   });
 
   it("item misses command with task; view is not created", async () => {
-    const item = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None);
+    const item = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, parentItem);
     await editTreeItemTask(mockTaskProvider, readFile, item);
     expect(MockVSCodeInfo.webViewCreated).eq(0);
   });
@@ -122,7 +124,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, parentItem, command1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -133,7 +135,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, parentItem, command2);
     await editTreeItemTask(mockTaskProvider, readFile, item1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
@@ -156,7 +158,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task1],
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, parentItem, command1);
     const task2: ConfiguredTask = {
       type: "test",
       label: "bbb",
@@ -167,7 +169,7 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: [task2],
     };
-    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, command2);
+    const item2 = new TaskTreeItem(0, "test", "bbb", "path", TreeItemCollapsibleState.None, parentItem, command2);
     await editTreeItemTask(mockTaskProvider, readFile, item1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
@@ -227,14 +229,14 @@ describe("Command editTask", () => {
       command: "tasks-explorer.editTask",
       arguments: undefined,
     };
-    const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", "wsFolder1", TreeItemCollapsibleState.None, parentItem, command1);
 
     await editTreeItemTask(mockTaskProvider, readFile, item1);
     expect(MockVSCodeInfo.configTasks?.get("wsFolder1")).to.not.empty;
   });
 
   describe("edit command programmatically", () => {
-    const item = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None);
+    const item = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, parentItem);
 
     it("edit command - task found", async () => {
       const task: ConfiguredTask = {

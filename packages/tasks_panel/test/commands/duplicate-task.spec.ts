@@ -5,7 +5,7 @@ import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode
 
 mockVscode("../../src/panels/task-editor-panel");
 import { duplicateTask } from "../../src/commands/duplicate-task";
-import { TaskTreeItem } from "../../src/view/task-tree-item";
+import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
 import { messages } from "../../src/i18n/messages";
 
@@ -43,15 +43,17 @@ describe("Command duplicateTask", () => {
     arguments: [task1],
   };
 
+  const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
+
   it("command wrong", async () => {
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem);
     await duplicateTask(item1);
     expect(spyGetConfiguration.neverCalledWith("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
   });
 
   it("task configuration wrong - task not exist", async () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, undefined as unknown as any);
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
     mockWindow
       .expects("showErrorMessage")
       .withExactArgs(new Error(messages.configuration_task_not_found(task1.label)).toString())
@@ -62,7 +64,7 @@ describe("Command duplicateTask", () => {
   it("task configuration wrong - task not found", async () => {
     const confTasks = [new MockConfigTask("task.label", "test")];
     MockVSCodeInfo.configTasks?.set(wsFolder, confTasks);
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
     mockWindow
       .expects("showErrorMessage")
       .withExactArgs(new Error(messages.configuration_task_not_found(task1.label)).toString())
@@ -74,7 +76,7 @@ describe("Command duplicateTask", () => {
 
   it("task found and duplicated", async () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await duplicateTask(item1);
     expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.deep.equal([
@@ -89,7 +91,7 @@ describe("Command duplicateTask", () => {
       new MockConfigTask("aaa", "test"),
       new MockConfigTask("copy of aaa", "test"),
     ]);
-    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, command1);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
     await duplicateTask(item1);
     expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.deep.equal([
