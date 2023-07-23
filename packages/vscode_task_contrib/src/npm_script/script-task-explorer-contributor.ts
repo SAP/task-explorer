@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { readFile } from "fs-extra";
+import { readFile } from "fs/promises";
 import { join } from "path";
 import {
   ComboboxFormProperty,

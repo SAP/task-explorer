@@ -70,6 +70,9 @@ export const testVscode: any = {
       }
       return { path: args[0] };
     },
+    joinPath(root: any, ...args: string[]): any {
+      return { path: join(root.path, ...args) };
+    },
   },
   workspace: {
     workspaceFolders: undefined,
@@ -96,6 +99,12 @@ export const testVscode: any = {
     },
   },
 
+  Selection: class {
+    constructor(public readonly anchor: any, public readonly active: any) {}
+  },
+  Range: class {
+    constructor(public readonly start: any, public readonly end: any) {}
+  },
   ConfigurationTarget: {
     WorkspaceFolder: 3,
   },
@@ -148,6 +157,9 @@ export const testVscode: any = {
     },
     showErrorMessage: async (msg: string): Promise<void> => {
       MockVSCodeInfo.errorMsg = msg;
+    },
+    showTextDocument: async () => {
+      throw new Error("not implemented");
     },
     withProgress: (
       options: {

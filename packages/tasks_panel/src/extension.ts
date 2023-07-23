@@ -11,6 +11,8 @@ import { createTask } from "./commands/create-task";
 import { messages } from "./i18n/messages";
 import { TASKS_EXPLORER_ID } from "./logger/settings";
 import { readResource } from "./utils/resource-reader";
+import { revealTask } from "./commands/reveal-task";
+import { duplicateTask } from "./commands/duplicate-task";
 import { terminateTaskFromTree } from "./commands/terminate-task";
 
 let extensionPath = "";
@@ -28,6 +30,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource))
   );
   context.subscriptions.push(commands.registerCommand("tasks-explorer.deleteTask", deleteTask));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.revealTask", revealTask));
+  context.subscriptions.push(commands.registerCommand("tasks-explorer.duplicateTask", duplicateTask));
   context.subscriptions.push(commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree));
   context.subscriptions.push(commands.registerCommand("tasks-explorer.stopTask", terminateTaskFromTree));
   context.subscriptions.push(

@@ -59,6 +59,14 @@
         "title": "Delete"
       },
       {
+        "command": "tasks-explorer.revealTask",
+        "title": "Show in File"
+      },
+      {
+        "command": "tasks-explorer.duplicateTask",
+        "title": "Duplicate"
+      },
+      {
         "command": "tasks-explorer.tree.refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
@@ -113,6 +121,10 @@
           "when": "false"
         },
         {
+          "command": "tasks-explorer.revealTask",
+          "when": "false"
+        },
+        {
           "command": "tasks-explorer.executeTask",
           "when": "false"
         },
@@ -122,6 +134,10 @@
         },
         {
           "command": "tasks-explorer.createTask",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.duplicateTask",
           "when": "false"
         },
         {
@@ -148,6 +164,14 @@
         },
         {
           "command": "tasks-explorer.deleteTask",
+          "when": "viewItem =~ /^task--idle$/"
+        },
+        {
+          "command": "tasks-explorer.revealTask",
+          "when": "viewItem =~ /^task--idle$/"
+        },
+        {
+          "command": "tasks-explorer.duplicateTask",
           "when": "viewItem =~ /^task--idle$/"
         },
         {
@@ -198,12 +222,12 @@
     "@vscode-logging/logger": "1.2.3",
     "datauri": "4.1.0",
     "escape-string-regexp": "4.0.0",
-    "fs-extra": "10.1.0",
     "lodash": "4.17.21",
     "strip-ansi": "7.0.1",
     "ws": "8.8.1"
   },
   "devDependencies": {
+    "fs-extra": "10.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.184",
