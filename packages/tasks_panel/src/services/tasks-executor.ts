@@ -11,7 +11,7 @@ export async function executeVScodeTask(task: any): Promise<void> {
   try {
     if (taskForExecution !== undefined) {
       const listener = tasks.onDidEndTask((e) => {
-        if (e.execution.task.name === taskForExecution.name) {
+        if (e.execution.task?.name === taskForExecution.name) {
           // update the tree items context value [running -> idle]
           void commands.executeCommand("tasks-explorer.tree.refresh");
           listener.dispose();
