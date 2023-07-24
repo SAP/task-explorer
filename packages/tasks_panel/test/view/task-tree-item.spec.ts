@@ -17,6 +17,7 @@ describe("IntentTreeItem class", () => {
     expect(item.collapsibleState).to.be.equal(TreeItemCollapsibleState.Expanded);
     expect(item.label).to.be.equal(label);
     expect(item.contextValue).to.be.equal("intent");
+    expect(item.tooltip).to.be.equal("");
   });
 });
 
@@ -39,6 +40,7 @@ describe("TaskTreeItem class", () => {
     expect(item.index).to.be.equal(index);
     expect(item.wsFolder).to.be.equal(wsFolder);
     expect(item.contextValue).to.be.undefined;
+    expect(item.tooltip).to.be.equal("");
   });
 
   it("TaskTreeItem instance, with command", () => {

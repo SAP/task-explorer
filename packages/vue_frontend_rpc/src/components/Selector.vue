@@ -29,7 +29,7 @@
                 :key="task.label"
                 class="pl-10"
               >
-                <v-img class="selection-task-icon" :src="task.__image"></v-img>
+                <v-img v-show="false" class="selection-task-icon" :src="task.__image"></v-img>
                 <v-list-item-title
                   class="selection-task-label"
                   :class="{

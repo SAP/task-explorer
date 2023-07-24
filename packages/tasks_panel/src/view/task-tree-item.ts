@@ -4,7 +4,14 @@ import { isMatchBuild, isMatchDeploy } from "../../src/utils/ws-folder";
 
 type TaskStatus = "idle" | "running";
 
-class BranchTreeItem extends TreeItem {
+class TreeTooltiplessItem extends TreeItem {
+  constructor(label: string, collapsibleState: TreeItemCollapsibleState) {
+    super(label, collapsibleState);
+    this.tooltip = "";
+  }
+}
+
+class BranchTreeItem extends TreeTooltiplessItem {
   constructor(
     label: string,
     collapsibleState: TreeItemCollapsibleState,
@@ -26,7 +33,7 @@ export class IntentTreeItem extends BranchTreeItem {
   }
 }
 
-export class TaskTreeItem extends TreeItem {
+export class TaskTreeItem extends TreeTooltiplessItem {
   constructor(
     public index: number,
     public type: string,
