@@ -37,10 +37,7 @@
       {
         "command": "tasks-explorer.executeTask",
         "title": "Run",
-        "icon": {
-          "light": "resources/play_light.svg",
-          "dark": "resources/play_dark.svg"
-        }
+        "icon": "$(debug-start)"
       },
       {
         "command": "tasks-explorer.createTask",
@@ -52,7 +49,7 @@
       },
       {
         "command": "tasks-explorer.editTask",
-        "title": "Edit"
+        "title": "Open"
       },
       {
         "command": "tasks-explorer.deleteTask",
@@ -74,7 +71,7 @@
       {
         "command": "tasks-explorer.stopTask",
         "title": "Stop",
-        "icon": "$(stop-circle)"
+        "icon": "$(debug-stop)"
       }
     ],
     "configuration": {
@@ -160,18 +157,22 @@
       "view/item/context": [
         {
           "command": "tasks-explorer.editTask",
+          "group": "main@1",
           "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.deleteTask",
+          "group": "main@4",
           "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.revealTask",
+          "group": "main@2",
           "when": "viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.duplicateTask",
+          "group": "main@3",
           "when": "viewItem =~ /^task--idle$/"
         },
         {

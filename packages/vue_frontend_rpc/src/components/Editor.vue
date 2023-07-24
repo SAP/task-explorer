@@ -4,7 +4,7 @@
       <v-col class="main-col ma-0 pa-0">
         <v-card class="main-card mr-16 pb-2">
           <v-card-title class="task-intro">
-            <v-img class="task-icon" :src="task.taskImage"></v-img>
+            <v-img v-show="false" class="task-icon" :src="task.taskImage"></v-img>
             <div class="task-label">{{ task.label }}</div>
             <v-spacer></v-spacer>
             <div>
