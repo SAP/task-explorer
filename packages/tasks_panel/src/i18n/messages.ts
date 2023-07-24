@@ -1,17 +1,17 @@
 export const messages = {
-  LOGGER_NOT_AVAILABLE: (): string => `Logs are not available for the Task Explorer Extension.`,
+  LOGGER_NOT_AVAILABLE: (): string => `Logs are not available for the Task Explorer extension.`,
   TASK_UPDATE_FAILED: (indexId: number, length: number): string =>
-    `Could not update the task with index ${indexId} in the tasks configuration because the configuration length is ${length}. `,
+    `Could not update the task with index ${indexId} in the Task Configuration because the configuration length is ${length}. `,
   TASK_DELETE_FAILED: (indexId: number, length: number): string =>
-    `Could not delete the task with index ${indexId} in the tasks configuration because the configuration length is ${length}. `,
+    `Could not delete the task with index ${indexId} in the Task Configuration because the configuration length is ${length}. `,
   DISCARD_CHANGES_BUTTON_TEXT: (): string => `Discard Changes`,
   MISSING_EXECUTION_TASK: (): string => `The Execution task is missing.`,
   MISSING_AUTO_DETECTED_TASKS: (): string =>
     `There are currently no tasks that are relevant for your workspace content.`,
   CONFIG_CHANGED: (): string => `The configuration has been changed.`,
-  GET_TREE_BRANCHES: (name: string, intents: number): string => `${intents} ${name} retrieved.`,
+  GET_TREE_BRANCHES: (name: string, intents: number): string => `Retrieved ${intents} ${name}.`,
   GET_TREE_CHILDREN_BY_INTENT: (intent: string, tasks: number): string =>
-    `${tasks} tasks retrieved for intent ${intent}.`,
+    `${tasks} tasks retrieved for the ${intent} intent.`,
   ACTIVATE_CONTRIB_EXT_ERROR: (extensionId: string): string => `Could not activate the ${extensionId} extension.`,
   SWITCH_UNSAVED_TASK: (taskInProcess: string): string =>
     `You have unsaved changes in the "${taskInProcess}" task. \n` +
@@ -19,19 +19,19 @@ export const messages = {
     `Click "Close" to return to the "${taskInProcess}" task or "Discard Changes" to continue.`,
   DELETE_TASK: (task: string): string => `tasks-explorer.deleteTask command. got task: ${task}`,
   EDIT_TASK: (task: string): string => `tasks-explorer.editTask command. got task: ${task}`,
-  TASK_NOT_FOUND: (task: string): string => `Task: ${task} not found`,
+  TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
   EDIT_TASK_NOT_FOUND: (task: string): string => `tasks-explorer.editTask command.${messages.TASK_NOT_FOUND(task)}`,
-  EXECUTE_TASK: (task: string): string => `Executed task: ${task}`,
-  TERMINATE_TASK: (task: string): string => `Terminate task: ${task}`,
-  CREATE_TASK: (task: string): string => `Created task: ${task}`,
-  MISSING_TYPE: (type: string): string => `The type "${type}" is missing.`,
-  DUPLICATED_TYPE: (type: string): string => `The type "${type}" is already contributed.`,
-  EXECUTE_FAILURE: (task: string): string => `Could not execute the task: ${task}`,
-  TERMINATE_FAILURE: (task: string, reason: string): string => `Could not terminate the task: ${task}: ${reason}`,
+  EXECUTE_TASK: (task: string): string => `Executed the ${task} task.`,
+  TERMINATE_TASK: (task: string): string => `Terminate the ${task} task.`,
+  CREATE_TASK: (task: string): string => `Create the ${task} task.`,
+  MISSING_TYPE: (type: string): string => `The "${type}" type is missing.`,
+  DUPLICATED_TYPE: (type: string): string => `The "${type}" type has already been contributed.`,
+  EXECUTE_FAILURE: (task: string): string => `Could not execute the ${task} task.`,
+  TERMINATE_FAILURE: (task: string, reason: string): string => `Could not terminate the ${task} task. ${reason}`,
   EVALUATED_METHOD_FAILURE: (methodName: string, questionName: string, params: string, err: Error): string =>
-    `Call to "${methodName}" method of property "${questionName}" with params: ${params}. Failed with error: ${err}`,
+    `The call to the "${methodName}" method of the "${questionName}" property containing the ${params} parameters, failed with error: ${err}`,
   METHOD_NOT_FOUND: (methodName: string, questionName: string, params: string): string =>
-    `Could not find the "${methodName}" method in "${questionName}" with params: ${params}`,
+    `Could not find the "${methodName}" method in "${questionName}" the ${params} parameters.`,
   GET_IMAGE_FAILURE: (imagePath: string, err: Error): string =>
     `Could not get the image from the given path: "${imagePath}". Failed with error: ${err}`,
   LABEL_IS_NOT_UNIQUE: (): string => `Enter a unique value.`,
@@ -45,7 +45,7 @@ export const messages = {
   SWA_TASK_EXPLORER_PARAM: (): string => `Explorer`,
   SWA_TASK_EDITOR_PARAM: (): string => `Editor`,
   OPENING_SELECTION_VIEW: `Collecting the tasks...`,
-  delete_task_confirmation: (name: string) => `Are you sure you want to delete '${name}' configuration?`,
-  resource_open_could_not_open_editor: "Could not open editor for required resource",
-  configuration_task_not_found: (label: string) => `Could not find configuration "${label}"`,
+  delete_task_confirmation: (name: string) => `Are you sure you want to delete the '${name}' configuration?`,
+  resource_open_could_not_open_editor: "Could not open the editor for the required resource",
+  configuration_task_not_found: (label: string) => `Could not find the "${label}" configuration.`,
 };
