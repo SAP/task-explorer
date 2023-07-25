@@ -4,7 +4,7 @@ import { LogLevel } from "@vscode-logging/logger";
 /**
  * Note that the values of these configuration properties must match those defined in the package.json
  */
-export const TASKS_EXPLORER_ID = "VSCode Tasks Panel";
+export const TASKS_EXPLORER_ID = "vscode-tasks-explorer-tasks-panel";
 export const LOGGING_LEVEL_CONFIG_PROP = `${TASKS_EXPLORER_ID}.loggingLevel`;
 export const SOURCE_TRACKING_CONFIG_PROP = `${TASKS_EXPLORER_ID}.sourceLocationTracking`;
 

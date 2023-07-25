@@ -18,6 +18,7 @@ export async function editTreeItemTask(
     return has(task, "__intent");
   }
   let task = treeItem.command?.arguments?.[0];
+  const isTaskAttached = !!task;
 
   if (task && !isConfiguredTask(task)) {
     // request for edit task programmatically
@@ -26,8 +27,9 @@ export async function editTreeItemTask(
 
   if (task) {
     return editTask(task, readResource);
-  } else {
-    getLogger().debug(messages.EDIT_TASK_NOT_FOUND(serializeTask(treeItem.command?.arguments?.[0])));
+  } else if (isTaskAttached) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified above
+    getLogger().debug(messages.EDIT_TASK_NOT_FOUND(serializeTask(treeItem.command!.arguments![0])));
   }
 }
 
