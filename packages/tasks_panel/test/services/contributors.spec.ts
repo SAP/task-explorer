@@ -53,6 +53,54 @@ describe("Contributors", () => {
       Contributors.getInstance()["tasksEditorContributorsMap"] = new Map<string, any>();
     });
 
+    it("getTasksPropertyMessageMap = verify returning map structure/mapping", async () => {
+      const packageJSON = {
+        id: "test",
+        contributes: {
+          taskDefinitions: [
+            {
+              type: "type-1",
+              required: ["label", "taskType"],
+              properties: {
+                label: {
+                  description: "Task Name",
+                },
+                taskType: {
+                  type: "string",
+                  description: "Task Type",
+                },
+                extPath: {
+                  type: "string",
+                  description: "Path to the Extension File",
+                },
+              },
+            },
+            {
+              type: "type-2",
+              required: ["label", "taskType", "buildType"],
+              properties: {
+                label: {
+                  description: "Task Name",
+                },
+                taskType: {
+                  description: "Task Type",
+                },
+                buildType: {
+                  type: "string",
+                  description: "Build Type",
+                },
+              },
+            },
+          ],
+        },
+      };
+      const messageMap = Contributors.getInstance()["getTasksPropertyMessageMap"](packageJSON);
+      expect(messageMap).to.be.deep.equal({
+        "type-1": { label: "Task Name", taskType: "Task Type", extPath: "Path to the Extension File" },
+        "type-2": { label: "Task Name", taskType: "Task Type", buildType: "Build Type" },
+      });
+    });
+
     it("active extension exists that contributes to tasks explorer panel", async () => {
       testVscode.extensions.all = [
         {

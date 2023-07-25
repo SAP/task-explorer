@@ -1,5 +1,5 @@
 import { commands, Extension, extensions } from "vscode";
-import { each, get, keys, map, set, uniq, zipObject } from "lodash";
+import { get, keys, map, uniq, zipObject } from "lodash";
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
@@ -112,13 +112,14 @@ export class Contributors implements IContributors {
   }
 
   private getTasksPropertyMessageMap(packageJSON: any): Record<string, Record<string, string>> {
-    const tasksProperties = {};
-    each(packageJSON.contributes.taskDefinitions, (taskDefinition) => {
+    const tasksDefinitions = get(packageJSON.contributes, "taskDefinitions");
+    const tasksTypes = map(tasksDefinitions, (_) => _.type);
+    const tasksProperties = map(tasksDefinitions, (taskDefinition) => {
       const propertiesNames: string[] = keys(taskDefinition.properties);
       const propertiesDescriptions: string[] = map(propertiesNames, (_) => taskDefinition.properties[_].description);
-      set(tasksProperties, taskDefinition.type, zipObject(propertiesNames, propertiesDescriptions));
+      return zipObject(propertiesNames, propertiesDescriptions);
     });
-    return tasksProperties;
+    return zipObject(tasksTypes, tasksProperties);
   }
 
   private getTypesInfo(packageJSON: Record<string, any>): Map<string, any> | undefined {
