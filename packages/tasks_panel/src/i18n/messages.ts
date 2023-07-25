@@ -1,9 +1,9 @@
 export const messages = {
   LOGGER_NOT_AVAILABLE: (): string => `Logs are not available for the Task Explorer extension.`,
   TASK_UPDATE_FAILED: (indexId: number, length: number): string =>
-    `Could not update the task with index ${indexId} in the Task Configuration because the configuration length is ${length}. `,
+    `Could not update the task because the configuration file has been altered. Create a new task instead.`,
   TASK_DELETE_FAILED: (indexId: number, length: number): string =>
-    `Could not delete the task with index ${indexId} in the Task Configuration because the configuration length is ${length}. `,
+    `Could not delete the task because the configuration file has been altered.`,
   DISCARD_CHANGES_BUTTON_TEXT: (): string => `Discard Changes`,
   MISSING_EXECUTION_TASK: (): string => `The Execution task is missing.`,
   MISSING_AUTO_DETECTED_TASKS: (): string =>
@@ -17,21 +17,21 @@ export const messages = {
     `You have unsaved changes in the "${taskInProcess}" task. \n` +
     `The changes will be discarded. \n` +
     `Click "Close" to return to the "${taskInProcess}" task or "Discard Changes" to continue.`,
-  DELETE_TASK: (task: string): string => `tasks-explorer.deleteTask command. got task: ${task}`,
-  EDIT_TASK: (task: string): string => `tasks-explorer.editTask command. got task: ${task}`,
+  DELETE_TASK: (task: string): string => `The ${task} task has been deleted.`,
+  EDIT_TASK: (task: string): string => `The changes to the ${task} task have been saved.`,
   TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
-  EDIT_TASK_NOT_FOUND: (task: string): string => `tasks-explorer.editTask command.${messages.TASK_NOT_FOUND(task)}`,
+  EDIT_TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
   EXECUTE_TASK: (task: string): string => `Executed the ${task} task.`,
   TERMINATE_TASK: (task: string): string => `Terminate the ${task} task.`,
   CREATE_TASK: (task: string): string => `Create the ${task} task.`,
   MISSING_TYPE: (type: string): string => `The "${type}" type is missing.`,
   DUPLICATED_TYPE: (type: string): string => `The "${type}" type has already been contributed.`,
-  EXECUTE_FAILURE: (task: string): string => `Could not execute the ${task} task.`,
+  EXECUTE_FAILURE: (task: string): string => `Could not execute the "${questionName}"`,
   TERMINATE_FAILURE: (task: string, reason: string): string => `Could not terminate the ${task} task. ${reason}`,
   EVALUATED_METHOD_FAILURE: (methodName: string, questionName: string, params: string, err: Error): string =>
     `The call to the "${methodName}" method of the "${questionName}" property containing the ${params} parameters, failed with error: ${err}`,
   METHOD_NOT_FOUND: (methodName: string, questionName: string, params: string): string =>
-    `Could not find the "${methodName}" method in "${questionName}" the ${params} parameters.`,
+    `Could not find the "${methodName}" method for the "${questionName}" question in the ${params} task parameter.`,
   GET_IMAGE_FAILURE: (imagePath: string, err: Error): string =>
     `Could not get the image from the given path: "${imagePath}". Failed with error: ${err}`,
   LABEL_IS_NOT_UNIQUE: (): string => `Enter a unique value.`,
