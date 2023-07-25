@@ -34,15 +34,6 @@ jobs:
             COVERALLS_SERVICE_NAME: circle-ci
             COVERALLS_GIT_BRANCH: ${CIRCLE_BRANCH}
 
-  build-node14:
-    docker:
-      - image: cimg/node:14.18
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run: yarn
-      - run: yarn run ci
-
   compliance:
     docker:
       - image: cimg/python:3.10.0
@@ -76,7 +67,7 @@ jobs:
       - checkout
       - run: yarn
       - run: yarn run ci
-      - run: mkdir -p artifacts && cp packages/tasks_panel/*.vsix ./artifacts
+      - run: mkdir -p artifacts && cp packages/tasks_panel/*.vsix packages/npm_task_contrib/*.vsix ./artifacts
       - run:
           name: "Inspect Artifacts Folder"
           working_directory: ./artifacts
@@ -109,7 +100,6 @@ workflows:
   version: 2
   voter:
     jobs:
-      - build-node14
       - build-node16
       - build-node18
       - compliance
