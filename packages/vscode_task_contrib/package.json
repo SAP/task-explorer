@@ -1,7 +1,7 @@
 {
   "name": "vscode-task-contrib",
   "displayName": "VSCode Task Contributor Sample",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": true,
   "categories": [],
   "keywords": [],
@@ -59,7 +59,7 @@
     "*"
   ],
   "dependencies": {
-    "@sap_oss/task_contrib_types": "^4.2.0",
+    "@sap_oss/task_contrib_types": "^4.3.0",
     "comment-json": "4.2.3",
     "datauri": "4.1.0",
     "lodash": "^4.17.21"
