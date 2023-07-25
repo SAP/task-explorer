@@ -87,14 +87,14 @@ describe("the VscodeEvents class", () => {
       MockVSCodeInfo.configTasks = new Map<string, MockConfigTask[]>();
       MockVSCodeInfo.configTasks.set("path", [new MockConfigTask("task one", "test")]);
       await vscodeEvents.updateTaskInConfiguration("path", task, 3);
-      expect(MockVSCodeInfo.errorMsg).eq(messages.TASK_UPDATE_FAILED(3, 1));
+      expect(MockVSCodeInfo.errorMsg).eq(messages.TASK_UPDATE_FAILED());
     });
 
     it("logs error on try to update task of undefined configuration", async () => {
       const vscodeEvents = new VSCodeEvents(testVscode.WebViewPanel);
       MockVSCodeInfo.configTasks = undefined;
       await vscodeEvents.updateTaskInConfiguration("path", task, 1);
-      expect(MockVSCodeInfo.errorMsg).eq(messages.TASK_UPDATE_FAILED(1, 0));
+      expect(MockVSCodeInfo.errorMsg).eq(messages.TASK_UPDATE_FAILED());
     });
   });
 

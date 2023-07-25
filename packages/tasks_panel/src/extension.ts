@@ -1,5 +1,5 @@
 import { partial } from "lodash";
-import { commands, ExtensionContext, OutputChannel, window } from "vscode";
+import { commands, ExtensionContext, window } from "vscode";
 import { createExtensionLoggerAndSubscribeToLogSettingsChanges } from "./logger/logger-wrapper";
 import { Contributors } from "./services/contributors";
 import { TasksProvider } from "./services/tasks-provider";
@@ -19,10 +19,11 @@ let extensionPath = "";
 
 export async function activate(context: ExtensionContext): Promise<void> {
   extensionPath = context.extensionPath;
-  const outputChannel = window.createOutputChannel(TASKS_EXPLORER_ID);
-  initializeLogger(context, outputChannel);
+
+  initializeLogger(context);
 
   const contributors = Contributors.getInstance();
+  void contributors.init();
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
 
@@ -40,11 +41,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(commands.registerCommand("tasks-explorer.tree.refresh", () => tasksTree.onChange()));
 
   context.subscriptions.push(window.registerTreeDataProvider("tasksPanel", tasksTree));
-
-  void contributors.init();
 }
 
-function initializeLogger(context: ExtensionContext, outputChannel: OutputChannel): void {
+function initializeLogger(context: ExtensionContext): void {
+  const outputChannel = window.createOutputChannel(TASKS_EXPLORER_ID);
   try {
     createExtensionLoggerAndSubscribeToLogSettingsChanges(context, outputChannel);
   } catch (error) {

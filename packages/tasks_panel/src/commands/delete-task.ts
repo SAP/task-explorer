@@ -39,7 +39,7 @@ export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
       await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);
       getLogger().debug(messages.DELETE_TASK(serializeTask(task)));
     } else {
-      getLogger().error(messages.TASK_DELETE_FAILED(taskIndex, tasks.length));
+      getLogger().error(messages.TASK_DELETE_FAILED(), { taskIndex, legth: tasks.length });
     }
   }
 }

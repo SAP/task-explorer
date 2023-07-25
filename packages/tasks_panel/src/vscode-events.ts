@@ -28,8 +28,8 @@ export class VSCodeEvents implements AppEvents {
       cleanTasks(tasks);
       await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);
     } else {
-      getLogger().error(messages.TASK_UPDATE_FAILED(index, tasks.length));
-      window.showErrorMessage(messages.TASK_UPDATE_FAILED(index, tasks.length));
+      getLogger().error(messages.TASK_UPDATE_FAILED(), { taskIndex: index, length: tasks.length });
+      window.showErrorMessage(messages.TASK_UPDATE_FAILED());
       return;
     }
     // change tab name on save

@@ -37,7 +37,7 @@
       {
         "command": "tasks-explorer.executeTask",
         "title": "Run",
-        "icon": "$(debug-start)"
+        "icon": "$(play)"
       },
       {
         "command": "tasks-explorer.createTask",
@@ -71,7 +71,7 @@
       {
         "command": "tasks-explorer.stopTask",
         "title": "Stop",
-        "icon": "$(debug-stop)"
+        "icon": "$(chrome-maximize)"
       }
     ],
     "configuration": {

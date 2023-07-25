@@ -25,6 +25,7 @@ export class TaskExplorerContributor implements TaskEditorContributionAPI<NpmDef
   };
 
   constructor(private readonly extensionPath: string) {
+    // TODO: correct the image path when will be provided
     this.image = getImage(join(this.extensionPath, "resources", "npm_48px.svg"));
   }
 
