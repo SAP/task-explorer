@@ -1,7 +1,7 @@
 {
   "name": "npm-task-contrib",
   "displayName": "Npm Task Contributor",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "private": true,
   "categories": [],
   "keywords": [],
@@ -51,7 +51,7 @@
     "*"
   ],
   "dependencies": {
-    "@sap_oss/task_contrib_types": "^4.3.0",
+    "@sap_oss/task_contrib_types": "^4.3.1",
     "datauri": "4.1.0",
     "lodash": "^4.17.21"
   },
