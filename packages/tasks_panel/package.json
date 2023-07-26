@@ -232,7 +232,7 @@
     "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.184",
     "@types/sinon": "^10.0.13",
-    "@types/vscode": "1.50.0",
+    "@types/vscode": "1.80.0",
     "@types/ws": "^7.2.3",
     "@vscode-tasks-explorer/vue_frontend_rpc": "^4.3.1",
     "fs-extra": "10.1.0",
