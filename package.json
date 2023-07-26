@@ -26,7 +26,7 @@
     "lint:validate": "eslint . --ext=js,ts,vue --max-warnings=0 --ignore-path=.gitignore",
     "prepare": "husky install",
     "release:publish": "lerna publish from-git --yes",
-    "release:version": "yarn worktree:update && lerna version --force-publish",
+    "release:version": "yarn worktree:update && lerna version",
     "version": "node ./scripts/update-root-version.js && yarn format:fix:changelog && git add package.json",
     "worktree:update": "yarn && git fetch && git rebase"
   },
