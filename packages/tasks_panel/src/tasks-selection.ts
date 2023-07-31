@@ -1,77 +1,97 @@
-import { filter, groupBy, isFunction, map, sortBy } from "lodash";
+import { each, extend, filter, find, groupBy, isEmpty, isEqual, isFunction, map, size, sortBy, uniq } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 import { AppEvents } from "./app-events";
-import { createTaskEditorPanel, disposeTaskSelectionPanel } from "./panels/panels-handler";
 import { getSWA } from "./utils/swa";
 import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { serializeTask } from "./utils/task-serializer";
 import { getConfiguredTasksFromCache } from "./services/tasks-provider";
+import { QuickPickItem, QuickPickOptions, window, QuickPickItemKind } from "vscode";
+import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
+import { createTaskEditorPanel } from "./panels/panels-handler";
 
 const escapeStringRegexp = require("escape-string-regexp");
-
-interface FrontendTasks {
-  intent: string;
-  tasksByIntent: ConfiguredTask[];
-}
+const task_selection_canceled = "_ internal - selection canceled _";
 
 export class TasksSelection {
   constructor(
-    private readonly rpc: IRpc,
     private readonly appEvents: AppEvents,
     private readonly tasks: ConfiguredTask[],
     private readonly readResource: (file: string) => Promise<string>
-  ) {
-    this.rpc.setResponseTimeout(2000);
-    this.rpc.registerMethod({
-      func: this.onFrontendReady,
-      name: "onFrontendReady",
-      thisArg: this,
-    });
-    this.rpc.registerMethod({
-      func: this.setSelectedTask,
-      name: "setSelectedTask",
-      thisArg: this,
-    });
-  }
+  ) {}
 
-  private getTaskImage(type: string): string {
-    const contributor = this.appEvents.getTasksEditorContributor(type);
-    return contributor ? contributor.getTaskImage() : "";
-  }
-
-  private async onFrontendReady(): Promise<void> {
-    // consider only tasks that are contributed to Tasks Explorer
-    const contributedTasks = filter(
-      this.tasks,
-      (_) => _.taskType !== undefined && this.appEvents.getTasksEditorContributor(_.type) !== undefined
+  private async showQuickPick<T extends QuickPickItem>(
+    items: T[] | Thenable<T[]>,
+    options?: QuickPickOptions
+  ): Promise<any> {
+    if (isEmpty(items)) {
+      throw new Error("nothing to select: no items found");
+    }
+    const choice = await window.showQuickPick(
+      items,
+      extend(
+        {
+          canPickMany: false,
+          matchOnDetail: true,
+          ignoreFocusOut: true,
+        },
+        options
+      )
     );
-
-    const contributedTasksWithImages: ConfiguredTask[] = map(contributedTasks, (_) => {
-      return {
-        ..._,
-        __image: this.getTaskImage(_.type),
-        label: _.label.replace("Template: ", ""),
-      };
-    });
-
-    // group tasks by intents
-    const tasksGroupedByIntent = groupBy(contributedTasksWithImages, (_) => _.taskType);
-
-    // prepare tasks for frontend: array of { intent, tasksByIntent }
-    const tasksFrontend: FrontendTasks[] = sortBy(
-      map(tasksGroupedByIntent, function (value, key) {
-        return { intent: key, tasksByIntent: value };
-      }),
-      "intent"
-    );
-
-    const message = tasksFrontend.length === 0 ? messages.MISSING_AUTO_DETECTED_TASKS() : "";
-
-    return this.rpc.invoke("setTasks", [tasksFrontend, message]);
+    if (!choice) {
+      throw new Error(task_selection_canceled);
+    }
+    return choice;
   }
 
+  public async select(project?: string): Promise<any> {
+    let selected;
+    try {
+      // step 1: (optional) select a project -> compose projects list
+      let pickItems = uniq(map(this.tasks, "__wsFolder"));
+      pickItems = project
+        ? [
+            find(pickItems, (item) => {
+              return item === project;
+            }),
+          ]
+        : pickItems;
+      selected =
+        size(pickItems) > 1
+          ? await this.showQuickPick(pickItems, { placeHolder: "select a project root:" })
+          : pickItems[0];
+
+      // step 2: select a task -> compose tasks list from the specified project by the existing sorted 'intent's
+      const tasksByProject = filter(this.tasks, ["__wsFolder", selected]);
+      const intents = sortBy(uniq(map(tasksByProject, "__intent")));
+      pickItems = [];
+      each(intents, (intent) => {
+        // add a group separator
+        pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
+        if (isMatchDeploy(intent) || isMatchBuild(intent)) {
+          pickItems.push(...filter(tasksByProject, ["__intent", intent]));
+        } else {
+          // Miscellaneous
+          pickItems.push({ label: MISC, type: "intent" }); // add a special item --> 'Miscellaneous' group
+        }
+      });
+      selected = await this.showQuickPick(pickItems, { placeHolder: "select the task you want to perform:" });
+
+      // step 3: 'Miscellaneous' item selected --> compose the available `other` tasks list for all projects
+      if (isEqual(selected, { label: MISC, type: "intent" })) {
+        selected = await this.showQuickPick(filter(tasksByProject, ["__intent", selected.label]), {
+          placeHolder: "select the task you want to perform:",
+        });
+      }
+
+      return this.setSelectedTask(selected);
+    } catch (e: any) {
+      getLogger().debug(`Task selection failed: ${e.toString()}`);
+      if (e.message !== task_selection_canceled) {
+        window.showErrorMessage(e.toString());
+      }
+    }
+  }
   private async setSelectedTask(selectedTask: ConfiguredTask): Promise<void> {
     getSWA().track(messages.SWA_CREATE_TASK_EVENT(), [
       messages.SWA_TASK_EXPLORER_PARAM(),
@@ -79,9 +99,8 @@ export class TasksSelection {
       selectedTask.__extensionName,
     ]);
     const tasks = getConfiguredTasksFromCache();
-    const existingLabels = map(tasks, (_) => _.label);
-    selectedTask.label = this.getUniqueTaskLabel(selectedTask.label, existingLabels);
-    await disposeTaskSelectionPanel();
+    selectedTask.label = this.getUniqueTaskLabel(selectedTask.label, map(tasks, "label"));
+
     const newTask = { ...selectedTask };
     delete selectedTask.__wsFolder;
     delete selectedTask.__image;

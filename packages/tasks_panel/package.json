@@ -184,6 +184,11 @@
           "command": "tasks-explorer.stopTask",
           "when": "viewItem =~ /^task--running$/",
           "group": "inline"
+        },
+        {
+          "command": "tasks-explorer.createTask",
+          "when": "viewItem =~ /^project$/",
+          "group": "inline"
         }
       ]
     },
@@ -232,7 +237,7 @@
     "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.184",
     "@types/sinon": "^10.0.13",
-    "@types/vscode": "1.50.0",
+    "@types/vscode": "1.75.0",
     "@types/ws": "^7.2.3",
     "@vscode-tasks-explorer/vue_frontend_rpc": "^4.3.1",
     "fs-extra": "10.1.0",
@@ -243,6 +248,7 @@
     "webpack-cli": "^4.10.0"
   },
   "engines": {
-    "vscode": "^1.50.0"
-  }
+    "vscode": "^1.75.0"
+  },
+  "icon": "icon.png"
 }

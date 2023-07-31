@@ -1,27 +1,20 @@
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import { TaskSelectionPanel } from "./task-selection-panel";
 import { TaskEditorPanel } from "./task-editor-panel";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
 import { serializeTask } from "../utils/task-serializer";
 import { TaskEditor } from "../task-editor";
+import { VSCodeEvents } from "../vscode-events";
+import { TasksSelection } from "../tasks-selection";
 
-let taskSelectionPanel: TaskSelectionPanel | undefined;
 let taskEditorPanel: TaskEditorPanel | undefined;
 
-export async function createTasksSelectionPanel(
+export async function createTasksSelection(
   tasks: ConfiguredTask[],
-  readResource: (file: string) => Promise<string>
+  readResource: (file: string) => Promise<string>,
+  project?: string
 ): Promise<void> {
-  taskSelectionPanel = new TaskSelectionPanel(tasks, readResource);
-  return taskSelectionPanel.initWebviewPanel();
-}
-
-export async function disposeTaskSelectionPanel(): Promise<void> {
-  if (taskSelectionPanel !== undefined) {
-    taskSelectionPanel.dispose();
-    taskSelectionPanel = undefined;
-  }
+  return new TasksSelection(new VSCodeEvents(), tasks, readResource).select(project);
 }
 
 export async function createTaskEditorPanel(

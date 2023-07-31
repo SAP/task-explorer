@@ -2,16 +2,17 @@ import { ProgressLocation, window } from "vscode";
 import { ITasksProvider } from "../services/definitions";
 import { messages } from "../i18n/messages";
 import {
-  createTasksSelectionPanel,
+  createTasksSelection,
   disposeTaskEditorPanel,
-  disposeTaskSelectionPanel,
   getTaskEditorPanel,
   getTaskInProcess,
 } from "../panels/panels-handler";
+import { TaskTreeItem } from "../view/task-tree-item";
 
 export async function createTask(
   tasksProvider: ITasksProvider,
-  readResource: (file: string) => Promise<string>
+  readResource: (file: string) => Promise<string>,
+  treeItem?: TaskTreeItem
 ): Promise<void> {
   const taskInProcess = getTaskInProcess();
 
@@ -33,22 +34,21 @@ export async function createTask(
     }
   }
 
-  await disposeTaskSelectionPanel();
-
   // display progress, it might take a while
   return window.withProgress(
     {
       location: ProgressLocation.Notification,
       title: messages.OPENING_SELECTION_VIEW,
     },
-    () => openViewForAutoDetectedTaskSelection(tasksProvider, readResource)
+    () => openViewForAutoDetectedTaskSelection(tasksProvider, readResource, treeItem)
   );
 }
 
 async function openViewForAutoDetectedTaskSelection(
   tasksProvider: ITasksProvider,
-  readResource: (file: string) => Promise<string>
+  readResource: (file: string) => Promise<string>,
+  treeItem?: TaskTreeItem
 ): Promise<void> {
   const tasks = await tasksProvider.getAutoDectedTasks();
-  return createTasksSelectionPanel(tasks, readResource);
+  return createTasksSelection(tasks, readResource, (<any>treeItem)?.fqn);
 }

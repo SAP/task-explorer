@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { mockVscode, MockVSCodeInfo, resetTestVSCode } from "../utils/mockVSCode";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 mockVscode("src/panels/panels-handler");
-import { disposeTaskEditorPanel, disposeTaskSelectionPanel, getTaskEditor } from "../../src/panels/panels-handler";
+import { disposeTaskEditorPanel, getTaskEditor } from "../../src/panels/panels-handler";
 mockVscode("src/commands/create-task");
 import { createTask } from "../../src/commands/create-task";
 mockVscode("src/commands/edit-task");
@@ -34,7 +34,6 @@ describe("Command createTask", () => {
   };
 
   afterEach(() => {
-    disposeTaskSelectionPanel();
     disposeTaskEditorPanel();
     resetTestVSCode();
     panelCreated = 0;
@@ -138,13 +137,8 @@ describe("Command createTask", () => {
       ];
       await createTask(new MockTasksProvider(tasks), readFile);
       expect(panelCreated).eq(1);
-      await disposeTaskSelectionPanel();
       await createTask(new MockTasksProvider(tasks), readFile);
       expect(panelCreated).eq(2);
-    });
-
-    it("does not throw null pointer exception when called with undefined instance of tasks selection panel", async () => {
-      await disposeTaskSelectionPanel();
     });
   });
 });

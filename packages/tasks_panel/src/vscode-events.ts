@@ -12,7 +12,7 @@ import { cleanTasks } from "./utils/ws-folder";
 export class VSCodeEvents implements AppEvents {
   private readonly contributors: IContributors;
 
-  constructor(private webviewPanel: WebviewPanel) {
+  constructor(private webviewPanel?: WebviewPanel) {
     this.contributors = Contributors.getInstance();
   }
 
@@ -33,7 +33,9 @@ export class VSCodeEvents implements AppEvents {
       return;
     }
     // change tab name on save
-    this.webviewPanel.title = task.label;
+    if (this.webviewPanel) {
+      this.webviewPanel.title = task.label;
+    }
   }
 
   getTasksEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {
