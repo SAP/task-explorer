@@ -32,8 +32,9 @@ export class VSCodeEvents implements AppEvents {
       window.showErrorMessage(messages.TASK_UPDATE_FAILED());
       return;
     }
-    // change tab name on save
+    // `this.webviewPanel` property is optionaly since it is not required for `addTaskToConfiguration` flow
     if (this.webviewPanel) {
+      // change tab name on save
       this.webviewPanel.title = task.label;
     }
   }

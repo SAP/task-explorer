@@ -1,4 +1,4 @@
-import { each, extend, filter, find, groupBy, isEmpty, isEqual, isFunction, map, size, sortBy, uniq } from "lodash";
+import { each, extend, filter, find, isEmpty, isEqual, isFunction, map, size, sortBy, uniq } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "./app-events";
 import { getSWA } from "./utils/swa";
@@ -11,7 +11,7 @@ import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
 import { createTaskEditorPanel } from "./panels/panels-handler";
 
 const escapeStringRegexp = require("escape-string-regexp");
-const task_selection_canceled = "_ internal - selection canceled _";
+const task_selection_canceled = "_canceled_";
 
 export class TasksSelection {
   constructor(
@@ -25,7 +25,7 @@ export class TasksSelection {
     options?: QuickPickOptions
   ): Promise<any> {
     if (isEmpty(items)) {
-      throw new Error("nothing to select: no items found");
+      throw new Error(messages.MISSING_AUTO_DETECTED_TASKS());
     }
     const choice = await window.showQuickPick(
       items,
@@ -67,21 +67,27 @@ export class TasksSelection {
       pickItems = [];
       each(intents, (intent) => {
         // add a group separator
-        pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
         if (isMatchDeploy(intent) || isMatchBuild(intent)) {
+          pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
           pickItems.push(...filter(tasksByProject, ["__intent", intent]));
         } else {
-          // Miscellaneous
-          pickItems.push({ label: MISC, type: "intent" }); // add a special item --> 'Miscellaneous' group
+          // add a special item --> 'Miscellaneous' group
+          pickItems.push({ label: MISC, kind: QuickPickItemKind.Separator });
+          pickItems.push({ label: MISC, type: "intent" });
         }
       });
       selected = await this.showQuickPick(pickItems, { placeHolder: "select the task you want to perform:" });
 
       // step 3: 'Miscellaneous' item selected --> compose the available `other` tasks list for all projects
       if (isEqual(selected, { label: MISC, type: "intent" })) {
-        selected = await this.showQuickPick(filter(tasksByProject, ["__intent", selected.label]), {
-          placeHolder: "select the task you want to perform:",
-        });
+        selected = await this.showQuickPick(
+          filter(tasksByProject, (_) => {
+            return !isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent);
+          }),
+          {
+            placeHolder: "select the task you want to perform:",
+          }
+        );
       }
 
       return this.setSelectedTask(selected);

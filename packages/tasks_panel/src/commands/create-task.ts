@@ -49,6 +49,7 @@ async function openViewForAutoDetectedTaskSelection(
   readResource: (file: string) => Promise<string>,
   treeItem?: TaskTreeItem
 ): Promise<void> {
-  const tasks = await tasksProvider.getAutoDectedTasks();
-  return createTasksSelection(tasks, readResource, (<any>treeItem)?.fqn);
+  return tasksProvider.getAutoDectedTasks().then((tasks) => {
+    void createTasksSelection(tasks, readResource, (<any>treeItem)?.fqn);
+  });
 }
