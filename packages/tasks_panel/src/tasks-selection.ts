@@ -1,4 +1,4 @@
-import { each, extend, filter, find, isEmpty, isEqual, isFunction, map, size, sortBy, uniq } from "lodash";
+import { filter, isFunction, map } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "./app-events";
 import { getSWA } from "./utils/swa";
@@ -6,12 +6,11 @@ import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { serializeTask } from "./utils/task-serializer";
 import { getConfiguredTasksFromCache } from "./services/tasks-provider";
-import { QuickPickItem, QuickPickOptions, window, QuickPickItemKind } from "vscode";
-import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
+import { window } from "vscode";
 import { createTaskEditorPanel } from "./panels/panels-handler";
+import { multiStepTaskSelect } from "./multi-step-select";
 
 const escapeStringRegexp = require("escape-string-regexp");
-const task_selection_canceled = "_canceled_";
 
 export class TasksSelection {
   constructor(
@@ -20,82 +19,15 @@ export class TasksSelection {
     private readonly readResource: (file: string) => Promise<string>
   ) {}
 
-  private async showQuickPick<T extends QuickPickItem>(
-    items: T[] | Thenable<T[]>,
-    options?: QuickPickOptions
-  ): Promise<any> {
-    if (isEmpty(items)) {
-      throw new Error(messages.MISSING_AUTO_DETECTED_TASKS());
-    }
-    const choice = await window.showQuickPick(
-      items,
-      extend(
-        {
-          canPickMany: false,
-          matchOnDetail: true,
-          ignoreFocusOut: true,
-        },
-        options
-      )
-    );
-    if (!choice) {
-      throw new Error(task_selection_canceled);
-    }
-    return choice;
-  }
-
   public async select(project?: string): Promise<any> {
-    let selected;
     try {
-      // step 1: (optional) select a project -> compose projects list
-      let pickItems = uniq(map(this.tasks, "__wsFolder"));
-      pickItems = project
-        ? [
-            find(pickItems, (item) => {
-              return item === project;
-            }),
-          ]
-        : pickItems;
-      selected =
-        size(pickItems) > 1
-          ? await this.showQuickPick(pickItems, { placeHolder: "select a project root:" })
-          : pickItems[0];
-
-      // step 2: select a task -> compose tasks list from the specified project by the existing sorted 'intent's
-      const tasksByProject = filter(this.tasks, ["__wsFolder", selected]);
-      const intents = sortBy(uniq(map(tasksByProject, "__intent")));
-      pickItems = [];
-      each(intents, (intent) => {
-        // add a group separator
-        if (isMatchDeploy(intent) || isMatchBuild(intent)) {
-          pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
-          pickItems.push(...filter(tasksByProject, ["__intent", intent]));
-        } else {
-          // add a special item --> 'Miscellaneous' group
-          pickItems.push({ label: MISC, kind: QuickPickItemKind.Separator });
-          pickItems.push({ label: MISC, type: "intent" });
-        }
-      });
-      selected = await this.showQuickPick(pickItems, { placeHolder: "select the task you want to perform:" });
-
-      // step 3: 'Miscellaneous' item selected --> compose the available `other` tasks list for all projects
-      if (isEqual(selected, { label: MISC, type: "intent" })) {
-        selected = await this.showQuickPick(
-          filter(tasksByProject, (_) => {
-            return !isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent);
-          }),
-          {
-            placeHolder: "select the task you want to perform:",
-          }
-        );
+      const { task } = await multiStepTaskSelect(this.tasks, project);
+      if (task) {
+        return this.setSelectedTask(task);
       }
-
-      return this.setSelectedTask(selected);
     } catch (e: any) {
       getLogger().debug(`Task selection failed: ${e.toString()}`);
-      if (e.message !== task_selection_canceled) {
-        window.showErrorMessage(e.toString());
-      }
+      window.showErrorMessage(e.toString());
     }
   }
   private async setSelectedTask(selectedTask: ConfiguredTask): Promise<void> {

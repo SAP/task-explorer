@@ -3,14 +3,13 @@ import { mockVscode, testVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/tasks-selection");
 import { MockAppEvents } from "./utils/mockAppEvents";
-import { messages } from "../src/i18n/messages";
 import { MockContributorWithOnSave } from "./utils/mockContributor";
 import { TasksSelection } from "../src/tasks-selection";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
 import { cloneDeep, extend, map } from "lodash";
-import { MISC } from "../src/utils/ws-folder";
 import * as taskProvider from "../src/services/tasks-provider";
 import * as panelHandler from "../src/panels/panels-handler";
+import * as multiStepSelection from "../src/multi-step-select";
 
 const roots = ["/user/projects/project1", "/user/projects/project2"];
 
@@ -48,17 +47,6 @@ const readFile = async function (): Promise<string> {
   return "aaa";
 };
 
-function composeQuickPickOptions(options: any): any {
-  return extend(
-    {
-      canPickMany: false,
-      matchOnDetail: true,
-      ignoreFocusOut: true,
-    },
-    options
-  );
-}
-
 describe("the TasksSelection class", () => {
   let sandbox: SinonSandbox;
   let mockWindow: SinonMock;
@@ -89,21 +77,12 @@ describe("the TasksSelection class", () => {
     expect(taskSelection["readResource"]).to.be.equal(readFile);
   });
 
-  it("select - no project name received, select -> project -> intend -> task (build)", async () => {
+  it("select - task selected", async () => {
     sandbox.stub(taskProvider, "getConfiguredTasksFromCache").returns(tasks);
-    let options = { placeHolder: "select a project root:" };
-    mockWindow.expects("showQuickPick").withExactArgs(roots, composeQuickPickOptions(options)).resolves(roots[0]);
-    const pickItems: any[] = [
-      { label: taskContributed1.__intent, kind: testVscode.QuickPickItemKind.Separator },
-      cloneDeep(taskContributed1),
-      { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
-      { label: MISC, type: "intent" },
-    ];
-    options = { placeHolder: "select the task you want to perform:" };
-    mockWindow
-      .expects("showQuickPick")
-      .withExactArgs(pickItems, composeQuickPickOptions(options))
-      .resolves(pickItems[1]);
+    sandbox
+      .stub(multiStepSelection, "multiStepTaskSelect")
+      .withArgs(taskSelection["tasks"])
+      .resolves({ task: cloneDeep(taskContributed1) });
     const expectedTask = extend(cloneDeep(tasks[0]), {
       __index: 0,
       label: taskSelection["getUniqueTaskLabel"](tasks[0].label, map(tasks, "label")),
@@ -112,72 +91,18 @@ describe("the TasksSelection class", () => {
     await taskSelection.select();
   });
 
-  it("select - project name received, select -> intend -> task (build)", async () => {
-    sandbox.stub(taskProvider, "getConfiguredTasksFromCache").returns(tasks);
-    const pickItems: any[] = [
-      { label: taskContributed1.__intent, kind: testVscode.QuickPickItemKind.Separator },
-      cloneDeep(taskContributed1),
-      { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
-      { label: MISC, type: "intent" },
-    ];
-    const options = { placeHolder: "select the task you want to perform:" };
-    mockWindow
-      .expects("showQuickPick")
-      .withExactArgs(pickItems, composeQuickPickOptions(options))
-      .resolves(pickItems[1]);
-    const expectedTask = extend(cloneDeep(tasks[0]), {
-      __index: 0,
-      label: taskSelection["getUniqueTaskLabel"](tasks[0].label, map(tasks, "label")),
-    });
-    mockPanelHandler.expects("createTaskEditorPanel").withExactArgs(expectedTask, readFile).resolves();
-    await taskSelection.select(roots[0]);
-  });
-
-  it("select - project name received, select -> misc -> task", async () => {
-    sandbox.stub(taskProvider, "getConfiguredTasksFromCache").returns(tasks);
-    let pickItems: any[] = [
-      { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
-      { label: MISC, type: "intent" },
-    ];
-    const options = { placeHolder: "select the task you want to perform:" };
-    mockWindow
-      .expects("showQuickPick")
-      .withExactArgs(pickItems, composeQuickPickOptions(options))
-      .resolves(pickItems[1]);
-    pickItems = [cloneDeep(taskNotContributed)];
-    mockWindow
-      .expects("showQuickPick")
-      .withExactArgs(pickItems, composeQuickPickOptions(options))
-      .resolves(pickItems[0]);
-    const expectedTask = extend(cloneDeep(taskNotContributed), {
-      __index: 0,
-      label: taskSelection["getUniqueTaskLabel"](taskNotContributed.label, map(tasks, "label")),
-    });
-    mockPanelHandler.expects("createTaskEditorPanel").withExactArgs(expectedTask, readFile).resolves();
-    await taskSelection.select(roots[1]);
-  });
-
-  it("select - project name received, selection canceled by user", async () => {
-    sandbox.stub(taskProvider, "getConfiguredTasksFromCache").returns(tasks);
-    const pickItems: any[] = [
-      { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
-      { label: MISC, type: "intent" },
-    ];
-    const options = { placeHolder: "select the task you want to perform:" };
-    mockWindow.expects("showQuickPick").withExactArgs(pickItems, composeQuickPickOptions(options)).resolves();
+  it("select - task selection canceled", async () => {
+    sandbox.stub(multiStepSelection, "multiStepTaskSelect").withArgs(taskSelection["tasks"]).resolves({});
     mockPanelHandler.expects("createTaskEditorPanel").never();
-    mockWindow.expects("showErrorMessage").never();
-    await taskSelection.select(roots[1]);
+    await taskSelection.select();
   });
 
-  it("select - project name received, selection - no task found", async () => {
-    sandbox.stub(taskProvider, "getConfiguredTasksFromCache").returns(tasks);
+  it("select - exception thrown", async () => {
+    const error = new Error("canceled");
+    sandbox.stub(multiStepSelection, "multiStepTaskSelect").withArgs(taskSelection["tasks"]).rejects(error);
     mockPanelHandler.expects("createTaskEditorPanel").never();
-    mockWindow
-      .expects("showErrorMessage")
-      .withExactArgs(new Error(messages.MISSING_AUTO_DETECTED_TASKS()).toString())
-      .resolves();
-    await taskSelection.select("/user/not-existing/project");
+    mockWindow.expects("showErrorMessage").withExactArgs(error.toString());
+    await taskSelection.select();
   });
 
   describe("getUniqueTaskLabel method", () => {

@@ -9,6 +9,8 @@ import { editTask } from "../../src/commands/edit-task";
 import { TaskEditor } from "../../src/task-editor";
 import { messages } from "../../src/i18n/messages";
 import { createSandbox, SinonMock, SinonSandbox } from "sinon";
+import { expect } from "chai";
+import { fail } from "assert";
 
 describe("Command createTask", () => {
   const tasks = [
@@ -52,7 +54,18 @@ describe("Command createTask", () => {
     const mockWindow = sandbox.mock(testVscode.window);
     mockWindow.expects("showErrorMessage").resolves();
     await createTask(new MockTasksProvider(tasks), readFile);
+    // async waiting for finish the flow
+    await new Promise((resolve) => setTimeout(() => resolve(true), 100));
     mockWindow.verify();
+  });
+
+  it("creates tasks selection panel - no tasks found", async () => {
+    try {
+      await createTask(new MockTasksProvider([]), readFile);
+      fail("should fail");
+    } catch (e: any) {
+      expect(e.message).to.be.equal(messages.MISSING_AUTO_DETECTED_TASKS());
+    }
   });
 
   it(`creates panel for tasks selection when called with some task opened for editing but not changed`, async () => {

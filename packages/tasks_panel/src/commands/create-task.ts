@@ -8,6 +8,7 @@ import {
   getTaskInProcess,
 } from "../panels/panels-handler";
 import { TaskTreeItem } from "../view/task-tree-item";
+import { isEmpty } from "lodash";
 
 export async function createTask(
   tasksProvider: ITasksProvider,
@@ -50,6 +51,9 @@ async function openViewForAutoDetectedTaskSelection(
   treeItem?: TaskTreeItem
 ): Promise<void> {
   return tasksProvider.getAutoDectedTasks().then((tasks) => {
+    if (isEmpty(tasks)) {
+      throw new Error(messages.MISSING_AUTO_DETECTED_TASKS());
+    }
     void createTasksSelection(tasks, readResource, (<any>treeItem)?.fqn);
   });
 }
