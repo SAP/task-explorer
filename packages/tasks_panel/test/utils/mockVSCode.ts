@@ -179,10 +179,7 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: {
-    extensionPath: "path",
-    subscriptions: [],
-  },
+  ExtensionContext: { extensionPath: "path", subscriptions: { push: (disposable) => disposable } },
   TreeItem: class {
     constructor(public label: string, public collapsibleState: any) {}
   },

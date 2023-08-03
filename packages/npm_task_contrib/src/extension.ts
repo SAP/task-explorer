@@ -7,7 +7,7 @@ import { NpmTaskProvider } from "./task-provider";
 export function activate(context: ExtensionContext): TaskEditorContributorExtensionAPI<ConfiguredTask> {
   // extension that contributes to Tasks Explorer has to provide:
   // 1. Task Provider
-  tasks.registerTaskProvider(NPM_TYPE, new NpmTaskProvider());
+  context.subscriptions.push(tasks.registerTaskProvider(NPM_TYPE, new NpmTaskProvider()));
 
   // 2. Task Contributors
   return {

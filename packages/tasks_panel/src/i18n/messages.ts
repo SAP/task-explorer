@@ -47,4 +47,6 @@ export const messages = {
   delete_task_confirmation: (name: string) => `Are you sure you want to delete the '${name}' configuration?`,
   resource_open_could_not_open_editor: "Could not open the editor for the required resource",
   configuration_task_not_found: (label: string) => `Could not find the "${label}" configuration.`,
+  create_task_pick_project_placeholder: "Select the project for which you want to create the task:",
+  create_task_pick_task_placeholder: "Select the task you want to perform:",
 };

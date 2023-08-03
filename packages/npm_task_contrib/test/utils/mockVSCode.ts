@@ -163,7 +163,7 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: { extensionPath: "path" },
+  ExtensionContext: { extensionPath: "path", subscriptions: { push: (disposable) => disposable } },
   TreeItem: class {},
   EventEmitter: class {
     fire(): void {

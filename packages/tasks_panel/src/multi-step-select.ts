@@ -11,6 +11,7 @@ import {
   QuickPick,
 } from "vscode";
 import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
+import { messages } from "./i18n/messages";
 
 const miscItem = { label: "$(list-unordered)", description: MISC, type: "intent" };
 
@@ -74,7 +75,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   async function pickProjects(input: MultiStepSelection, state: Partial<State>) {
     const pickItems = grabProjectItems(tasks, project);
     state.project = await input.showQuickPick({
-      placeholder: "Pick which project you are creating the task for:",
+      placeholder: messages.create_task_pick_project_placeholder,
       items: pickItems,
       activeItem: find(pickItems, state.project),
       shouldResume: shouldResume,
@@ -85,7 +86,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   async function pickTaskByGroup(input: MultiStepSelection, state: Partial<State>) {
     const pickItems = grabTasksByGroup(tasks, state.project?.description as string);
     state.taskByGroup = await input.showQuickPick({
-      placeholder: "Pick the task you want to perform",
+      placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
       activeItem: find(pickItems, state.taskByGroup),
       shouldResume: shouldResume,
@@ -100,7 +101,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   async function pickMiscTask(input: MultiStepSelection, state: Partial<State>) {
     const pickItems = grabMiscTasksByProject(tasks, state.project?.description as string);
     state.task = await input.showQuickPick({
-      placeholder: "Pick the task you want to perform",
+      placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
       activeItem: find(pickItems, state.task) as QuickPickItem | undefined,
       shouldResume: shouldResume,
