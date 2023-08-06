@@ -3,7 +3,7 @@ import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
-import { createTaskEditorPanel, disposeTaskSelectionPanel, getTaskInProcess } from "../panels/panels-handler";
+import { createTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
 import { ITasksProvider } from "../services/definitions";
 import { find, has } from "lodash";
 import { serializeTask } from "../utils/task-serializer";
@@ -55,8 +55,6 @@ export async function editTask(task: ConfiguredTask, readResource: (file: string
       return;
     }
   }
-
-  await disposeTaskSelectionPanel();
 
   return createTaskEditorPanel(task, readResource);
 }

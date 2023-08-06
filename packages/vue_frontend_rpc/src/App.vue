@@ -1,7 +1,6 @@
 <template>
   <v-app id="app">
     <Editor ref="editor" :editor="editor" :rpc="rpc" />
-    <Selector ref="selector" :selector="selector" :rpc="rpc" />
   </v-app>
 </template>
 
@@ -9,21 +8,18 @@
 import { RpcBrowser } from "@sap-devx/webview-rpc/out.browser/rpc-browser";
 import { RpcBrowserWebSockets } from "@sap-devx/webview-rpc/out.browser/rpc-browser-ws";
 import { forEach } from "lodash";
-import Selector from "./components/Selector";
 import Editor from "./components/Editor";
 
 function initialState() {
   return {
     rpc: Object,
     editor: true,
-    selector: false,
   };
 }
 
 export default {
   name: "app",
   components: {
-    Selector,
     Editor,
   },
   data() {
@@ -95,13 +91,6 @@ export default {
     async setTask(task) {
       this.$refs.editor.setTask(task);
       this.editor = true;
-      this.selector = false;
-    },
-
-    setTasks(tasks, message) {
-      this.editor = false;
-      this.selector = true;
-      this.$refs.selector.setTasks(tasks, message);
     },
   },
 };

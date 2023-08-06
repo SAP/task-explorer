@@ -168,6 +168,10 @@ export const testVscode: any = {
       },
       task: (progress: any, token: any) => Promise<any>
     ) => Promise.resolve(task({}, {})),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
+    showQuickPick: (items: any[], options: any) => {
+      throw new Error("not implemented");
+    },
   },
   ViewColumn: {
     One: 1,
@@ -175,10 +179,7 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: {
-    extensionPath: "path",
-    subscriptions: [],
-  },
+  ExtensionContext: { extensionPath: "path", subscriptions: { push: (disposable) => disposable } },
   TreeItem: class {
     constructor(public label: string, public collapsibleState: any) {}
   },
@@ -230,6 +231,10 @@ export const testVscode: any = {
   },
   ThemeIcon: class {
     constructor(public readonly id: string) {}
+  },
+  QuickPickItemKind: {
+    Separator: -1,
+    Default: 0,
   },
 };
 

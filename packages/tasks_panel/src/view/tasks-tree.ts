@@ -73,7 +73,9 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
         })
     );
     /* istanbul ignore next */
-    getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_CHILDREN_BY_INTENT(element.label ?? "", children.length));
+    getClassLogger(LOGGER_CLASS_NAME).debug(
+      messages.GET_TREE_CHILDREN_BY_INTENT(element.label?.toString() ?? "", children.length)
+    );
     return children;
   }
 

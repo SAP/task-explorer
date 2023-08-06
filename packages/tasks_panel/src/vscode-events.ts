@@ -12,7 +12,7 @@ import { cleanTasks } from "./utils/ws-folder";
 export class VSCodeEvents implements AppEvents {
   private readonly contributors: IContributors;
 
-  constructor(private webviewPanel: WebviewPanel) {
+  constructor(private webviewPanel?: WebviewPanel) {
     this.contributors = Contributors.getInstance();
   }
 
@@ -32,8 +32,11 @@ export class VSCodeEvents implements AppEvents {
       window.showErrorMessage(messages.TASK_UPDATE_FAILED());
       return;
     }
-    // change tab name on save
-    this.webviewPanel.title = task.label;
+    // `this.webviewPanel` property is optionaly since it is not required for `addTaskToConfiguration` flow
+    if (this.webviewPanel) {
+      // change tab name on save
+      this.webviewPanel.title = task.label;
+    }
   }
 
   getTasksEditorContributor(type: string): TaskEditorContributionAPI<ConfiguredTask> {

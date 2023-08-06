@@ -24,7 +24,7 @@ class BranchTreeItem extends TreeTooltiplessItem {
 }
 export class ProjectTreeItem extends BranchTreeItem {
   constructor(label: string, public fqn: string, collapsibleState: TreeItemCollapsibleState) {
-    super(label, collapsibleState, "branch");
+    super(label, collapsibleState, "project");
   }
 }
 export class IntentTreeItem extends BranchTreeItem {
