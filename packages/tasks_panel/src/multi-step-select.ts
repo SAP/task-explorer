@@ -32,9 +32,11 @@ function grabTasksByGroup(tasks: ConfiguredTask[], project: string): QuickPickIt
       pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
       pickItems.push(...filter(tasksByProject, ["__intent", intent]));
     } else {
-      // add a special item --> 'Miscellaneous' group
-      pickItems.push({ label: MISC, kind: QuickPickItemKind.Separator });
-      pickItems.push(miscItem);
+      if (!find(pickItems, miscItem)) {
+        // add a special item (once) --> 'Miscellaneous' group
+        pickItems.push({ label: MISC, kind: QuickPickItemKind.Separator });
+        pickItems.push(miscItem);
+      }
     }
   });
   return pickItems;

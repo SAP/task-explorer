@@ -38,7 +38,16 @@ describe("multi-step-selection scope", () => {
     __extensionName: "testExtension",
   };
 
-  const tasks = [taskContributed1, taskContributed2, taskNotContributed];
+  const taskContributed4 = {
+    label: "Template: task4",
+    prop1: "value1",
+    type: "otherType",
+    taskType: "testIntent",
+    __wsFolder: roots[1],
+    __extensionName: "testExtension",
+  };
+
+  const tasks = [taskContributed1, taskContributed2, taskNotContributed, taskContributed4];
 
   it("Miscellaneous item verification", async () => {
     expect(__internal.miscItem).to.be.deep.equal({ label: "$(list-unordered)", description: MISC, type: "intent" });
@@ -83,6 +92,6 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabMiscTasksByProject", async () => {
-    expect(__internal.grabMiscTasksByProject(tasks, roots[1])).to.be.deep.equal([taskNotContributed]);
+    expect(__internal.grabMiscTasksByProject(tasks, roots[1])).to.be.deep.equal([taskNotContributed, taskContributed4]);
   });
 });
