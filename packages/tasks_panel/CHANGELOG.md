@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.1](https://github.com/SAP/task-explorer/compare/v4.4.0...v4.4.1) (2023-08-08)
+
+### Bug Fixes
+
+- avoid misc group duplicate appearance ([#293](https://github.com/SAP/task-explorer/issues/293)) ([d6a18ca](https://github.com/SAP/task-explorer/commit/d6a18cac77f0008c7d1fe42ae2ccf7c58a6cdccc))
+
 # [4.4.0](https://github.com/SAP/task-explorer/compare/v4.3.1...v4.4.0) (2023-08-06)
 
 ### Features
