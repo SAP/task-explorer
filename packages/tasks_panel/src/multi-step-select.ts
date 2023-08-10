@@ -1,5 +1,5 @@
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import { each, extend, filter, find, groupBy, isEqual, keys, map, size, sortBy, uniq } from "lodash";
+import { compact, each, extend, filter, find, groupBy, isEmpty, isEqual, keys, map, size, sortBy, uniq } from "lodash";
 import {
   QuickPickItem,
   window,
@@ -12,6 +12,7 @@ import {
 } from "vscode";
 import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
 import { messages } from "./i18n/messages";
+import { FioriProjectInfo, getFioriE2ePickItems } from "./misc/fiori-e2e-config";
 
 const miscItem = { label: "$(list-unordered)", description: MISC, type: "intent" };
 
@@ -23,8 +24,21 @@ function grabProjectItems(tasks: ConfiguredTask[], project?: string): QuickPickI
   });
 }
 
-function grabTasksByGroup(tasks: ConfiguredTask[], project: string): QuickPickItem[] {
+async function grabTasksByGroup(tasks: ConfiguredTask[], project: string): Promise<QuickPickItem[]> {
+  function toFioriE2ePickItems(items: FioriProjectInfo[]): QuickPickItem[] {
+    return map(items, (item) => {
+      return {
+        label: `Define Deployment parameters - ${item.project}`,
+        ...item,
+      };
+    });
+  }
   const pickItems: any[] = [];
+  const fioriDeploymentParamItems = toFioriE2ePickItems(await getFioriE2ePickItems(project));
+  if (!isEmpty(fioriDeploymentParamItems)) {
+    pickItems.push({ label: "Fiori Configuration", kind: QuickPickItemKind.Separator });
+    pickItems.push(...fioriDeploymentParamItems);
+  }
   const tasksByProject = filter(tasks, ["__wsFolder", project]);
   each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent) => {
     // add a group separator
@@ -39,7 +53,7 @@ function grabTasksByGroup(tasks: ConfiguredTask[], project: string): QuickPickIt
       }
     }
   });
-  return pickItems;
+  return compact(pickItems);
 }
 
 function grabMiscTasksByProject(tasks: ConfiguredTask[], project: string): QuickPickItem[] {
@@ -86,7 +100,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   }
 
   async function pickTaskByGroup(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = grabTasksByGroup(tasks, state.project?.description as string);
+    const pickItems = await grabTasksByGroup(tasks, state.project?.description as string);
     state.taskByGroup = await input.showQuickPick({
       placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
