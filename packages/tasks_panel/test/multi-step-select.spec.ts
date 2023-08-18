@@ -5,6 +5,8 @@ mockVscode("/src/multi-step-select");
 import { __internal } from "../src/multi-step-select";
 import { cloneDeep, map, uniq } from "lodash";
 import { MISC } from "../src/utils/ws-folder";
+import * as e2eConfig from "../src/misc/fiori-e2e-config";
+import { SinonMock, SinonSandbox, createSandbox } from "sinon";
 
 describe("multi-step-selection scope", () => {
   const roots = ["/user/projects/project1", "/user/projects/project2"];
@@ -49,6 +51,22 @@ describe("multi-step-selection scope", () => {
 
   const tasks = [taskContributed1, taskContributed2, taskNotContributed, taskContributed4];
 
+  let sandbox: SinonSandbox;
+  let mockFioriE2eCinfig: SinonMock;
+
+  before(() => {
+    sandbox = createSandbox();
+  });
+
+  beforeEach(() => {
+    mockFioriE2eCinfig = sandbox.mock(e2eConfig);
+  });
+
+  afterEach(() => {
+    mockFioriE2eCinfig.verify();
+    sandbox.restore();
+  });
+
   it("Miscellaneous item verification", async () => {
     expect(__internal.miscItem).to.be.deep.equal({ label: "$(list-unordered)", description: MISC, type: "intent" });
   });
@@ -76,7 +94,8 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabTasksByGroup - [build/deploy] tasks found", async () => {
-    expect(__internal.grabTasksByGroup(tasks, roots[0])).to.be.deep.equal([
+    mockFioriE2eCinfig.expects("getFioriE2ePickItems").resolves([]);
+    expect(await __internal.grabTasksByGroup(tasks, roots[0])).to.be.deep.equal([
       { label: taskContributed1.__intent, kind: testVscode.QuickPickItemKind.Separator },
       cloneDeep(taskContributed1),
       { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
@@ -85,7 +104,21 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabTasksByGroup - [misc] tasks only", async () => {
-    expect(__internal.grabTasksByGroup(tasks, roots[1])).to.be.deep.equal([
+    mockFioriE2eCinfig.expects("getFioriE2ePickItems").resolves([]);
+    expect(await __internal.grabTasksByGroup(tasks, roots[1])).to.be.deep.equal([
+      { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
+      __internal.miscItem,
+    ]);
+  });
+
+  it("grabTasksByGroup - fioriE2ePickItems found, [build/deploy] tasks hidden", async () => {
+    const e2eItem1 = { wsFolder: "folder-1", project: "project-1" };
+    const e2eItem2 = { wsFolder: "folder-2", project: "" };
+    mockFioriE2eCinfig.expects("getFioriE2ePickItems").resolves([e2eItem1, e2eItem2]);
+    expect(await __internal.grabTasksByGroup(tasks, roots[0])).to.be.deep.equal([
+      { label: "Fiori Configuration", kind: testVscode.QuickPickItemKind.Separator },
+      { label: `Define Deployment parameters - ${e2eItem1.project}`, ...e2eItem1 },
+      { label: `Define Deployment parameters - ${e2eItem2.wsFolder}`, ...e2eItem2 },
       { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
       __internal.miscItem,
     ]);

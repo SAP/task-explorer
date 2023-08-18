@@ -28,7 +28,7 @@ async function grabTasksByGroup(tasks: ConfiguredTask[], project: string): Promi
   function toFioriE2ePickItems(items: FioriProjectInfo[]): QuickPickItem[] {
     return map(items, (item) => {
       return {
-        label: `Define Deployment parameters - ${item.project}`,
+        label: `Define Deployment parameters - ${item.project || item.wsFolder}`,
         ...item,
       };
     });
@@ -43,8 +43,11 @@ async function grabTasksByGroup(tasks: ConfiguredTask[], project: string): Promi
   each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent) => {
     // add a group separator
     if (isMatchDeploy(intent) || isMatchBuild(intent)) {
-      pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
-      pickItems.push(...filter(tasksByProject, ["__intent", intent]));
+      if (isEmpty(fioriDeploymentParamItems)) {
+        // fiori projects workaround: hide `Build`/`Deploy` npm tasks if fiori e2e deployment configuration needed
+        pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
+        pickItems.push(...filter(tasksByProject, ["__intent", intent]));
+      }
     } else {
       if (!find(pickItems, miscItem)) {
         // add a special item (once) --> 'Miscellaneous' group
