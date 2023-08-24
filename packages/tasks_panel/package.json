@@ -158,36 +158,36 @@
         {
           "command": "tasks-explorer.editTask",
           "group": "main@1",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.deleteTask",
           "group": "main@4",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.revealTask",
           "group": "main@2",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.duplicateTask",
           "group": "main@3",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.executeTask",
-          "when": "viewItem =~ /^task--idle$/",
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/",
           "group": "inline"
         },
         {
           "command": "tasks-explorer.stopTask",
-          "when": "viewItem =~ /^task--running$/",
+          "when": "view == tasksPanel && viewItem =~ /^task--running$/",
           "group": "inline"
         },
         {
           "command": "tasks-explorer.createTask",
-          "when": "viewItem =~ /^project$/",
+          "when": "view == tasksPanel && viewItem =~ /^project$/",
           "group": "inline"
         }
       ]

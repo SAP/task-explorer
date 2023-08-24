@@ -10,7 +10,9 @@ import {
 } from "vscode";
 import { BasToolkit } from "@sap-devx/app-studio-toolkit-types";
 import * as Yaml from "yaml";
-import { Dictionary, compact, concat, find, includes, map } from "lodash";
+import * as path from "path";
+import { Dictionary, compact, concat, find, includes, last, map, split } from "lodash";
+import { getLogger } from "../logger/logger-wrapper";
 
 export enum TYPE_FE_DEPLOY_CFG {
   fioriDeploymentConfig = "fioriDeploymentConfig",
@@ -46,24 +48,24 @@ async function detectDeployTarget(ui5DeployYaml: Uri): Promise<FE_DEPLOY_TRG | u
     }
     return find(yamlContext.builder.customTasks, ["name", "deploy-to-abap"]) ? FE_DEPLOY_TRG.ABAP : FE_DEPLOY_TRG.CF;
   } catch (e: any) {
-    // TODO: log error
+    getLogger().error(e.toString());
   }
 }
 
-const crypto = require("crypto");
+// const crypto = require("crypto");
 
 /* istanbul ignore next */
-function generateRandomString(length: number) {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const randomBytes = crypto.randomBytes(length);
+// function generateRandomString(length: number) {
+//   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//   const randomBytes = crypto.randomBytes(length);
 
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(randomBytes[i] % characters.length);
-  }
+//   let result = "";
+//   for (let i = 0; i < length; i++) {
+//     result += characters.charAt(randomBytes[i] % characters.length);
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
 export async function getFioriE2ePickItems(wsFolder: string): Promise<FioriProjectInfo[]> {
   async function isFileExist(uri: Uri): Promise<boolean> {
@@ -199,26 +201,33 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       throw new Error("Unable to complete the tasks definition - unsupported deployment target");
     }
     // Generate a random string of length between 4 and 8 characters
-    const randomStringLength = Math.floor(Math.random() * 5) + 4; // Random length between 4 and 8
-    const randomString = generateRandomString(randomStringLength);
+    // const randomStringLength = Math.floor(Math.random() * 5) + 4; // Random length between 4 and 8
+    const randomString = ""; //generateRandomString(randomStringLength);
     //
     const tasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
-      tasks.push({ type: "npm", label: `deploy to ABAP (${randomString}): ${project}`, script: "deploy" });
+      tasks.push({
+        type: "npm",
+        label: `Deploy to ABAP ${randomString}`,
+        script: "deploy",
+        options: { cwd: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}` },
+      });
     } else {
       // FE_DEPLOY_TRG.CF
       const taskBuild = {
         type: "build.mta",
-        label: `Build MTA (${randomString}): ${project}`,
+        label: `Build MTA ${randomString}`,
         taskType: "Build",
         projectPath: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}`,
         extensions: [],
       };
       const taskDeploy = {
         type: "deploy.mta.cf",
-        label: `Deploy MTA to Cloud Foundry (${randomString}): ${Uri.joinPath(Uri.file(wsFolder), project).fsPath}`,
+        label: `Deploy MTA to Cloud Foundry ${randomString}`,
         taskType: "Deploy",
-        mtarPath: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}/mta_archives/${project}_0.0.1.mtar`,
+        mtarPath: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}/mta_archives/${
+          project || last(split(wsFolder, path.sep))
+        }_0.0.1.mtar`,
         extensions: [],
         cfTarget: "",
         cfEndpoint: "",
@@ -232,7 +241,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
   }
 
   const ui5DeployYaml = waitForResource(
-    new RelativePattern(wsFolder, `${project}/ui5-deploy.yaml`),
+    new RelativePattern(wsFolder, `${project ? `${project}/` : ``}ui5-deploy.yaml`),
     false,
     false,
     true
