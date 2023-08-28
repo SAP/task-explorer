@@ -6,6 +6,7 @@ mockVscode("/src/fiori-e2e-config");
 import { each, last, split } from "lodash";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
 import { TYPE_FE_DEPLOY_CFG, fioriE2eConfig, getFioriE2ePickItems } from "../../src/misc/fiori-e2e-config";
+import { messages } from "../../src/i18n/messages";
 
 describe("fiori-e2e-config scope", () => {
   let sandbox: SinonSandbox;
@@ -368,7 +369,9 @@ specVersion: '2.4'
     beforeEach(() => {
       mockCommands
         .expects("executeCommand")
-        .withExactArgs("sap.ux.appGenerator.launchDeployConfig", { fsPath: wsFolder })
+        .withExactArgs("sap.ux.appGenerator.launchDeployConfig", {
+          fsPath: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath,
+        })
         .resolves();
       mockWorkspace
         .expects("createFileSystemWatcher")
@@ -398,7 +401,7 @@ specVersion: '2.4'
         .withExactArgs("tasks", testVscode.Uri.file(wsFolder))
         .returns(taskConfig);
       await fioriE2eConfig(wsFolder, project);
-      expect(/^Deploy to ABAP/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy to ABAP$/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("npm");
       expect((tasks[1] as any).options).to.be.deep.equal({
         cwd: `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}`,
@@ -419,15 +422,17 @@ specVersion: '2.4'
         .expects("getConfiguration")
         .withExactArgs("tasks", testVscode.Uri.file(wsFolder))
         .returns(taskConfig);
+
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
       await fioriE2eConfig(wsFolder, project);
-      expect(/^Build MTA/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("build.mta");
       expect((tasks[0] as any).taskType).to.be.equal("Build");
       expect((tasks[0] as any).projectPath).to.be.equal(
         testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath
       );
       expect((tasks[0] as any).extensions).to.be.deep.equal([]);
-      expect(/^Deploy MTA to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("deploy.mta.cf");
       expect((tasks[1] as any).taskType).to.be.equal("Deploy");
       expect((tasks[1] as any).mtarPath).to.be.equal(
@@ -451,7 +456,7 @@ specVersion: '2.4'
         await fioriE2eConfig(wsFolder, project);
         fail("should fail");
       } catch (e: any) {
-        expect(e.message).to.be.equal("Unable to complete the tasks definition - unsupported deployment target");
+        expect(e.message).to.be.equal(messages.err_task_definition_unsupported_target);
       }
     });
   });
@@ -462,6 +467,7 @@ specVersion: '2.4'
     const uriUi5DeployYaml = testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), "ui5-deploy.yaml");
 
     let tasks: any[] = [];
+    let lastRuntasks: any[] = [];
     const callbacks = {};
     const watcher = {
       dispose: () => true,
@@ -501,6 +507,7 @@ specVersion: '2.4'
     });
 
     afterEach(() => {
+      lastRuntasks = tasks;
       tasks = [];
     });
 
@@ -517,15 +524,17 @@ specVersion: '2.4'
         .expects("getConfiguration")
         .withExactArgs("tasks", testVscode.Uri.file(wsFolder))
         .returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+
       await fioriE2eConfig(wsFolder, project);
-      expect(/^Build MTA/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("build.mta");
       expect((tasks[0] as any).taskType).to.be.equal("Build");
       expect((tasks[0] as any).projectPath).to.be.equal(
         testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath
       );
       expect((tasks[0] as any).extensions).to.be.deep.equal([]);
-      expect(/^Deploy MTA to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("deploy.mta.cf");
       expect((tasks[1] as any).taskType).to.be.equal("Deploy");
       expect((tasks[1] as any).mtarPath).to.be.equal(
@@ -537,6 +546,27 @@ specVersion: '2.4'
       expect((tasks[1] as any).cfOrg).to.be.empty;
       expect((tasks[1] as any).cfSpace).to.be.empty;
       expect((tasks[1] as any).dependsOn).to.be.deep.equal([`${tasks[0].label}`]);
+    });
+
+    // this test depends on the result of the previous run test - always fails on independent run
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, `editTask` call structure verifing [depends on previous run]", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+      mockWorkspaceFs
+        .expects("readFile")
+        .withExactArgs(uriUi5DeployYaml)
+        .resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace
+        .expects("getConfiguration")
+        .withExactArgs("tasks", testVscode.Uri.file(wsFolder))
+        .returns(taskConfig);
+      mockCommands
+        .expects("executeCommand")
+        .withExactArgs("tasks-explorer.editTask", { command: { arguments: [lastRuntasks[1]] } })
+        .resolves();
+      await fioriE2eConfig(wsFolder, project);
     });
   });
 });

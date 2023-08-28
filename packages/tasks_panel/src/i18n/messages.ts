@@ -49,4 +49,5 @@ export const messages = {
   configuration_task_not_found: (label: string) => `Could not find the "${label}" configuration.`,
   create_task_pick_project_placeholder: "Select the project for which you want to create the task:",
   create_task_pick_task_placeholder: "Select the task you want to perform:",
+  err_task_definition_unsupported_target: "Unable to complete the tasks definition - unsupported deployment target",
 };

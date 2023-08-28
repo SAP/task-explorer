@@ -13,6 +13,7 @@ import * as Yaml from "yaml";
 import * as path from "path";
 import { Dictionary, compact, concat, find, includes, last, map, split } from "lodash";
 import { getLogger } from "../logger/logger-wrapper";
+import { messages } from "../i18n/messages";
 
 export enum TYPE_FE_DEPLOY_CFG {
   fioriDeploymentConfig = "fioriDeploymentConfig",
@@ -51,21 +52,6 @@ async function detectDeployTarget(ui5DeployYaml: Uri): Promise<FE_DEPLOY_TRG | u
     getLogger().error(e.toString());
   }
 }
-
-// const crypto = require("crypto");
-
-/* istanbul ignore next */
-// function generateRandomString(length: number) {
-//   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-//   const randomBytes = crypto.randomBytes(length);
-
-//   let result = "";
-//   for (let i = 0; i < length; i++) {
-//     result += characters.charAt(randomBytes[i] % characters.length);
-//   }
-
-//   return result;
-// }
 
 export async function getFioriE2ePickItems(wsFolder: string): Promise<FioriProjectInfo[]> {
   async function isFileExist(uri: Uri): Promise<boolean> {
@@ -178,7 +164,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       new Promise((resolve) => setTimeout(() => resolve(false), timeout * 1000)),
     ]).then((status) => {
       if (typeof status === "boolean") {
-        // timeout
+        // timeout occurred
         return status; // false
       } else {
         // [statuses]
@@ -198,36 +184,32 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
 
   async function completeTasksDefinition(target: FE_DEPLOY_TRG | undefined): Promise<any> {
     if (!target) {
-      throw new Error("Unable to complete the tasks definition - unsupported deployment target");
+      throw new Error(messages.err_task_definition_unsupported_target);
     }
-    // Generate a random string of length between 4 and 8 characters
-    // const randomStringLength = Math.floor(Math.random() * 5) + 4; // Random length between 4 and 8
-    const randomString = ""; //generateRandomString(randomStringLength);
-    //
-    const tasks: TaskDefinition[] = [];
+    let taskDeploy;
+    const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
+    const _tasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
-      tasks.push({
+      _tasks.push({
         type: "npm",
-        label: `Deploy to ABAP ${randomString}`,
+        label: `Deploy to ABAP`,
         script: "deploy",
-        options: { cwd: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}` },
+        options: { cwd: `${projectUri.fsPath}` },
       });
     } else {
       // FE_DEPLOY_TRG.CF
       const taskBuild = {
         type: "build.mta",
-        label: `Build MTA ${randomString}`,
+        label: `Build MTA`,
         taskType: "Build",
-        projectPath: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}`,
+        projectPath: `${projectUri.fsPath}`,
         extensions: [],
       };
-      const taskDeploy = {
+      taskDeploy = {
         type: "deploy.mta.cf",
-        label: `Deploy MTA to Cloud Foundry ${randomString}`,
+        label: `Deploy MTA to Cloud Foundry`,
         taskType: "Deploy",
-        mtarPath: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}/mta_archives/${
-          project || last(split(wsFolder, path.sep))
-        }_0.0.1.mtar`,
+        mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
         extensions: [],
         cfTarget: "",
         cfEndpoint: "",
@@ -235,9 +217,13 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
         cfSpace: "",
         dependsOn: [`${taskBuild.label}`],
       };
-      tasks.push(taskBuild, taskDeploy);
+      _tasks.push(taskBuild, taskDeploy);
     }
-    return addTaskDefinition(tasks);
+    return addTaskDefinition(_tasks).then(() => {
+      if (taskDeploy && target === FE_DEPLOY_TRG.CF) {
+        void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [taskDeploy] } });
+      }
+    });
   }
 
   const ui5DeployYaml = waitForResource(
@@ -246,7 +232,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
     false,
     true
   );
-  await commands.executeCommand(cmd_launch_deploy_config, { fsPath: wsFolder });
+  await commands.executeCommand(cmd_launch_deploy_config, { fsPath: Uri.joinPath(Uri.file(wsFolder), project).fsPath });
   if (await areResourcesReady([ui5DeployYaml])) {
     await completeTasksDefinition(
       await detectDeployTarget(Uri.joinPath(Uri.file(wsFolder), project, "ui5-deploy.yaml"))
