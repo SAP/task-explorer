@@ -109,4 +109,16 @@ describe("TasksTree class", () => {
       expect(MockVSCodeInfo.fired).true;
     });
   });
+
+  describe("findTreeItem", () => {
+    it("findTreeItem - element found", async () => {
+      const tasksTree = new TasksTree(new MockTasksProvider(tasks));
+      expect((await tasksTree.findTreeItem(tasks[3]))?.command?.arguments?.[0]).to.be.equal(tasks[3]);
+    });
+
+    it("findTreeItem - element not exists", async () => {
+      const tasksTree = new TasksTree(new MockTasksProvider(tasks));
+      expect(await tasksTree.findTreeItem({ type: "type3", label: "unknown" })).to.be.undefined;
+    });
+  });
 });

@@ -190,6 +190,9 @@ export const testVscode: any = {
     showQuickPick: (items: any[], options: any) => {
       throw new Error("not implemented");
     },
+    createTreeView: (id, opt) => {
+      MockVSCodeInfo.treeDataProvider.set(id, opt.treeDataProvider);
+    },
   },
   ViewColumn: {
     One: 1,

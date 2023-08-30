@@ -69,6 +69,10 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "tasks-explorer.tree.select",
+        "title": "Select"
+      },
+      {
         "command": "tasks-explorer.stopTask",
         "title": "Stop",
         "icon": "$(chrome-maximize)"
@@ -139,6 +143,10 @@
         },
         {
           "command": "tasks-explorer.tree.refresh",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.tree.select",
           "when": "false"
         }
       ],
@@ -223,7 +231,7 @@
     "*"
   ],
   "dependencies": {
-    "@sap-devx/app-studio-toolkit-types": "file: ../../../../../app-studio-toolkit/packages/app-studio-toolkit-types",
+    "@sap-devx/app-studio-toolkit-types": "1.15.13",
     "@sap-devx/webview-rpc": "0.2.3",
     "@sap_oss/task_contrib_types": "^4.3.1",
     "@vscode-logging/logger": "1.2.3",

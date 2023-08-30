@@ -400,6 +400,7 @@ specVersion: '2.4'
         .expects("getConfiguration")
         .withExactArgs("tasks", testVscode.Uri.file(wsFolder))
         .returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
       await fioriE2eConfig(wsFolder, project);
       expect(/^Deploy to ABAP$/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("npm");
@@ -424,6 +425,7 @@ specVersion: '2.4'
         .returns(taskConfig);
 
       mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
       await fioriE2eConfig(wsFolder, project);
       expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("build.mta");
@@ -525,6 +527,7 @@ specVersion: '2.4'
         .withExactArgs("tasks", testVscode.Uri.file(wsFolder))
         .returns(taskConfig);
       mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
 
       await fioriE2eConfig(wsFolder, project);
       expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
@@ -566,6 +569,7 @@ specVersion: '2.4'
         .expects("executeCommand")
         .withExactArgs("tasks-explorer.editTask", { command: { arguments: [lastRuntasks[1]] } })
         .resolves();
+      mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.select", lastRuntasks[1]).resolves();
       await fioriE2eConfig(wsFolder, project);
     });
   });

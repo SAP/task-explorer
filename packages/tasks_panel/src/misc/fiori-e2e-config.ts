@@ -186,7 +186,6 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
     if (!target) {
       throw new Error(messages.err_task_definition_unsupported_target);
     }
-    let taskDeploy;
     const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
     const _tasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
@@ -205,7 +204,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
         projectPath: `${projectUri.fsPath}`,
         extensions: [],
       };
-      taskDeploy = {
+      const taskDeploy = {
         type: "deploy.mta.cf",
         label: `Deploy MTA to Cloud Foundry`,
         taskType: "Deploy",
@@ -220,9 +219,10 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       _tasks.push(taskBuild, taskDeploy);
     }
     return addTaskDefinition(_tasks).then(() => {
-      if (taskDeploy && target === FE_DEPLOY_TRG.CF) {
-        void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [taskDeploy] } });
+      if (target === FE_DEPLOY_TRG.CF) {
+        void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [last(_tasks)] } });
       }
+      void commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
     });
   }
 
