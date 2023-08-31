@@ -12,6 +12,7 @@ mockVscode("../../src/panels/task-editor-panel");
 import { editTask, editTreeItemTask } from "../../src/commands/edit-task";
 import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
+import { cloneDeep, extend } from "lodash";
 import { disposeTaskEditorPanel, getTaskEditor, getTaskEditorPanel } from "../../src/panels/panels-handler";
 import { createLoggerWrapperMock, getLoggerMessage, resetLoggerMessage } from "../utils/loggerWrapperMock";
 import { messages } from "../../src/i18n/messages";
@@ -239,10 +240,7 @@ describe("Command editTask", () => {
     const item = new TaskTreeItem(0, "test", "aaa", "path", TreeItemCollapsibleState.None, parentItem);
 
     it("edit command - task found", async () => {
-      const task: ConfiguredTask = {
-        type: tasks[0].type,
-        label: tasks[0].label,
-      };
+      const task: ConfiguredTask = cloneDeep(tasks[0]);
       item.command = {
         title: "Edit Task",
         command: "tasks-explorer.editTask",
@@ -253,10 +251,7 @@ describe("Command editTask", () => {
     });
 
     it("edit command - task not found", async () => {
-      const task: ConfiguredTask = {
-        type: "wrong",
-        label: tasks[0].label,
-      };
+      const task: ConfiguredTask = extend(cloneDeep(tasks[0]), { prop1: "value 1.2" });
       item.command = {
         title: "Edit Task",
         command: "tasks-explorer.editTask",

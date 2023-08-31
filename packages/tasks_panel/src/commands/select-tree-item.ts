@@ -1,5 +1,5 @@
 import { TreeItem, TreeView } from "vscode";
-import { find } from "lodash";
+import { find, isMatch } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { TasksTree } from "../view/tasks-tree";
 import { getLogger } from "../logger/logger-wrapper";
@@ -13,7 +13,9 @@ export async function selectTreeItem(
   taskProvider: ITasksProvider,
   task: ConfiguredTask
 ): Promise<void> {
-  const _task = find(await taskProvider.getConfiguredTasks(), { type: task.type, label: task.label });
+  const _task = find(await taskProvider.getConfiguredTasks(), (_) => {
+    return isMatch(_, task);
+  });
   if (_task) {
     return dataProvider.findTreeItem(_task).then((treeItem: TreeItem | undefined) => {
       if (treeItem) {
