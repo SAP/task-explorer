@@ -233,6 +233,7 @@
   "dependencies": {
     "@sap-devx/app-studio-toolkit-types": "1.15.13",
     "@sap-devx/webview-rpc": "0.2.3",
+    "@sap/cf-tools": "3.2.0",
     "@sap_oss/task_contrib_types": "^4.3.1",
     "@vscode-logging/logger": "1.2.3",
     "datauri": "4.1.0",

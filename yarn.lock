@@ -1671,6 +1671,16 @@
   dependencies:
     "@sap/artifact-management-base-types" "1.26.0"
 
+"@sap/cf-tools@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@sap/cf-tools/-/cf-tools-3.2.0.tgz#7e2d6e217b0b5f1c30506669a193b14e33a04ed7"
+  integrity sha512-iD/ttsBzKAqLShPuB4FsNcO6d5/Bl0gMSb/MXw2lYOGZE91IJ8PQDk1OF27fJ4e5ycK33ZkuD2xGxJygCBF7wQ==
+  dependencies:
+    comment-json "4.2.3"
+    lodash "4.17.21"
+    properties-reader "2.2.0"
+    url "0.11.0"
+
 "@sigstore/protobuf-specs@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@sigstore/protobuf-specs/-/protobuf-specs-0.1.0.tgz#957cb64ea2f5ce527cc9cf02a096baeb0d2b99b4"
@@ -11667,6 +11677,13 @@ promzard@^1.0.0:
   dependencies:
     read "^2.0.0"
 
+properties-reader@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/properties-reader/-/properties-reader-2.2.0.tgz#41d837fe143d8d5f2386b6a869a1975c0b2c595c"
+  integrity sha512-CgVcr8MwGoBKK24r9TwHfZkLLaNFHQ6y4wgT9w/XzdpacOOi5ciH4hcuLechSDAwXsfrGQtI2JTutY2djOx2Ow==
+  dependencies:
+    mkdirp "^1.0.4"
+
 proto-list@~1.2.1:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/proto-list/-/proto-list-1.2.4.tgz#212d5bfe1318306a420f6402b8e26ff39647a849"
@@ -14034,7 +14051,7 @@ url-parse@^1.5.1:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-url@^0.11.0:
+url@0.11.0, url@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
   integrity sha1-ODjpfPxgUh63PFJajlW/3Z4uKPE=

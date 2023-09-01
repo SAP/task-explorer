@@ -11,7 +11,8 @@ import {
 import { BasToolkit } from "@sap-devx/app-studio-toolkit-types";
 import * as Yaml from "yaml";
 import * as path from "path";
-import { Dictionary, compact, concat, find, includes, last, map, split } from "lodash";
+import { Dictionary, compact, concat, find, includes, last, map, split, extend, isEmpty, size, values } from "lodash";
+import { cfGetTargets, cfGetConfigFileField, DEFAULT_TARGET } from "@sap/cf-tools";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
 
@@ -23,6 +24,13 @@ enum FE_DEPLOY_TRG {
   ABAP = "abap",
   CF = "cf",
 }
+
+type CfDetails = {
+  cfTarget: string;
+  cfEndpoint: string;
+  cfOrg: string;
+  cfSpace: string;
+};
 
 const cmd_launch_deploy_config = "sap.ux.appGenerator.launchDeployConfig";
 
@@ -182,10 +190,33 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
     );
   }
 
+  async function populateCfDetails(): Promise<CfDetails> {
+    try {
+      const targets = await cfGetTargets();
+      if (isEmpty(targets) || (size(targets) === 1 && targets[0].label === DEFAULT_TARGET)) {
+        throw new Error("No CF targets found");
+      }
+      const targetName = find(targets, "isCurrent")?.label;
+      if (!targetName) {
+        throw new Error("No CF current target defined");
+      }
+      return {
+        cfTarget: targetName,
+        cfEndpoint: (await cfGetConfigFileField("Target", targetName)) ?? "",
+        cfOrg: (await cfGetConfigFileField("OrganizationFields", targetName))?.Name ?? "",
+        cfSpace: (await cfGetConfigFileField("SpaceFields", targetName))?.Name ?? "",
+      };
+    } catch (e: any) {
+      getLogger().debug(`Can not populate cf target details`, { reason: e.toString() });
+      return { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" };
+    }
+  }
+
   async function completeTasksDefinition(target: FE_DEPLOY_TRG | undefined): Promise<any> {
     if (!target) {
       throw new Error(messages.err_task_definition_unsupported_target);
     }
+    let isTaskConfigRequired = false;
     const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
     const _tasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
@@ -204,22 +235,25 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
         projectPath: `${projectUri.fsPath}`,
         extensions: [],
       };
-      const taskDeploy = {
-        type: "deploy.mta.cf",
-        label: `Deploy MTA to Cloud Foundry`,
-        taskType: "Deploy",
-        mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
-        extensions: [],
-        cfTarget: "",
-        cfEndpoint: "",
-        cfOrg: "",
-        cfSpace: "",
-        dependsOn: [`${taskBuild.label}`],
-      };
+      const taskDeploy = extend(
+        {
+          type: "deploy.mta.cf",
+          label: `Deploy MTA to Cloud Foundry`,
+          taskType: "Deploy",
+          mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+          extensions: [],
+          dependsOn: [`${taskBuild.label}`],
+        },
+        await populateCfDetails().then((data) => {
+          isTaskConfigRequired = map(values(data), isEmpty).includes(true);
+          return data;
+        })
+      );
+
       _tasks.push(taskBuild, taskDeploy);
     }
     return addTaskDefinition(_tasks).then(() => {
-      if (target === FE_DEPLOY_TRG.CF) {
+      if (isTaskConfigRequired) {
         void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [last(_tasks)] } });
       }
       void commands.executeCommand("tasks-explorer.tree.select", last(_tasks));

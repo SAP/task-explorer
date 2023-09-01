@@ -7,6 +7,9 @@ import { each, last, split } from "lodash";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
 import { TYPE_FE_DEPLOY_CFG, fioriE2eConfig, getFioriE2ePickItems } from "../../src/misc/fiori-e2e-config";
 import { messages } from "../../src/i18n/messages";
+import { DEFAULT_TARGET } from "@sap/cf-tools";
+import * as cfUtils from "@sap/cf-tools/out/src/utils";
+import * as cfTools from "@sap/cf-tools/out/src/cf-local";
 
 describe("fiori-e2e-config scope", () => {
   let sandbox: SinonSandbox;
@@ -497,6 +500,15 @@ specVersion: '2.4'
       },
     };
 
+    const targets = [
+      { label: "target1", isCurrent: false },
+      { label: "target2", isCurrent: true },
+    ];
+    const currentTarget = { endPoint: "cur-end-point", org: "cur-org", space: "cur-space" };
+
+    let mockCfTools: SinonMock;
+    let mockCfUtils: SinonMock;
+
     beforeEach(() => {
       mockCommands
         .expects("executeCommand")
@@ -506,11 +518,15 @@ specVersion: '2.4'
         .expects("createFileSystemWatcher")
         .withExactArgs(new testVscode.RelativePattern(wsFolder, "ui5-deploy.yaml"), false, false, true)
         .returns(watcher);
+
+      mockCfTools = sandbox.mock(cfTools);
+      mockCfUtils = sandbox.mock(cfUtils);
     });
 
     afterEach(() => {
       lastRuntasks = tasks;
       tasks = [];
+      mockCfTools.verify();
     });
 
     it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined", async () => {
@@ -570,6 +586,145 @@ specVersion: '2.4'
         .withExactArgs("tasks-explorer.editTask", { command: { arguments: [lastRuntasks[1]] } })
         .resolves();
       mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.select", lastRuntasks[1]).resolves();
+      await fioriE2eConfig(wsFolder, project);
+    });
+
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, CF details obtained", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+
+      mockCfTools.expects("cfGetTargets").resolves(targets);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("Target", targets[1].label)
+        .resolves(currentTarget.endPoint);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("OrganizationFields", targets[1].label)
+        .resolves({ Name: currentTarget.org });
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("SpaceFields", targets[1].label)
+        .resolves({ Name: currentTarget.space });
+
+      mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace.expects("getConfiguration").returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+
+      await fioriE2eConfig(wsFolder, project);
+      expect((tasks[1] as any).cfTarget).to.be.equal(targets[1].label);
+      expect((tasks[1] as any).cfEndpoint).to.be.equal(currentTarget.endPoint);
+      expect((tasks[1] as any).cfOrg).to.be.equal(currentTarget.org);
+      expect((tasks[1] as any).cfSpace).to.be.equal(currentTarget.space);
+    });
+
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, no CF targets defined", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+      const targets = [{ label: DEFAULT_TARGET, isCurrent: true }];
+      mockCfTools.expects("cfGetTargets").resolves(targets);
+      mockCfUtils.expects("cfGetConfigFileField").never();
+
+      mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace.expects("getConfiguration").returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+      await fioriE2eConfig(wsFolder, project);
+    });
+
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, no current CF targets defined", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+
+      mockCfTools.expects("cfGetTargets").resolves([
+        { label: "target1", isCurrent: false },
+        { label: "target2", isCurrent: false },
+      ]);
+      mockCfUtils.expects("cfGetConfigFileField").never();
+      mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace.expects("getConfiguration").returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+
+      await fioriE2eConfig(wsFolder, project);
+    });
+
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, CF details obtained but not completed [org missed]", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+
+      mockCfTools.expects("cfGetTargets").resolves(targets);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("Target", targets[1].label)
+        .resolves(currentTarget.endPoint);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("OrganizationFields", targets[1].label)
+        .resolves(currentTarget.org);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("SpaceFields", targets[1].label)
+        .resolves({ Name: currentTarget.space });
+
+      mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace.expects("getConfiguration").returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+
+      await fioriE2eConfig(wsFolder, project);
+    });
+
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, CF details obtained but not completed [exception thrown]", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+      mockCfTools.expects("cfGetTargets").resolves(targets);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("Target", targets[1].label)
+        .resolves(currentTarget.endPoint);
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("OrganizationFields", targets[1].label)
+        .rejects(new Error("no org"));
+      mockCfUtils
+        .expects("cfGetConfigFileField")
+        .withExactArgs("SpaceFields", targets[1].label)
+        .resolves({ label: currentTarget.space });
+
+      mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace.expects("getConfiguration").returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+
+      await fioriE2eConfig(wsFolder, project);
+    });
+
+    it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, CF details obtained but not completed [config format unexpected]", async () => {
+      (tasks as any) = undefined;
+      setTimeout(() => {
+        callbacks["create"]();
+      });
+      mockCfTools.expects("cfGetTargets").resolves(targets);
+      mockCfUtils.expects("cfGetConfigFileField").withExactArgs("Target", targets[1].label).resolves();
+      mockCfUtils.expects("cfGetConfigFileField").withExactArgs("OrganizationFields", targets[1].label).resolves();
+      mockCfUtils.expects("cfGetConfigFileField").withExactArgs("SpaceFields", targets[1].label).resolves();
+
+      mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+      mockWorkspace.expects("getConfiguration").returns(taskConfig);
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
+
       await fioriE2eConfig(wsFolder, project);
     });
   });
