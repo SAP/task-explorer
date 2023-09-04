@@ -612,6 +612,7 @@ specVersion: '2.4'
       mockWorkspaceFs.expects("readFile").resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
       mockWorkspace.expects("getConfiguration").returns(taskConfig);
       mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
+      mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
 
       await fioriE2eConfig(wsFolder, project);
       expect((tasks[1] as any).cfTarget).to.be.equal(targets[1].label);

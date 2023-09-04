@@ -11,7 +11,7 @@ import {
 import { BasToolkit } from "@sap-devx/app-studio-toolkit-types";
 import * as Yaml from "yaml";
 import * as path from "path";
-import { Dictionary, compact, concat, find, includes, last, map, split, extend, isEmpty, size, values } from "lodash";
+import { Dictionary, compact, concat, find, includes, last, map, split, extend, isEmpty, size } from "lodash";
 import { cfGetTargets, cfGetConfigFileField, DEFAULT_TARGET } from "@sap/cf-tools";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
@@ -216,7 +216,6 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
     if (!target) {
       throw new Error(messages.err_task_definition_unsupported_target);
     }
-    let isTaskConfigRequired = false;
     const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
     const _tasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
@@ -244,16 +243,13 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
           extensions: [],
           dependsOn: [`${taskBuild.label}`],
         },
-        await populateCfDetails().then((data) => {
-          isTaskConfigRequired = map(values(data), isEmpty).includes(true);
-          return data;
-        })
+        await populateCfDetails()
       );
 
       _tasks.push(taskBuild, taskDeploy);
     }
     return addTaskDefinition(_tasks).then(() => {
-      if (isTaskConfigRequired) {
+      if (target === FE_DEPLOY_TRG.CF) {
         void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [last(_tasks)] } });
       }
       void commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
