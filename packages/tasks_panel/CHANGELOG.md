@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/SAP/task-explorer/compare/v4.4.1...v4.5.0) (2023-09-06)
+
+### Features
+
+- E2E Deploy configuration action ([#297](https://github.com/SAP/task-explorer/issues/297)) ([a431aa1](https://github.com/SAP/task-explorer/commit/a431aa1368f08037116655fa1dfe31342da6dd87))
+
 ## [4.4.1](https://github.com/SAP/task-explorer/compare/v4.4.0...v4.4.1) (2023-08-08)
 
 ### Bug Fixes
