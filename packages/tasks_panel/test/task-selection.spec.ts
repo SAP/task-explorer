@@ -10,6 +10,7 @@ import { cloneDeep, extend, map } from "lodash";
 import * as taskProvider from "../src/services/tasks-provider";
 import * as panelHandler from "../src/panels/panels-handler";
 import * as multiStepSelection from "../src/multi-step-select";
+import * as e2eConfig from "../src/misc/fiori-e2e-config";
 
 const roots = ["/user/projects/project1", "/user/projects/project2"];
 
@@ -75,6 +76,23 @@ describe("the TasksSelection class", () => {
     expect(taskSelection["appEvents"]).to.be.equal(appEvents);
     expect(taskSelection["tasks"]).to.be.deep.equal(tasks);
     expect(taskSelection["readResource"]).to.be.equal(readFile);
+  });
+
+  it("select - fiori E2E config item selected", async () => {
+    const fioriE2e = {
+      type: e2eConfig.TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig,
+      wsFolder: "ws-folder",
+      project: "my-project",
+    };
+    sandbox
+      .stub(multiStepSelection, "multiStepTaskSelect")
+      .withArgs(taskSelection["tasks"])
+      .resolves({ task: fioriE2e });
+    mockPanelHandler.expects("createTaskEditorPanel").never();
+    const mockFioriE2EConfig = sandbox.mock(e2eConfig);
+    mockFioriE2EConfig.expects("fioriE2eConfig").withExactArgs(fioriE2e.wsFolder, fioriE2e.project).resolves();
+    await taskSelection.select();
+    mockFioriE2EConfig.verify();
   });
 
   it("select - task selected", async () => {

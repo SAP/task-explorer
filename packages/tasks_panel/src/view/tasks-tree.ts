@@ -1,4 +1,4 @@
-import { filter, map, uniq, sortBy } from "lodash";
+import { filter, map, uniq, sortBy, isMatch } from "lodash";
 import { IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "./task-tree-item";
 import {
   Event,
@@ -100,5 +100,25 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
 
   public getParent(element: TreeItem): ProviderResult<TreeItem> {
     return (element as any).parent;
+  }
+
+  public async findTreeItem(task: ConfiguredTask): Promise<TreeItem | undefined> {
+    const findElement = async (items: TreeItem[], task: ConfiguredTask): Promise<TreeItem | undefined> => {
+      let found: TreeItem | undefined;
+      for (const item of items) {
+        if (item.collapsibleState !== TreeItemCollapsibleState.None) {
+          found = await findElement(await this.getChildren(item), task);
+        } else {
+          /* istanbul ignore next */
+          if (isMatch(item.command?.arguments?.[0], task)) {
+            found = item;
+          }
+        }
+        if (found) {
+          return found;
+        }
+      }
+    };
+    return findElement(await this.getChildren(), task);
   }
 }

@@ -14,6 +14,7 @@ import { readResource } from "./utils/resource-reader";
 import { revealTask } from "./commands/reveal-task";
 import { duplicateTask } from "./commands/duplicate-task";
 import { terminateTaskFromTree } from "./commands/terminate-task";
+import { selectTreeItem } from "./commands/select-tree-item";
 
 let extensionPath = "";
 
@@ -26,6 +27,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   void contributors.init();
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
+  const view = window.createTreeView("tasksPanel", { treeDataProvider: tasksTree, showCollapseAll: true });
 
   context.subscriptions.push(
     commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource))
@@ -39,8 +41,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource))
   );
   context.subscriptions.push(commands.registerCommand("tasks-explorer.tree.refresh", () => tasksTree.onChange()));
-
-  context.subscriptions.push(window.registerTreeDataProvider("tasksPanel", tasksTree));
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.tree.select", partial(selectTreeItem, view, tasksTree, tasksProvider))
+  );
 }
 
 function initializeLogger(context: ExtensionContext): void {

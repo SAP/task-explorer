@@ -69,6 +69,10 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "tasks-explorer.tree.select",
+        "title": "Select"
+      },
+      {
         "command": "tasks-explorer.stopTask",
         "title": "Stop",
         "icon": "$(chrome-maximize)"
@@ -140,6 +144,10 @@
         {
           "command": "tasks-explorer.tree.refresh",
           "when": "false"
+        },
+        {
+          "command": "tasks-explorer.tree.select",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -158,36 +166,36 @@
         {
           "command": "tasks-explorer.editTask",
           "group": "main@1",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.deleteTask",
           "group": "main@4",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.revealTask",
           "group": "main@2",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.duplicateTask",
           "group": "main@3",
-          "when": "viewItem =~ /^task--idle$/"
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
         },
         {
           "command": "tasks-explorer.executeTask",
-          "when": "viewItem =~ /^task--idle$/",
+          "when": "view == tasksPanel && viewItem =~ /^task--idle$/",
           "group": "inline"
         },
         {
           "command": "tasks-explorer.stopTask",
-          "when": "viewItem =~ /^task--running$/",
+          "when": "view == tasksPanel && viewItem =~ /^task--running$/",
           "group": "inline"
         },
         {
           "command": "tasks-explorer.createTask",
-          "when": "viewItem =~ /^project$/",
+          "when": "view == tasksPanel && viewItem =~ /^project$/",
           "group": "inline"
         }
       ]
@@ -223,14 +231,17 @@
     "*"
   ],
   "dependencies": {
+    "@sap-devx/app-studio-toolkit-types": "1.15.13",
     "@sap-devx/webview-rpc": "0.2.3",
+    "@sap/cf-tools": "3.2.0",
     "@sap_oss/task_contrib_types": "^4.3.1",
     "@vscode-logging/logger": "1.2.3",
     "datauri": "4.1.0",
     "escape-string-regexp": "4.0.0",
     "lodash": "4.17.21",
     "strip-ansi": "7.0.1",
-    "ws": "8.8.1"
+    "ws": "8.8.1",
+    "yaml": "2.3.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",

@@ -96,8 +96,22 @@ describe("Contributors", () => {
       };
       const messageMap = Contributors.getInstance()["getTasksPropertyMessageMap"](packageJSON);
       expect(messageMap).to.be.deep.equal({
-        "type-1": { label: "Task Name", taskType: "Task Type", extPath: "Path to the Extension File" },
-        "type-2": { label: "Task Name", taskType: "Task Type", buildType: "Build Type" },
+        "type-1": {
+          properties: {
+            label: { description: "Task Name" },
+            taskType: { description: "Task Type", type: "string" },
+            extPath: { description: "Path to the Extension File", type: "string" },
+          },
+          requires: ["label", "taskType"],
+        },
+        "type-2": {
+          properties: {
+            label: { description: "Task Name" },
+            taskType: { description: "Task Type" },
+            buildType: { description: "Build Type", type: "string" },
+          },
+          requires: ["label", "taskType", "buildType"],
+        },
       });
     });
 

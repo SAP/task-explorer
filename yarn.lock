@@ -1607,6 +1607,16 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
+"@sap-devx/app-studio-toolkit-types@1.15.13":
+  version "1.15.13"
+  resolved "https://registry.yarnpkg.com/@sap-devx/app-studio-toolkit-types/-/app-studio-toolkit-types-1.15.13.tgz#c70fa1b2977cb3afeb3015dafad36baa33e6dfe7"
+  integrity sha512-TnN5jyXxsX836ntjOyoM3iieRPzCsnhClWmqWE681yodCFnEAQVDlYeUBRM0uCKHVNdhC0mjdVK1Vtt7aY0q9w==
+  dependencies:
+    "@sap/artifact-management-types" "1.26.0"
+    "@types/vscode" "1.75.0"
+    "@vscode-logging/types" "0.1.4"
+    type-fest "2.11.1"
+
 "@sap-devx/inquirer-gui-file-browser-plugin@0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-file-browser-plugin/-/inquirer-gui-file-browser-plugin-0.0.5.tgz#469dc021cab7b771d16f36199f2ce06d229a9d30"
@@ -1643,6 +1653,33 @@
   integrity sha512-6rgMO6SraQ34YPeRQiI0SO82J+u/6E+gpAJc++5zvo7LPQeCjCSKXALFrUEjFxQFeWP/eT00/Rig/jK0fJUnpA==
   dependencies:
     ws "^7.2.3"
+
+"@sap/artifact-management-base-types@1.26.0":
+  version "1.26.0"
+  resolved "https://registry.yarnpkg.com/@sap/artifact-management-base-types/-/artifact-management-base-types-1.26.0.tgz#73df74c4b53c88cc6cf9474e454349ad53b5aa44"
+  integrity sha512-KzVdKMmpdlZfV3FGNU1ojB08YpNKPnixY4GT6n9xKNU2bPrIUE3nKcswuLL6kI7qSBmpQ32EVDl3gK4JxDZ8Xg==
+  dependencies:
+    "@types/node" "14.14.6"
+    "@types/vscode" "1.52.0"
+    "@vscode-logging/types" "0.1.3"
+    vscode-languageserver-types "3.16.0"
+
+"@sap/artifact-management-types@1.26.0":
+  version "1.26.0"
+  resolved "https://registry.yarnpkg.com/@sap/artifact-management-types/-/artifact-management-types-1.26.0.tgz#5e87ea277d405c12677727f64609d72d56942993"
+  integrity sha512-KhmXvCqGB3kdsbeLRGKBUBf1RZAzvhorfosfC0E5ywbcCRQ8sfdiJyYQnphHA7DxLwWAzKWE3JlDzd0ydhek3g==
+  dependencies:
+    "@sap/artifact-management-base-types" "1.26.0"
+
+"@sap/cf-tools@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@sap/cf-tools/-/cf-tools-3.2.0.tgz#7e2d6e217b0b5f1c30506669a193b14e33a04ed7"
+  integrity sha512-iD/ttsBzKAqLShPuB4FsNcO6d5/Bl0gMSb/MXw2lYOGZE91IJ8PQDk1OF27fJ4e5ycK33ZkuD2xGxJygCBF7wQ==
+  dependencies:
+    comment-json "4.2.3"
+    lodash "4.17.21"
+    properties-reader "2.2.0"
+    url "0.11.0"
 
 "@sigstore/protobuf-specs@^0.1.0":
   version "0.1.0"
@@ -1913,6 +1950,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.3.0.tgz#d6fed7d6bc6854306da3dea1af9f874b00783e26"
   integrity sha512-8/bnjSZD86ZfpBsDlCIkNXIvm+h6wi9g7IqL+kmFkQ+Wvu3JrasgLElfiPgoo8V8vVfnEi0QVS12gbl94h9YsQ==
 
+"@types/node@14.14.6":
+  version "14.14.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.6.tgz#146d3da57b3c636cc0d1769396ce1cfa8991147f"
+  integrity sha512-6QlRuqsQ/Ox/aJEQWBEJG7A9+u7oSYl3mem/K8IzxXG/kAGbV1YPD9Bg9Zw3vyxC/YP+zONKwy8hGkSt1jxFMw==
+
 "@types/node@^14.0.0":
   version "14.18.26"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.26.tgz#239e19f8b4ea1a9eb710528061c1d733dc561996"
@@ -1994,6 +2036,11 @@
   integrity sha512-EGkrJD5Uy+Pg0NUR8uA4bJ5WMfljyad0G+784vLCNUkD+QwOJXUbBYExXfVGf7YtyzdQp3L/XMYcliB987kL5Q==
   dependencies:
     source-map "^0.6.1"
+
+"@types/vscode@1.52.0":
+  version "1.52.0"
+  resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.52.0.tgz#61917968dd403932127fc4004a21fd8d69e4f61c"
+  integrity sha512-Kt3bvWzAvvF/WH9YEcrCICDp0Z7aHhJGhLJ1BxeyNP6yRjonWqWnAIh35/pXAjswAnWOABrYlF7SwXR9+1nnLA==
 
 "@types/vscode@1.75.0":
   version "1.75.0"
@@ -2174,7 +2221,12 @@
     winston "3.3.3"
     winston-transport "4.3.0"
 
-"@vscode-logging/types@^0.1.4":
+"@vscode-logging/types@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@vscode-logging/types/-/types-0.1.3.tgz#9ec39d46af9d278ac31b4b1f89de752cba73e068"
+  integrity sha512-1mV/aMVXpm50PyJ4XYD0qPUREv6QcmPwuDtzdMcKeiXN5Tt/WmnyEHfUxENQr1Aes8Hr+EVtNK4tvrUXXco/5A==
+
+"@vscode-logging/types@0.1.4", "@vscode-logging/types@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@vscode-logging/types/-/types-0.1.4.tgz#0a9b1752322da0d02e7435995557f6e0e12c4cb9"
   integrity sha512-uxuHQfpX9RbkgSj5unJFmciXRczyFSaAI2aA829MYYkE8jxlhZLRLoiJLymTNiojNVdV7fFE3CILF5Q6M+EBsA==
@@ -11625,6 +11677,13 @@ promzard@^1.0.0:
   dependencies:
     read "^2.0.0"
 
+properties-reader@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/properties-reader/-/properties-reader-2.2.0.tgz#41d837fe143d8d5f2386b6a869a1975c0b2c595c"
+  integrity sha512-CgVcr8MwGoBKK24r9TwHfZkLLaNFHQ6y4wgT9w/XzdpacOOi5ciH4hcuLechSDAwXsfrGQtI2JTutY2djOx2Ow==
+  dependencies:
+    mkdirp "^1.0.4"
+
 proto-list@~1.2.1:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/proto-list/-/proto-list-1.2.4.tgz#212d5bfe1318306a420f6402b8e26ff39647a849"
@@ -13732,6 +13791,11 @@ type-detect@4.0.8, type-detect@^4.0.0, type-detect@^4.0.5, type-detect@^4.0.8:
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
 
+type-fest@2.11.1:
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-2.11.1.tgz#04ddf5c0dbbd403fb8270d98ad1b4857e7ff7b24"
+  integrity sha512-fPcV5KLAqFfmhHobtAUwEpbpfYhVF7wSLVgbG/7mIGe/Pete7ky/bPAPRkzbWdrj0/EkswFAAR2feJCgigkUKg==
+
 type-fest@^0.18.0:
   version "0.18.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.18.1.tgz#db4bc151a4a2cf4eebf9add5db75508db6cc841f"
@@ -13987,7 +14051,7 @@ url-parse@^1.5.1:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-url@^0.11.0:
+url@0.11.0, url@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
   integrity sha1-ODjpfPxgUh63PFJajlW/3Z4uKPE=
@@ -14140,6 +14204,11 @@ vsce@1.100.1:
     xml2js "^0.4.23"
     yauzl "^2.3.1"
     yazl "^2.2.2"
+
+vscode-languageserver-types@3.16.0:
+  version "3.16.0"
+  resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.16.0.tgz#ecf393fc121ec6974b2da3efb3155644c514e247"
+  integrity sha512-k8luDIWJWyenLc5ToFQQMaSrqCHiLwyKPHKPQZ5zz21vM+vIVUSvsRpcbiECH4WR88K2XZqc4ScRcZ7nk/jbeA==
 
 vue-eslint-parser@^7.6.0:
   version "7.6.0"
@@ -14809,6 +14878,11 @@ yallist@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
+
+yaml@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.3.1.tgz#02fe0975d23cd441242aa7204e09fc28ac2ac33b"
+  integrity sha512-2eHWfjaoXgTBC2jNM1LRef62VQa0umtvRiDSk6HSzW7RvS5YtkabJrwYLLEKWBc8a5U2PTSCs+dJjUTJdlHsWQ==
 
 yaml@^1.10.0:
   version "1.10.2"

@@ -1,5 +1,6 @@
 import { resolve, join } from "path";
 import { ConfiguredTask, FormProperty, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
+import * as _ from "lodash";
 
 const Module = require("module");
 const originalRequire = Module.prototype.require;
@@ -59,19 +60,23 @@ export const testVscode: any = {
         MockVSCodeInfo.visiblePanel = rest[1];
       }
     },
+    getCommands: () => Promise.resolve([]),
   },
   extensions: {
     all: [],
+    getExtension: () => {
+      return {};
+    },
   },
   Uri: {
     file(...args: string[]): any {
       if (args[0] === "fail") {
         throw new Error("uriError");
       }
-      return { path: args[0] };
+      return { path: args[0], fsPath: args[0] };
     },
     joinPath(root: any, ...args: string[]): any {
-      return { path: join(root.path, ...args) };
+      return { path: join(root.path, ...args), fsPath: join(root.path, ...args) };
     },
   },
   workspace: {
@@ -95,7 +100,17 @@ export const testVscode: any = {
       };
     },
     getWorkspaceFolder: (v) => {
-      return { name: v.path };
+      return { name: v.path, uri: { fsPath: v.path } };
+    },
+    asRelativePath: (p) => _.last(_.split(p, "/")),
+    fs: {
+      stat: () => Promise.resolve(),
+      readFile: () => Promise.resolve(),
+    },
+    createFileSystemWatcher: () => {
+      return {
+        dispose: () => true,
+      };
     },
   },
 
@@ -122,6 +137,9 @@ export const testVscode: any = {
       this.source = source === undefined ? definition.type : source;
       this.scope = scope;
     }
+  },
+  RelativePattern: class {
+    constructor(public readonly base: any, public readonly pattern: string) {}
   },
   window: {
     showOpenDialog: async (options: {
@@ -171,6 +189,9 @@ export const testVscode: any = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
     showQuickPick: (items: any[], options: any) => {
       throw new Error("not implemented");
+    },
+    createTreeView: (id, opt) => {
+      MockVSCodeInfo.treeDataProvider.set(id, opt.treeDataProvider);
     },
   },
   ViewColumn: {

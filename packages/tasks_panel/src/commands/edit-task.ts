@@ -5,7 +5,7 @@ import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
 import { createTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
 import { ITasksProvider } from "../services/definitions";
-import { find, has } from "lodash";
+import { find, has, isMatch } from "lodash";
 import { serializeTask } from "../utils/task-serializer";
 import { getLogger } from "../logger/logger-wrapper";
 
@@ -22,7 +22,9 @@ export async function editTreeItemTask(
 
   if (task && !isConfiguredTask(task)) {
     // request for edit task programmatically
-    task = find(await tasksProvider.getConfiguredTasks(), { type: task.type, label: task.label });
+    task = find(await tasksProvider.getConfiguredTasks(), (_) => {
+      return isMatch(_, task);
+    });
   }
 
   if (task) {

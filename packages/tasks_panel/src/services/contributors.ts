@@ -1,5 +1,5 @@
 import { commands, Extension, extensions } from "vscode";
-import { get, keys, map, uniq, zipObject } from "lodash";
+import { Dictionary, get, keys, map, uniq, zipObject } from "lodash";
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
@@ -81,7 +81,8 @@ export class Contributors implements IContributors {
                         provider: provider,
                         intent: typeInfo["intent"],
                         extensionName: extensionName,
-                        properties: tasksPropertyMessageMap[type],
+                        properties: tasksPropertyMessageMap[type].properties,
+                        requires: tasksPropertyMessageMap[type].requires,
                       });
                     } else {
                       throw new Error(messages.DUPLICATED_TYPE(type));
@@ -111,13 +112,18 @@ export class Contributors implements IContributors {
       });
   }
 
-  private getTasksPropertyMessageMap(packageJSON: any): Record<string, Record<string, string>> {
+  private getTasksPropertyMessageMap(
+    packageJSON: any
+  ): Record<string, { properties: Dictionary<any>; requires: string[] }> {
     const tasksDefinitions = get(packageJSON.contributes, "taskDefinitions");
     const tasksTypes = map(tasksDefinitions, (_) => _.type);
     const tasksProperties = map(tasksDefinitions, (taskDefinition) => {
       const propertiesNames: string[] = keys(taskDefinition.properties);
-      const propertiesDescriptions: string[] = map(propertiesNames, (_) => taskDefinition.properties[_].description);
-      return zipObject(propertiesNames, propertiesDescriptions);
+      const propertiesDetails: any[] = map(propertiesNames, (_) => taskDefinition.properties[_]);
+      return {
+        properties: zipObject(propertiesNames, propertiesDetails),
+        requires: taskDefinition.required,
+      };
     });
     return zipObject(tasksTypes, tasksProperties);
   }
@@ -135,6 +141,6 @@ export class Contributors implements IContributors {
   }
 
   getTaskPropertyDescription(type: string, property: string): string {
-    return this.tasksEditorContributorsMap.get(type).properties[property];
+    return get(this.tasksEditorContributorsMap.get(type).properties[property], "description", "");
   }
 }
