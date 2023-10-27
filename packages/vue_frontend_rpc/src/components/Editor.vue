@@ -46,8 +46,7 @@
 </template>
 
 <script>
-import Vue from "vue";
-import { get } from "lodash";
+import { createApp } from "vue";
 import FileBrowserPlugin from "@sap-devx/inquirer-gui-file-browser-plugin";
 import FolderBrowserPlugin from "@sap-devx/inquirer-gui-folder-browser-plugin";
 import LabelPlugin from "@sap-devx/inquirer-gui-label-plugin";
@@ -84,10 +83,12 @@ export default {
     },
     registerPlugin(plugin) {
       const options = {};
-      Vue.use(plugin, options);
+      createApp().use(plugin, options);
       if (options.plugin) {
-        const registerPluginFunc = get(this.$refs, "form.registerPlugin");
-        registerPluginFunc(options.plugin);
+        const registerPluginFunc =  this.$refs.form.registerPlugin;
+        // if (registerPluginFunc) {
+          registerPluginFunc(options.plugin);
+        // }
       }
     },
     setTask(task) {

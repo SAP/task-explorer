@@ -7,8 +7,8 @@
 <script>
 import { RpcBrowser } from "@sap-devx/webview-rpc/out.browser/rpc-browser";
 import { RpcBrowserWebSockets } from "@sap-devx/webview-rpc/out.browser/rpc-browser-ws";
+import Editor from "./components/Editor.vue";
 import { forEach } from "lodash";
-import Editor from "./components/Editor";
 
 function initialState() {
   return {
@@ -26,20 +26,22 @@ export default {
     return initialState();
   },
 
-  created() {
-    /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
-    if (this.isInVsCode()) {
-      this.setupVSCodeRpc();
-    }
-    // istanbul ignore if - None Productive local-dev only flow.
-    if (location.port === "8090") {
-      // Local Development Flow
-      // Assumes a WS server is already up and waiting.
-      this.setupWsRPC(8081);
-    }
+  async created() {
+    await this.setupRpc();
   },
 
   methods: {
+    async setupRpc() {
+      /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
+      if (this.isInVsCode()) {
+        this.setupVSCodeRpc();
+      }else {
+        // Local Development Flow
+        // Assumes a WS server is already up and waiting.
+        await this.setupWsRPC(8081);
+      }
+    },
+
     isInVsCode() {
       return typeof acquireVsCodeApi !== "undefined";
     },
@@ -84,7 +86,6 @@ export default {
           name: funcName,
         });
       });
-
       await this.rpc.invoke("onFrontendReady");
     },
 
