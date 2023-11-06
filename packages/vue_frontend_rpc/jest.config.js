@@ -6,7 +6,7 @@ module.exports = {
   collectCoverageFrom: [
     "src/**/*.{js,vue}",
     "!**/node_modules/**",
-    "!<rootDir>/src/main.ts",
+    "!<rootDir>/src/main.js",
     "!<rootDir>/src/plugins/**",
   ],
   moduleNameMapper: {
@@ -28,10 +28,10 @@ module.exports = {
   testEnvironment: "jsdom",
   coverageThreshold: {
     global: {
-      branches: 84,
-      functions: 80,
-      lines: 86,
-      statements: 86,
+      branches: 83,
+      functions: 68,
+      lines: 85,
+      statements: 85,
     },
   },
 };

@@ -28,10 +28,8 @@
                 <v-list-item-title>General Properties</v-list-item-title>
               </v-list-item-content>
             </template>
-            <v-list-item class="pl-10">
-              <Form ref="form" :questions="task.content" @answered="onAnswered" />
-            </v-list-item>
           </v-list-group>
+          <Form ref="form" :questions="questions" @answered="onAnswered" />
         </v-card>
       </v-col>
     </v-row>
@@ -46,10 +44,6 @@
 </template>
 
 <script>
-import { createApp } from "vue";
-import FileBrowserPlugin from "@sap-devx/inquirer-gui-file-browser-plugin";
-import FolderBrowserPlugin from "@sap-devx/inquirer-gui-folder-browser-plugin";
-import LabelPlugin from "@sap-devx/inquirer-gui-label-plugin";
 
 const FUNCTION = "__Function";
 
@@ -59,6 +53,7 @@ export default {
   data() {
     return {
       task: Object,
+      questions: [],
       state: {
         saveEnabled: false,
         firstRender: true,
@@ -71,27 +66,16 @@ export default {
   },
   computed: {
     isExecuteEnabled: function () {
-      return this.state.inputValid && !this.state.saveEnabled;
+      const t = this.state.inputValid && !this.state.saveEnabled;
+      console.log(t);
+      return t;
     },
   },
   methods: {
     init() {
-      // register custom inquirer-gui plugins
-      this.registerPlugin(FileBrowserPlugin);
-      this.registerPlugin(FolderBrowserPlugin);
-      this.registerPlugin(LabelPlugin);
-    },
-    registerPlugin(plugin) {
-      const options = {};
-      createApp().use(plugin, options);
-      if (options.plugin) {
-        const registerPluginFunc =  this.$refs.form.registerPlugin;
-        // if (registerPluginFunc) {
-          registerPluginFunc(options.plugin);
-        // }
-      }
     },
     setTask(task) {
+      this.task = task;
       this.prepareTask(task);
     },
     async onExec() {
@@ -103,15 +87,19 @@ export default {
       await this.rpc.invoke("saveTask");
     },
     prepareTask(task) {
-      this.task = task;
-      for (const question of task.content) {
+      const questions = [...task.content];
+      for(const question of questions) {
         for (const prop in question) {
           if (question[prop] === FUNCTION) {
-            const that = this;
-            question[prop] = this.getEvaluationFunction(that.rpc, question.name, prop);
+            var that = this;
+            question[prop] = async (...args) => {
+              const response = await that.rpc.invoke("evaluateMethod", [question.name, prop, args]);
+              return response;
+            };
           }
         }
       }
+      this.questions = questions;
     },
     getEvaluationFunction(rpc, questionName, questionProperty) {
       return async (...args) => {
@@ -131,3 +119,71 @@ export default {
   },
 };
 </script>
+
+<style>
+html,
+body {
+  height: 100%;
+  padding: 0px;
+}
+
+.inquirer-gui {
+  margin: 8px;
+}
+
+.inquirer-gui div.v-field {
+  border-radius: 0;
+}
+
+.inquirer-gui .v-card.v-card--outlined.v-sheet.theme--light {
+  border-radius: 0;
+  border-width: medium;
+  border-color: black;
+}
+
+.inquirer-gui .v-card .v-image__image--cover {
+  background-size: contain;
+}
+
+div.v-application.v-theme--light {
+  background-color: var(--vscode-editor-background, white);
+  color: var(--vscode-editor-foreground, black);
+}
+
+/* --vscode-focusBorder */
+
+form.inquirer-gui p.question-label {
+  color: var(--vscode-panelTitle-activeForeground, black);
+}
+
+form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light.v-field--focused {
+  border-color: var(--vscode-inputOption-activeBorder, white);
+}
+
+form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light {
+  background-color: var(--vscode-input-background, darkgray);
+}
+
+.v-application .task-label{
+  color: var(--vscode-panelTitle-activeForeground, black);
+}
+
+form.inquirer-gui div.theme--light.v-select {
+  color: pink;
+}
+form.inquirer-gui div.theme--light.v-input input,
+form.inquirer-gui div.theme--light.v-input textarea {
+  color: var(--vscode-input-foreground, white);
+}
+
+form.inquirer-gui .error-validation-text {
+  color: brown;
+}
+
+form.inquirer-gui .mandatory-asterisk {
+  color: red;
+}
+.inquirer-gui .v-field__input {
+  opacity: 1;
+}
+</style>

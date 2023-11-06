@@ -26,19 +26,19 @@ export default {
     return initialState();
   },
 
-  async created() {
-    await this.setupRpc();
+  mounted() {
+    this.setupRpc();
   },
 
   methods: {
-    async setupRpc() {
+    setupRpc() {
       /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
       if (this.isInVsCode()) {
         this.setupVSCodeRpc();
       }else {
         // Local Development Flow
         // Assumes a WS server is already up and waiting.
-        await this.setupWsRPC(8081);
+        this.setupWsRPC(8081);
       }
     },
 
