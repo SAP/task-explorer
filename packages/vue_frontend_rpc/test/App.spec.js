@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import App from "../src/App";
 
 // Mock the Editor.vue module
@@ -69,7 +69,7 @@ describe("App.vue", () => {
         };
       },
     });
-    const expectedHtml = `<v-appid=\"app\"><editor-stubeditor=\"true\"rpc=\"[objectObject]\"></editor-stub></v-app>`;
+    const expectedHtml = `<v-appid="app"><editor-stubeditor="true"rpc="[objectObject]"></editor-stub></v-app>`;
     expect(wrapper.html().replace(/\s/g, "")).to.equal(expectedHtml);
   });
 
