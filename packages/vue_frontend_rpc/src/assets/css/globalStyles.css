@@ -35,6 +35,9 @@ body {
 .v-application .task-label {
     padding-left: 1rem;
     font-weight: bold;
+    float: left;
+    width: 60%;
+    color: var(--vscode-panelTitle-activeForeground, #4B4B4B);
 }
 
 .v-card__title.task-intro, .v-card__title.selection-intro {
@@ -67,7 +70,7 @@ i.v-icon.notranslate.material-icons {
 }
 
 .exec-title {
-    color: var(--vscode-editor-foreground);
+    color: var(--vscode-editor-foreground, #4B4B4B);
 }
 
 span.v-btn__content {

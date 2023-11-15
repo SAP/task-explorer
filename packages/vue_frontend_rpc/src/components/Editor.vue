@@ -27,9 +27,11 @@
               <v-list-item-content>
                 <v-list-item-title>General Properties</v-list-item-title>
               </v-list-item-content>
+              <v-list-item-content>
+                <Form ref="form" :questions="questions" @answered="onAnswered" />
+              </v-list-item-content>
             </template>
           </v-list-group>
-          <Form ref="form" :questions="questions" @answered="onAnswered" />
         </v-card>
       </v-col>
     </v-row>
@@ -160,10 +162,6 @@ form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light.v-field--fo
 
 form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light {
   background-color: var(--vscode-input-background, darkgray);
-}
-
-.v-application .task-label {
-  color: var(--vscode-panelTitle-activeForeground, black);
 }
 
 form.inquirer-gui div.theme--light.v-select {
