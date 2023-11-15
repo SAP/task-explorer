@@ -44,7 +44,6 @@
 </template>
 
 <script>
-
 const FUNCTION = "__Function";
 
 export default {
@@ -72,8 +71,7 @@ export default {
     },
   },
   methods: {
-    init() {
-    },
+    init() {},
     setTask(task) {
       this.task = task;
       this.prepareTask(task);
@@ -88,7 +86,7 @@ export default {
     },
     prepareTask(task) {
       const questions = [...task.content];
-      for(const question of questions) {
+      for (const question of questions) {
         for (const prop in question) {
           if (question[prop] === FUNCTION) {
             var that = this;
@@ -164,7 +162,7 @@ form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light {
   background-color: var(--vscode-input-background, darkgray);
 }
 
-.v-application .task-label{
+.v-application .task-label {
   color: var(--vscode-panelTitle-activeForeground, black);
 }
 

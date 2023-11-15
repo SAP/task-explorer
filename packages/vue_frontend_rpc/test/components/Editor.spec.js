@@ -23,13 +23,11 @@ jest.mock("@sap-devx/inquirer-gui-folder-browser-plugin", () => ({
   })),
 }));
 
-
 jest.mock("@sap-devx/inquirer-gui-label-plugin", () => ({
   LabelPlugin: jest.fn(() => ({
     register: jest.fn(),
   })),
 }));
-
 
 describe("Editor.vue", () => {
   it("renders without errors", () => {
@@ -86,32 +84,32 @@ describe("Editor.vue", () => {
     expect(wrapper.vm.state.firstRender).to.equal(false);
   });
 
-    it("correctly handles 'onSave' method", async () => {
-      // Mount the component
-      const wrapper = mount(Editor, {
-        props: {
-          editor: true,
-          rpc: {},
-        },
-      });
-
-      // Mock the 'rpc' object and its 'invoke' method
-      const mockRpc = {
-        invoke: jest.fn(),
-      };
-
-      // Set the 'rpc' object in the component's data
-      wrapper.setData({
-        rpc: mockRpc,
-        state: {
-          saveEnabled: true,
-        },
-      });
-
-      // Call the 'onSave' method
-      await wrapper.vm.onSave();
-
-      // Assert that the 'saveEnabled' state has been correctly updated
-      expect(wrapper.vm.state.saveEnabled).to.be.false;
+  it("correctly handles 'onSave' method", async () => {
+    // Mount the component
+    const wrapper = mount(Editor, {
+      props: {
+        editor: true,
+        rpc: {},
+      },
     });
+
+    // Mock the 'rpc' object and its 'invoke' method
+    const mockRpc = {
+      invoke: jest.fn(),
+    };
+
+    // Set the 'rpc' object in the component's data
+    wrapper.setData({
+      rpc: mockRpc,
+      state: {
+        saveEnabled: true,
+      },
+    });
+
+    // Call the 'onSave' method
+    await wrapper.vm.onSave();
+
+    // Assert that the 'saveEnabled' state has been correctly updated
+    expect(wrapper.vm.state.saveEnabled).to.be.false;
+  });
 });

@@ -35,7 +35,7 @@ export default {
       /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
       if (this.isInVsCode()) {
         this.setupVSCodeRpc();
-      }else {
+      } else {
         // Local Development Flow
         // Assumes a WS server is already up and waiting.
         this.setupWsRPC(8081);
