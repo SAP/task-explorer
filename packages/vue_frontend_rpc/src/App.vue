@@ -77,7 +77,7 @@ export default {
 
     async initRpc() {
       const functions = ["setTask", "setTasks"];
-      functions.forEach(funcName => {
+      functions.forEach((funcName) => {
         this.rpc.registerMethod({
           func: this[funcName],
           thisArg: this,

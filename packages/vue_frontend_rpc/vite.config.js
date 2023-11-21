@@ -6,21 +6,21 @@ export default defineConfig({
   plugins: [vue()],
   base: "./",
   resolve: {
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
   },
   test: {
     define: {
-      "global": {},
+      global: {},
     },
-    exclude: ['../src/assets/*, ../src/plugins/*, ../src/icons/*, ../src/main.js'],
+    exclude: ["../src/assets/*, ../src/plugins/*, ../src/icons/*, ../src/main.js"],
     // enable jest-like global test APIs
     globals: true,
     // simulate DOM with happy-dom
     // (requires installing happy-dom as a peer dependency)
-    environment: 'happy-dom',
+    environment: "happy-dom",
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
     },
-  }
+  },
 });
