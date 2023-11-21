@@ -11,7 +11,7 @@
     "ci": "npm-run-all clean build test",
     "ci:artifacts_only": "npm-run-all clean build",
     "clean": "rimraf ./dist ./coverage",
-    "test": "vitest --dom --coverage",
+    "test": "vitest --dom --coverage --watch=false",
     "serve": "vite"
   },
   "dependencies": {
