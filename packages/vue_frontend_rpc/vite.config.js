@@ -12,7 +12,7 @@ export default defineConfig({
     define: {
       global: {},
     },
-    exclude: ["../src/assets/*, ../src/plugins/*, ../src/icons/*, ../src/main.js"],
+    exclude: ["../src/assets/*", "../src/plugins/*", "../src/icons/*", "../src/main.js"],
     // enable jest-like global test APIs
     globals: true,
     // simulate DOM with happy-dom
