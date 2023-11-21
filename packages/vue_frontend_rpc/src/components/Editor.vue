@@ -67,9 +67,7 @@ export default {
   },
   computed: {
     isExecuteEnabled: function () {
-      const t = this.state.inputValid && !this.state.saveEnabled;
-      console.log(t);
-      return t;
+      return this.state.inputValid && !this.state.saveEnabled;
     },
   },
   methods: {
@@ -119,67 +117,3 @@ export default {
   },
 };
 </script>
-
-<style>
-html,
-body {
-  height: 100%;
-  padding: 0px;
-}
-
-.inquirer-gui {
-  margin: 8px;
-}
-
-.inquirer-gui div.v-field {
-  border-radius: 0;
-}
-
-.inquirer-gui .v-card.v-card--outlined.v-sheet.theme--light {
-  border-radius: 0;
-  border-width: medium;
-  border-color: black;
-}
-
-.inquirer-gui .v-card .v-image__image--cover {
-  background-size: contain;
-}
-
-div.v-application.v-theme--light {
-  background-color: var(--vscode-editor-background, white);
-  color: var(--vscode-editor-foreground, black);
-}
-
-/* --vscode-focusBorder */
-
-form.inquirer-gui p.question-label {
-  color: var(--vscode-panelTitle-activeForeground, black);
-}
-
-form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light.v-field--focused {
-  border-color: var(--vscode-inputOption-activeBorder, white);
-}
-
-form.inquirer-gui .v-input .v-input__control .v-field.v-theme--light {
-  background-color: var(--vscode-input-background, darkgray);
-}
-
-form.inquirer-gui div.theme--light.v-select {
-  color: pink;
-}
-form.inquirer-gui div.theme--light.v-input input,
-form.inquirer-gui div.theme--light.v-input textarea {
-  color: var(--vscode-input-foreground, white);
-}
-
-form.inquirer-gui .error-validation-text {
-  color: brown;
-}
-
-form.inquirer-gui .mandatory-asterisk {
-  color: red;
-}
-.inquirer-gui .v-field__input {
-  opacity: 1;
-}
-</style>

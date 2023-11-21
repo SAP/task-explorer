@@ -7,7 +7,7 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@adobe/css-tools@^4.3.1":
+"@adobe/css-tools@^4.3.0":
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.3.1.tgz#abfccb8ca78075a2b6187345c26243c1a0842f28"
   integrity sha512-/62yikz7NLScCGAAST5SHdnjaDJQBDq0M2muyRTpf2VQhw6StBg2ALiu73zSJQ4fMVLA+0uBhBHAle7Wg+2kSg==
@@ -835,10 +835,10 @@
     validate-npm-package-name "5.0.0"
     yargs-parser "20.2.4"
 
-"@mdi/font@^5.1.45":
-  version "5.9.55"
-  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-5.9.55.tgz#41acd50b88073ded7095fc3029d8712b6e12f38e"
-  integrity sha512-jswRF6q3eq8NWpWiqct6q+6Fg/I7nUhrxYJfiEM8JJpap0wVJLQdbKtyS65GdlK7S7Ytnx3TTi/bmw+tBhkGmg==
+"@mdi/font@5.1.45":
+  version "5.1.45"
+  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-5.1.45.tgz#58edff65985cc5a350eb95ff2974273a285ea9ad"
+  integrity sha512-7H1UMwUpEp8mthdPlpAi7bhEyvTbvtK1TlA89scc0cXMpQy0UFygdkaf+6fveIxpBcRNgw0gnGSEonlsfYocXg==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1211,38 +1211,45 @@
     "@vscode-logging/types" "0.1.4"
     type-fest "2.11.1"
 
-"@sap-devx/inquirer-gui-file-browser-plugin@^3.0.0":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-file-browser-plugin/-/inquirer-gui-file-browser-plugin-3.0.1.tgz#980ac3b0a065ed04563826d8bea5ce060558b6b8"
-  integrity sha512-d5BCR9oRwMbv4gpvlsD83Yrbdxp/vBsIEgJ2x32o0Awo1UmotvtmtF9QoFh5qkOHwRBGeEXozmYAv55c2h8KtA==
+"@sap-devx/inquirer-gui-file-browser-plugin@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-file-browser-plugin/-/inquirer-gui-file-browser-plugin-3.0.0.tgz#0daa4a92403dd4db28894624a7f266a7e002001c"
+  integrity sha512-shCI8yMQ5m/ad1bxKq78BrBG2NHeaPIniTBKOVXkTcACVzLBSqbxozyMNgTq6gl4rlcKMGtr0rFZvD37U+OWlw==
   dependencies:
     vue "^3.3.4"
 
-"@sap-devx/inquirer-gui-folder-browser-plugin@^3.0.0":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-folder-browser-plugin/-/inquirer-gui-folder-browser-plugin-3.0.1.tgz#e7ab2a33a8b566f4c2383acfad273efc0f9f07f6"
-  integrity sha512-K897nDsUS4Bb+/S73fY01i+DmeevIy0V4BhPcKpH0GYRfIp20oBcugXpsTf79Uoyi3bmlqDHGMFCafeO1TJdpg==
+"@sap-devx/inquirer-gui-folder-browser-plugin@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-folder-browser-plugin/-/inquirer-gui-folder-browser-plugin-3.0.0.tgz#6402ce3e91417cb900c9e0d858228a37aaa4f20b"
+  integrity sha512-9bbY/tpTP5oCOTkLtO8FkAu1UghUd6iHVJ6FS6XEv4LvAl4RKNC7ccQVr63ONGqAxC1WsQjE1XA5w9peDWF6YQ==
   dependencies:
     vue "^3.3.4"
 
-"@sap-devx/inquirer-gui-label-plugin@^3.0.0":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-label-plugin/-/inquirer-gui-label-plugin-3.0.2.tgz#268d49a9700061e2a7d9d36f90cd51c091f24328"
-  integrity sha512-9NZkJ4zbDTCIGD1R4bV3/ItRJLz9sIUmJlxXnjUX80cks9EKnuV8s71HoS4YcIzAa7o94mCt9OU6HYLhtGqJPg==
+"@sap-devx/inquirer-gui-label-plugin@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui-label-plugin/-/inquirer-gui-label-plugin-3.0.0.tgz#a259004d49ad49dbcf1462f12a4acca1d7625272"
+  integrity sha512-x4xgoi1R6iLE1I7F1zZY+wMwLlWDUBWr54orYqNmeiljJIdOD9gV9qqyxe4TyuwMTrgN/+nyuq0HkgSSM4XWbw==
   dependencies:
     vue "^3.3.4"
 
-"@sap-devx/inquirer-gui@^3.0.0":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui/-/inquirer-gui-3.0.2.tgz#bbce44c6f613fe96b03e5eff7101d2629d258de7"
-  integrity sha512-wfzB/tKCYO4rXxpKXFevSEr4wp4Vo2CHh+QUKOOGgICzBTLEPgRUaC7hCHs2LRAm4QQejI3ax304IKZC1BGI+w==
+"@sap-devx/inquirer-gui@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@sap-devx/inquirer-gui/-/inquirer-gui-3.0.0.tgz#6ea7c6d1f4117edcbb2f6c31e5a8e0d3601a93f8"
+  integrity sha512-YVJI6t7Gs6Ip+uPsLekNUB9CT3LF+qc6kezUIGkihw67XvPilr7E/vlKM1RKdUtROYxpdtDrELjRK5J5t6xEIA==
   dependencies:
     lodash "^4.17.21"
     strip-ansi "^6.0.0"
     vue "^3.3.4"
     vuetify "^3.3.10"
 
-"@sap-devx/webview-rpc@0.2.3", "@sap-devx/webview-rpc@^0.2.2":
+"@sap-devx/webview-rpc@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@sap-devx/webview-rpc/-/webview-rpc-0.2.2.tgz#29e0cd72bc47b859c731094ff9b9be1105b1ce6a"
+  integrity sha512-1RfjUH65yL/mLfEF6xGSWeJ68H6Hj+Hp+QQzeE64FLDpmbRE+DDKd9wteoiSAl6WtGsiE3A/+0JS9yFIY+LwpQ==
+  dependencies:
+    ws "^7.2.3"
+
+"@sap-devx/webview-rpc@0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@sap-devx/webview-rpc/-/webview-rpc-0.2.3.tgz#748f75725a8b62f32b966a6b533bf33fb3072fbf"
   integrity sha512-6rgMO6SraQ34YPeRQiI0SO82J+u/6E+gpAJc++5zvo7LPQeCjCSKXALFrUEjFxQFeWP/eT00/Rig/jK0fJUnpA==
@@ -1373,12 +1380,12 @@
     lz-string "^1.5.0"
     pretty-format "^27.0.2"
 
-"@testing-library/jest-dom@^6.1.3":
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-6.1.4.tgz#cf0835c33bc5ef00befb9e672b1e3e6a710e30e3"
-  integrity sha512-wpoYrCYwSZ5/AxcrjLxJmCU6I5QAJXslEeSiMQqaWmP2Kzpd1LvF/qxmAIW2qposULGWq2gw30GgVNFLSc2Jnw==
+"@testing-library/jest-dom@6.1.3":
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-6.1.3.tgz#443118c9e4043f96396f120de2c7122504a079c5"
+  integrity sha512-YzpjRHoCBWPzpPNtg6gnhasqtE/5O4qz8WCwDEaxtfnPO6gkaLrnuXusrGSPyhIGPezr1HM7ZH0CFaUTY9PJEQ==
   dependencies:
-    "@adobe/css-tools" "^4.3.1"
+    "@adobe/css-tools" "^4.3.0"
     "@babel/runtime" "^7.9.2"
     aria-query "^5.0.0"
     chalk "^3.0.0"
@@ -1387,7 +1394,7 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/vue@^8.0.1":
+"@testing-library/vue@8.0.1":
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/@testing-library/vue/-/vue-8.0.1.tgz#3def5854daa7e5f98a9d05ecf65a2d84ca551b02"
   integrity sha512-l51ZEpjTQ6glq3wM+asQ1GbKJMGcxwgHEygETx0aCRN4TjFEGvMZy4YdWKs/y7bu4bmLrxcxhbEPP7iPSW/2OQ==
@@ -1784,7 +1791,7 @@
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.3.4.tgz#a289dff38e01949fe7be581d5542cabaeb961dec"
   integrity sha512-ciXNIHKPriERBisHFBvnTbfKa6r9SAesOYXeGDzgegcvy9Q4xdScSHAmKbNT0M3O0S9LKhIf5/G+UYG4NnnzYw==
 
-"@vitest/coverage-v8@^0.34.6":
+"@vitest/coverage-v8@0.34.6":
   version "0.34.6"
   resolved "https://registry.yarnpkg.com/@vitest/coverage-v8/-/coverage-v8-0.34.6.tgz#931d9223fa738474e00c08f52b84e0f39cedb6d1"
   integrity sha512-fivy/OK2d/EsJFoEoxHFEnNGTg+MmdZBAVK9Ka4qhXR2K3J0DS08vcGVwzDtXSuUMabLv4KtPcpSKkcMXFDViw==
@@ -1869,12 +1876,12 @@
   resolved "https://registry.yarnpkg.com/@vscode-logging/types/-/types-0.1.4.tgz#0a9b1752322da0d02e7435995557f6e0e12c4cb9"
   integrity sha512-uxuHQfpX9RbkgSj5unJFmciXRczyFSaAI2aA829MYYkE8jxlhZLRLoiJLymTNiojNVdV7fFE3CILF5Q6M+EBsA==
 
-"@vue/compat@^3.3.4":
-  version "3.3.8"
-  resolved "https://registry.yarnpkg.com/@vue/compat/-/compat-3.3.8.tgz#20e7e657158af0ab58ea29436b07d556abcbf014"
-  integrity sha512-ywp40WMF1DKZ4X/HbLPd5gHDyxDk/itDHp8JiSodvI9OyiA53HQS2hstLCh652HDue58gTQlo80HJwQCj+hYRw==
+"@vue/compat@3.3.4":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@vue/compat/-/compat-3.3.4.tgz#1e0b81e02eb2eabde796b97b18838c3eca8dcdd1"
+  integrity sha512-VwAsPqUqRJVxeLQPUC03Sa5d+T8UG2Qv4VItq74KmNvtQlRXICpa/sqq12BcyBB4Tz1U5paOEZxWCUoXkrZ9QQ==
   dependencies:
-    "@babel/parser" "^7.23.0"
+    "@babel/parser" "^7.21.3"
     estree-walker "^2.0.2"
     source-map-js "^1.0.2"
 
@@ -4819,7 +4826,7 @@ get-pkg-repo@^4.2.1:
     through2 "^2.0.0"
     yargs "^16.2.0"
 
-get-port@5.1.1, get-port@^5.1.1:
+get-port@5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/get-port/-/get-port-5.1.1.tgz#0469ed07563479de6efb986baf053dcd7d4e3193"
   integrity sha512-g/Q1aTSDOxFpchXC4i8ZWvxA1lnPqx/JHqcpIw0/LX9T8x/GBbi6YnlN5nhaKIFkT8oFsscUKgDJYxfwfS6QsQ==
@@ -5086,7 +5093,7 @@ handlebars@^4.7.7:
   optionalDependencies:
     uglify-js "^3.1.4"
 
-happy-dom@^12.10.3:
+happy-dom@12.10.3:
   version "12.10.3"
   resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-12.10.3.tgz#e61985eff163b822c110458be7f81aa4f94ad588"
   integrity sha512-JzUXOh0wdNGY54oKng5hliuBkq/+aT1V3YpTM+lrN/GoLQTANZsMaIvmHiHe612rauHvPJnDZkZ+5GZR++1Abg==
@@ -5813,7 +5820,7 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==
 
-istanbul-instrumenter-loader@^3.0.1:
+istanbul-instrumenter-loader@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/istanbul-instrumenter-loader/-/istanbul-instrumenter-loader-3.0.1.tgz#9957bd59252b373fae5c52b7b5188e6fde2a0949"
   integrity sha512-a5SPObZgS0jB/ixaKSMdn6n/gXSrK2S6q/UfRJBT3e6gQmVjwZROTODQsYW5ZNwOu78hG62Y3fWlebaVOL0C+w==
@@ -6647,7 +6654,7 @@ markdown-it@^10.0.0:
     mdurl "^1.0.1"
     uc.micro "^1.0.5"
 
-material-design-icons-iconfont@^5.0.1:
+material-design-icons-iconfont@5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/material-design-icons-iconfont/-/material-design-icons-iconfont-5.0.1.tgz#371875ed7fe9c8c520bc7123c3231feeab731c31"
   integrity sha512-Xg6rIdGrfySTqiTZ6d+nQbcFepS6R4uKbJP0oAqyeZXJY/bX6mZDnOmmUJusqLXfhIwirs0c++a6JpqVa8RFvA==
@@ -7482,7 +7489,7 @@ osenv@^0.1.3:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-p-defer@^3.0.0:
+p-defer@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/p-defer/-/p-defer-3.0.0.tgz#d1dceb4ee9b2b604b1d94ffec83760175d4e6f83"
   integrity sha512-ugZxsxmtTln604yeYd29EGrNhazN2lywetzpKhfmQjW/VJmhpDmWbiX+h0zL8V91R0UXkhb3KtPmyq9PZw3aYw==
@@ -9660,9 +9667,9 @@ vite@4.4.9:
     fsevents "~2.3.2"
 
 "vite@^3.0.0 || ^4.0.0 || ^5.0.0-0", "vite@^3.1.0 || ^4.0.0 || ^5.0.0-0":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-5.0.1.tgz#457d6505a302dde8002e551139cdc462f5ec0c49"
-  integrity sha512-T2plNaDK+olJPoxwmpGxKcI+BScI2OAulAtRUAljTrb6QxSqJShWMUT+7ilXcBHTMAzbYHfWROuC1J/g2oRhEw==
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-5.0.2.tgz#3c94627dace83b9bf04b64eaf618038e30fb95c0"
+  integrity sha512-6CCq1CAJCNM1ya2ZZA7+jS2KgnhbzvxakmlIjN24cF/PXhRMzpM/z8QgsVJA/Dm5fWUWnVEsmtBoMhmerPxT0g==
   dependencies:
     esbuild "^0.19.3"
     postcss "^8.4.31"
@@ -9670,7 +9677,7 @@ vite@4.4.9:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vitest@^0.34.6:
+vitest@0.34.6:
   version "0.34.6"
   resolved "https://registry.yarnpkg.com/vitest/-/vitest-0.34.6.tgz#44880feeeef493c04b7f795ed268f24a543250d7"
   integrity sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==
@@ -9791,6 +9798,11 @@ vue@^3.3.4:
     "@vue/runtime-dom" "3.3.8"
     "@vue/server-renderer" "3.3.8"
     "@vue/shared" "3.3.8"
+
+vuetify@3.3.10:
+  version "3.3.10"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.3.10.tgz#5eaf304f792c576e4083016f2fd26c81abb3b030"
+  integrity sha512-jV5zA4PMK1ik8j/alPhAR75fzSoAvUgPcoKl+fZ/buDu70vJ3nM6+F3zh78UBs0PMzyLlarwt851QNbYXLbZbQ==
 
 vuetify@^3.3.10:
   version "3.4.2"
