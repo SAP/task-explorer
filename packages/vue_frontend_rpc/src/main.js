@@ -1,16 +1,22 @@
 import { createApp, h } from "vue";
 import App from "./App.vue";
+
+// Material Design Icons CSS
 import "material-design-icons-iconfont/dist/material-design-icons.css";
+
+// Global Styles CSS
 import "./assets/css/globalStyles.css";
+
+// Inquirer GUI CSS
 import "@sap-devx/inquirer-gui/dist/form.css";
 import "@sap-devx/inquirer-gui-label-plugin/dist/labelPlugin.css";
 
-import Form from "@sap-devx/inquirer-gui";
-import "@sap-devx/inquirer-gui/dist/form.css";
+// Other Modules
 import vuetify from "./plugins/vuetify";
 import FileBrowserPlugin from "@sap-devx/inquirer-gui-file-browser-plugin";
 import FolderBrowserPlugin from "@sap-devx/inquirer-gui-folder-browser-plugin";
 import LabelPlugin from "@sap-devx/inquirer-gui-label-plugin";
+import Form from "@sap-devx/inquirer-gui";
 
 const plugins = [];
 
@@ -24,7 +30,6 @@ const app = createApp({
   },
   methods: {
     registerFormPlugins(formPlugins) {
-      console.log(formPlugins);
       if (Array.isArray(formPlugins)) {
         formPlugins.forEach((formPlugin) => {
           this.$refs.appRef.$refs.editor.$refs.form.registerPlugin(formPlugin);

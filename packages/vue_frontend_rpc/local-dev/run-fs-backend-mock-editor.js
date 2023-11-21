@@ -18,7 +18,6 @@ new BackendMock({
     await this.rpc.invoke("setTask", [taskObject]);
   },
   evaluateMethod: async function (params, questionName, methodName) {
-    console.log("params: ", params, "questionName", questionName, "methodName: ", methodName);
     if (!isEmpty(evaluatedQuestions)) {
       const relevantQuestion = find(evaluatedQuestions, (question) => {
         return get(question, "name") === questionName;

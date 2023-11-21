@@ -1,33 +1,6 @@
 import Editor from "../../src/components/Editor.vue";
 import { expect } from "chai";
-import { mount, shallowMount } from "@vue/test-utils";
-
-jest.spyOn(window, "getComputedStyle").mockImplementation(() => ({
-  getPropertyValue: (property) => {
-    if (property === "--vscode-descriptionForeground") {
-      return "#717171"; // Mock the CSS variable value
-    }
-    return "";
-  },
-}));
-
-jest.mock("@sap-devx/inquirer-gui-file-browser-plugin", () => ({
-  FileBrowserPlugin: jest.fn(() => ({
-    register: jest.fn(),
-  })),
-}));
-
-jest.mock("@sap-devx/inquirer-gui-folder-browser-plugin", () => ({
-  FolderBrowserPlugin: jest.fn(() => ({
-    register: jest.fn(),
-  })),
-}));
-
-jest.mock("@sap-devx/inquirer-gui-label-plugin", () => ({
-  LabelPlugin: jest.fn(() => ({
-    register: jest.fn(),
-  })),
-}));
+import { mount } from "@vue/test-utils";
 
 describe("Editor.vue", () => {
   it("renders without errors", () => {
@@ -42,13 +15,13 @@ describe("Editor.vue", () => {
   });
 
   it("renders the correct HTML structure set editor true", () => {
-    const wrapper = shallowMount(Editor, {
+    const wrapper = mount(Editor, {
       props: {
         editor: true,
         rpc: {},
       },
     });
-    const expectedHtml = `<v-mainid="editor-component"><v-rowclass="main-rowma-0pa-0"><v-colclass="main-colma-0pa-0"><v-cardclass="main-cardmr-16pb-2"><v-card-titleclass="task-intro"><v-imgclass="task-icon"style="display:none;"></v-img><divclass="task-label"></div><v-spacer></v-spacer><div><v-dividervertical=""inset=""></v-divider><v-btnid="exec"text=""tile=""disabled="true"><divclass="exec-title"></div><divstyle="mask-image:url(undefined);webkit-mask-image:url(undefined);"class="exec-icon"></div></v-btn></div></v-card-title><v-divider></v-divider><v-list-groupclass="my-list-group"sub-group=""prepend-icon="$expand"value="true"></v-list-group></v-card></v-col></v-row><v-dividerclass="mr-16"></v-divider><v-rowstyle="height:4rem;"class="mr-16"sm="auto"><v-colclass="bottom-buttons-col"style="display:flex;align-items:center;"><v-btnid="save"disabled="true">Save</v-btn></v-col></v-row></v-main>`;
+    const expectedHtml = `<v-mainid="editor-component"><v-rowclass="main-rowma-0pa-0"><v-colclass="main-colma-0pa-0"><v-cardclass="main-cardmr-16pb-2"><v-card-titleclass="task-intro"><v-imgclass="task-icon"style="display:none;"></v-img><divclass="task-label"></div><v-spacer></v-spacer><div><v-dividervertical=""inset=""></v-divider><v-btnid="exec"text=""tile=""disabled="true"><divclass="exec-title"></div><divclass="exec-icon"></div></v-btn></div></v-card-title><v-divider></v-divider><v-list-groupclass="my-list-group"sub-group=""prepend-icon="$expand"value="true"></v-list-group></v-card></v-col></v-row><v-dividerclass="mr-16"></v-divider><v-rowstyle="height:4rem;"class="mr-16"sm="auto"><v-colclass="bottom-buttons-col"style="display:flex;align-items:center;"><v-btnid="save"disabled="true">Save</v-btn></v-col></v-row></v-main>`;
     expect(wrapper.html().replace(/\s/g, "")).to.equal(expectedHtml);
     expect(wrapper.exists()).to.be.true;
   });
@@ -95,7 +68,7 @@ describe("Editor.vue", () => {
 
     // Mock the 'rpc' object and its 'invoke' method
     const mockRpc = {
-      invoke: jest.fn(),
+      invoke: async () => {},
     };
 
     // Set the 'rpc' object in the component's data

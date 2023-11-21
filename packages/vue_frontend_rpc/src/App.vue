@@ -8,7 +8,6 @@
 import { RpcBrowser } from "@sap-devx/webview-rpc/out.browser/rpc-browser";
 import { RpcBrowserWebSockets } from "@sap-devx/webview-rpc/out.browser/rpc-browser-ws";
 import Editor from "./components/Editor.vue";
-import { forEach } from "lodash";
 
 function initialState() {
   return {
@@ -26,13 +25,12 @@ export default {
     return initialState();
   },
 
-  mounted() {
+  created() {
     this.setupRpc();
   },
 
   methods: {
     setupRpc() {
-      /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
       if (this.isInVsCode()) {
         this.setupVSCodeRpc();
       } else {
@@ -79,7 +77,7 @@ export default {
 
     async initRpc() {
       const functions = ["setTask", "setTasks"];
-      forEach(functions, (funcName) => {
+      functions.forEach(funcName => {
         this.rpc.registerMethod({
           func: this[funcName],
           thisArg: this,

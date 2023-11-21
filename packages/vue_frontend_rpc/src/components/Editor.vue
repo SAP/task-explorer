@@ -75,7 +75,6 @@ export default {
   methods: {
     init() {},
     setTask(task) {
-      this.task = task;
       this.prepareTask(task);
     },
     async onExec() {
@@ -87,6 +86,7 @@ export default {
       await this.rpc.invoke("saveTask");
     },
     prepareTask(task) {
+      this.task = task;
       const questions = [...task.content];
       for (const question of questions) {
         for (const prop in question) {
