@@ -62,16 +62,12 @@ export default {
       },
     };
   },
-  mounted() {
-    this.init();
-  },
   computed: {
     isExecuteEnabled: function () {
       return this.state.inputValid && !this.state.saveEnabled;
     },
   },
   methods: {
-    init() {},
     setTask(task) {
       this.prepareTask(task);
     },
@@ -98,11 +94,6 @@ export default {
         }
       }
       this.questions = questions;
-    },
-    getEvaluationFunction(rpc, questionName, questionProperty) {
-      return async (...args) => {
-        return rpc.invoke("evaluateMethod", [args, questionName, questionProperty]);
-      };
     },
     async onAnswered(answers, issues) {
       this.state.inputValid = issues === undefined;

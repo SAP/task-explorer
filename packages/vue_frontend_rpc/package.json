@@ -20,7 +20,6 @@
     "@sap-devx/inquirer-gui-file-browser-plugin": "3.0.0",
     "@sap-devx/inquirer-gui-folder-browser-plugin": "3.0.0",
     "@sap-devx/inquirer-gui-label-plugin": "3.0.0",
-    "@vue/compat": "3.3.4",
     "material-design-icons-iconfont": "5.0.1",
     "vue": "3.2.36",
     "vue-loader": "17.2.2",
