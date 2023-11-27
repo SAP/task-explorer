@@ -1,6 +1,7 @@
 import { join, sep } from "path";
 import { WebviewPanel, window, ViewColumn, Uri, commands } from "vscode";
 import { getExtensionPath } from "../extension";
+import * as cheerio from "cheerio";
 
 export abstract class AbstractWebviewPanel<T> {
   public viewType = "";
@@ -67,15 +68,24 @@ export abstract class AbstractWebviewPanel<T> {
     if (this.webViewPanel === undefined) {
       return;
     }
-    let indexHtml = await this.readResource(join(this.mediaPath, this.htmlFileName));
     // Local path to main script run in the webview
     const scriptPathOnDisk = Uri.file(join(this.mediaPath, sep));
     const scriptUri = this.webViewPanel.webview.asWebviewUri(scriptPathOnDisk);
+    const baseUrl = scriptUri.toString();
+    const $ = cheerio.load(await this.readResource(join(this.mediaPath, this.htmlFileName)));
 
-    indexHtml = indexHtml.replace(/<link href="/g, `<link href="${scriptUri.toString()}`);
-    indexHtml = indexHtml.replace(/<script src="/g, `<script src="${scriptUri.toString()}`);
-    indexHtml = indexHtml.replace(/<img src="/g, `<img src="${scriptUri.toString()}`);
+    function replaceAttributePaths(elements: any, attributeName: string) {
+      elements.each((index: number, element: cheerio.Element) => {
+        const currentAttr = $(element).attr(attributeName);
+        if (currentAttr) {
+          $(element).attr(attributeName, `${baseUrl}/${currentAttr}`);
+        }
+      });
+    }
 
-    this.webViewPanel.webview.html = indexHtml;
+    replaceAttributePaths($("[src]"), "src");
+    replaceAttributePaths($("[href]"), "href");
+
+    this.webViewPanel.webview.html = $.html();
   }
 }

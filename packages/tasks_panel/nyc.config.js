@@ -12,4 +12,8 @@ module.exports = Object.assign(baseNycConfig, {
     "dist/test/**",
     "src/webSocketServer/**",
   ],
+  branches: 99,
+  lines: 99,
+  functions: 99,
+  statements: 99,
 });

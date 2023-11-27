@@ -1463,6 +1463,13 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.3.tgz#3c90752792660c4b562ad73b3fbd68bf3bc7ae07"
   integrity sha512-hC7OMnszpxhZPduX+m+nrx+uFoLkWOMiR4oa/AZF3MuSETYTZmFfJAHqZEM8MVlvfG7BEUcgvtwoCTxBp6hm3g==
 
+"@types/cheerio@^0.22.31":
+  version "0.22.35"
+  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.35.tgz#0d16dc1f24d426231c181b9c31847f673867595f"
+  integrity sha512-yD57BchKRvTV+JD53UZ6PD8KWY5g5rvvMLRnZR3EQBCZXiDT/HR+pKpMzFGlWNhFrXlo7VPZXtKvIEwZkAWOIA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/comment-json@2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@types/comment-json/-/comment-json-2.4.2.tgz#336368d351b9d29fb08352d37c2686b3fc4d882a"
@@ -3088,7 +3095,7 @@ cheerio-select@^2.1.0:
     domhandler "^5.0.3"
     domutils "^3.0.1"
 
-cheerio@^1.0.0-rc.9:
+cheerio@^1.0.0-rc.12, cheerio@^1.0.0-rc.9:
   version "1.0.0-rc.12"
   resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.12.tgz#788bf7466506b1c6bf5fae51d24a2c4d62e47683"
   integrity sha512-VqR8m68vM46BNnuZ5NtnGBKIE/DfN0cRIzg9n40EIq9NOv90ayxLBXA8fXC5gquFRGJSTRqBq25Jt2ECLR431Q==
