@@ -23,17 +23,16 @@
           </v-card-title>
           <v-divider></v-divider>
 
-
-            <v-list value="General Properties">
-                <v-list-group value="General Properties">
-                  <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" title="General Properties"></v-list-item>
-                  </template>
-                  <v-list-item>
-                    <Form ref="form" :questions="questions" @answered="onAnswered" />
-                  </v-list-item>
-                </v-list-group>
-            </v-list>
+          <v-list value="General Properties">
+            <v-list-group value="General Properties">
+              <template v-slot:activator="{ props }">
+                <v-list-item v-bind="props" title="General Properties"></v-list-item>
+              </template>
+              <v-list-item>
+                <Form ref="form" :questions="questions" @answered="onAnswered" />
+              </v-list-item>
+            </v-list-group>
+          </v-list>
         </v-card>
       </v-col>
     </v-row>
