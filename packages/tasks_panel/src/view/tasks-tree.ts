@@ -57,8 +57,7 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
   }
 
   private getRoots(tasks: ConfiguredTask[]): TreeItem[] {
-    const wsFolders = uniq(map(tasks, "__wsFolder"));
-    return wsFolders.length === 1 ? this.getIntents(tasks) : this.getWorkspaces(wsFolders);
+    return this.getWorkspaces(uniq(map(tasks, "__wsFolder")));
   }
 
   private async getIntentChildren(tasks: ConfiguredTask[], element: TreeItem) {

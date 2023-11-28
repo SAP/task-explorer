@@ -164,11 +164,6 @@
       ],
       "view/item/context": [
         {
-          "command": "tasks-explorer.editTask",
-          "group": "main@1",
-          "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
-        },
-        {
           "command": "tasks-explorer.deleteTask",
           "group": "main@4",
           "when": "view == tasksPanel && viewItem =~ /^task--idle$/"
@@ -195,7 +190,7 @@
         },
         {
           "command": "tasks-explorer.createTask",
-          "when": "view == tasksPanel && viewItem =~ /^project$/",
+          "when": "view == tasksPanel && viewItem =~ /^(project|intent)$/",
           "group": "inline"
         }
       ]

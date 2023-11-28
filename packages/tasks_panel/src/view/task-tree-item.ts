@@ -3,6 +3,7 @@ import { TreeItem, TreeItemCollapsibleState, Command, tasks, ThemeIcon } from "v
 import { isMatchBuild, isMatchDeploy } from "../../src/utils/ws-folder";
 
 type TaskStatus = "idle" | "running";
+export type ElementTreeItem = ProjectTreeItem | IntentTreeItem | TaskTreeItem;
 
 class TreeTooltiplessItem extends TreeItem {
   constructor(label: string, collapsibleState: TreeItemCollapsibleState) {

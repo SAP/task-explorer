@@ -10,6 +10,7 @@ import { window } from "vscode";
 import { createTaskEditorPanel } from "./panels/panels-handler";
 import { multiStepTaskSelect } from "./multi-step-select";
 import { TYPE_FE_DEPLOY_CFG, fioriE2eConfig } from "./misc/fiori-e2e-config";
+import { ElementTreeItem } from "./view/task-tree-item";
 
 const escapeStringRegexp = require("escape-string-regexp");
 
@@ -20,9 +21,9 @@ export class TasksSelection {
     private readonly readResource: (file: string) => Promise<string>
   ) {}
 
-  public async select(project?: string): Promise<any> {
+  public async select(treeItem?: ElementTreeItem): Promise<any> {
     try {
-      const { task } = await multiStepTaskSelect(this.tasks, project);
+      const { task } = await multiStepTaskSelect(this.tasks, treeItem);
       if (task) {
         return await (task.type === TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig
           ? fioriE2eConfig(task.wsFolder, task.project)

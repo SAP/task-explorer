@@ -7,13 +7,13 @@ import {
   getTaskEditorPanel,
   getTaskInProcess,
 } from "../panels/panels-handler";
-import { TaskTreeItem } from "../view/task-tree-item";
+import { ElementTreeItem } from "../view/task-tree-item";
 import { isEmpty } from "lodash";
 
 export async function createTask(
   tasksProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
-  treeItem?: TaskTreeItem
+  treeItem?: ElementTreeItem
 ): Promise<void> {
   const taskInProcess = getTaskInProcess();
 
@@ -48,12 +48,12 @@ export async function createTask(
 async function openViewForAutoDetectedTaskSelection(
   tasksProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
-  treeItem?: TaskTreeItem
+  treeItem?: ElementTreeItem
 ): Promise<void> {
   return tasksProvider.getAutoDectedTasks().then((tasks) => {
     if (isEmpty(tasks)) {
       throw new Error(messages.MISSING_AUTO_DETECTED_TASKS());
     }
-    void createTasksSelection(tasks, readResource, (<any>treeItem)?.fqn);
+    void createTasksSelection(tasks, readResource, treeItem);
   });
 }

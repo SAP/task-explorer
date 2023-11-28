@@ -60,4 +60,8 @@ export class TaskEditorPanel extends AbstractWebviewPanel<TaskEditorPanelState> 
   async showOpenFolderDialog(currentPath: string): Promise<string> {
     return showOpenDialog(currentPath, false, true);
   }
+
+  public getLoadedTask(): ConfiguredTask {
+    return this.state.task;
+  }
 }

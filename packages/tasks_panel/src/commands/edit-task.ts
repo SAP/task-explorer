@@ -1,9 +1,8 @@
-import { window } from "vscode";
+import { commands, window } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
-import { createTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
+import { createTaskEditorPanel, getTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
 import { ITasksProvider } from "../services/definitions";
 import { find, has, isMatch } from "lodash";
 import { serializeTask } from "../utils/task-serializer";
@@ -12,26 +11,26 @@ import { getLogger } from "../logger/logger-wrapper";
 export async function editTreeItemTask(
   tasksProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
-  treeItem: TaskTreeItem
+  task?: ConfiguredTask
 ): Promise<void> {
   function isConfiguredTask(task: ConfiguredTask): boolean {
     return has(task, "__intent");
   }
-  let task = treeItem.command?.arguments?.[0];
-  const isTaskAttached = !!task;
 
+  let cmdTask;
   if (task && !isConfiguredTask(task)) {
+    cmdTask = task;
     // request for edit task programmatically
     task = find(await tasksProvider.getConfiguredTasks(), (_) => {
-      return isMatch(_, task);
+      return isMatch(_, task as ConfiguredTask);
     });
   }
 
   if (task) {
     return editTask(task, readResource);
-  } else if (isTaskAttached) {
+  } else if (cmdTask) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified above
-    getLogger().debug(messages.EDIT_TASK_NOT_FOUND(serializeTask(treeItem.command!.arguments![0])));
+    getLogger().debug(messages.EDIT_TASK_NOT_FOUND(serializeTask(cmdTask)));
   }
 }
 
@@ -54,6 +53,7 @@ export async function editTask(task: ConfiguredTask, readResource: (file: string
       messages.DISCARD_CHANGES_BUTTON_TEXT()
     );
     if (decision !== messages.DISCARD_CHANGES_BUTTON_TEXT()) {
+      void commands.executeCommand("tasks-explorer.tree.select", getTaskEditorPanel()?.getLoadedTask());
       return;
     }
   }
