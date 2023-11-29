@@ -284,4 +284,5 @@ div.v-input__slot .v-select__selection {
 
 #exec.v-btn--disabled {
     opacity: 0.5;
+    color: transparent !important;
 }

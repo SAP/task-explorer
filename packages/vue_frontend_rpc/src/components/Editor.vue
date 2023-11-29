@@ -9,7 +9,7 @@
             <v-spacer></v-spacer>
             <div>
               <v-divider vertical inset></v-divider>
-              <v-btn id="exec" text tile @click="onExec" :disabled="!isExecuteEnabled">
+              <v-btn style="float: right" id="exec" text tile @click="onExec" :disabled="!isExecuteEnabled">
                 <div class="exec-title">{{ task.taskIntent }}</div>
                 <div
                   :style="{
