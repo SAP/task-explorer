@@ -33,7 +33,8 @@ async function grabTasksByGroup(
   function toFioriE2ePickItems(items: FioriProjectInfo[]): QuickPickItem[] {
     return map(items, (item) => {
       return {
-        label: `Define Deployment parameters - ${item.project || item.wsFolder}`,
+        label: "Define Deployment parameters",
+        detail: `${item.project || item.wsFolder}`,
         ...item,
       };
     });
@@ -52,7 +53,15 @@ async function grabTasksByGroup(
         if (!group || group.toLowerCase() === intent.toLowerCase()) {
           // fiori projects workaround: hide `Build`/`Deploy` npm tasks if fiori e2e deployment configuration needed
           pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
-          pickItems.push(...filter(tasksByProject, ["__intent", intent]));
+          pickItems.push(
+            ...compact(
+              map(tasksByProject, (_) => {
+                if (_.__intent === intent) {
+                  return extend({ ..._ }, { description: _.type }, _.description ? { detail: _.description } : {});
+                }
+              })
+            )
+          );
         }
       }
     } else {
@@ -68,9 +77,13 @@ async function grabTasksByGroup(
 
 function grabMiscTasksByProject(tasks: ConfiguredTask[], project: string): QuickPickItem[] {
   const tasksByProject = filter(tasks, ["__wsFolder", project]);
-  return filter(tasksByProject, (_) => {
-    return !isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent);
-  });
+  return compact(
+    map(tasksByProject, (_) => {
+      if (!isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent)) {
+        return { ..._, description: _.type };
+      }
+    })
+  );
 }
 
 /* istanbul ignore next */
@@ -163,7 +176,10 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
     });
   }
 
-  return collectInputs();
+  return collectInputs().then((state) => {
+    delete state.task?.description; // supposed added for a QuickPick purpose
+    return state;
+  });
 }
 
 class InputFlowAction {

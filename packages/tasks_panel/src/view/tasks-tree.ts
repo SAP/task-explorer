@@ -56,8 +56,8 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
     );
   }
 
-  private getRoots(tasks: ConfiguredTask[]): TreeItem[] {
-    return this.getWorkspaces(uniq(map(tasks, "__wsFolder")));
+  private getRoots(): TreeItem[] {
+    return this.getWorkspaces(map(workspace.workspaceFolders, (_) => _.uri.fsPath));
   }
 
   private async getIntentChildren(tasks: ConfiguredTask[], element: TreeItem) {
@@ -81,7 +81,7 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
   public async getChildren(element?: TreeItem): Promise<TreeItem[]> {
     const tasks = await this.tasksProvider.getConfiguredTasks();
     if (element === undefined) {
-      return this.getRoots(tasks);
+      return this.getRoots();
     } else if (element instanceof ProjectTreeItem) {
       return this.getIntents(tasks, element);
     } else {
