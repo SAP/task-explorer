@@ -19,7 +19,6 @@ export const messages = {
   DELETE_TASK: (task: string): string => `The ${task} task has been deleted.`,
   EDIT_TASK: (task: string): string => `The changes to the ${task} task have been saved.`,
   TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
-  EDIT_TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
   EXECUTE_TASK: (task: string): string => `Executed the ${task} task.`,
   TERMINATE_TASK: (task: string): string => `Terminate the ${task} task.`,
   CREATE_TASK: (task: string): string => `Create the ${task} task.`,

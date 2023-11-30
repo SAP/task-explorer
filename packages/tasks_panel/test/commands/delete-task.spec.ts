@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { createSandbox, SinonMock, SinonSandbox, SinonSpy } from "sinon";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
-import { MockTasksProvider } from "../utils/mockTasksProvider";
 
 mockVscode("../../src/panels/task-editor-panel");
 import { deleteTask } from "../../src/commands/delete-task";
@@ -18,14 +17,6 @@ describe("Command deleteTask", () => {
     return "aaa";
   };
 
-  const tasks = [
-    {
-      label: "task 1",
-      type: "testType",
-      taskType: "Deploy",
-      prop1: "value 1.1",
-    },
-  ];
   let sandbox: SinonSandbox;
   let spyGetConfiguration: SinonSpy;
   const wsFolder = "wsFolder1";
@@ -60,21 +51,21 @@ describe("Command deleteTask", () => {
   };
   const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
 
-  // it("task already opened for editing, task panel will be disposed and task deleted", async () => {
-  //   MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
-  //   const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
+  it("task already opened for editing, task panel will be disposed and task deleted", async () => {
+    MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
+    const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
-  //   await editTreeItemTask(new MockTasksProvider(tasks), readFile, item1);
-  //   expect(MockVSCodeInfo.webViewCreated).eq(1);
-  //   mockWindow
-  //     .expects("showInformationMessage")
-  //     .withExactArgs(messages.delete_task_confirmation(task1.label), { modal: true }, "Delete")
-  //     .resolves("Delete");
-  //   await deleteTask(item1);
-  //   expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.empty;
-  //   expect(MockVSCodeInfo.disposeCalled).eq(true);
-  //   expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
-  // });
+    await editTreeItemTask(readFile, task1);
+    expect(MockVSCodeInfo.webViewCreated).eq(1);
+    mockWindow
+      .expects("showInformationMessage")
+      .withExactArgs(messages.delete_task_confirmation(task1.label), { modal: true }, "Delete")
+      .resolves("Delete");
+    await deleteTask(item1);
+    expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.empty;
+    expect(MockVSCodeInfo.disposeCalled).eq(true);
+    expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+  });
 
   it("task is not opened for editing, task will be deleted", async () => {
     MockVSCodeInfo.configTasks?.set("wsFolder1", [new MockConfigTask("aaa", "test")]);

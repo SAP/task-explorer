@@ -5,12 +5,14 @@ import * as panelHandler from "../../src/panels/panels-handler";
 mockVscode("src/commands/create-task");
 import { createTask } from "../../src/commands/create-task";
 mockVscode("src/commands/edit-task");
-import { editTask } from "../../src/commands/edit-task";
+import { editTreeItemTask } from "../../src/commands/edit-task";
 import { TaskEditor } from "../../src/task-editor";
 import { messages } from "../../src/i18n/messages";
 import { createSandbox, SinonMock, SinonSandbox } from "sinon";
 import { expect } from "chai";
 import { fail } from "assert";
+import { ProjectTreeItem } from "../../src/view/task-tree-item";
+import { TreeItemCollapsibleState } from "vscode";
 
 describe("Command createTask", () => {
   const tasks = [
@@ -69,15 +71,12 @@ describe("Command createTask", () => {
   });
 
   it(`creates panel for tasks selection when called with some task opened for editing but not changed`, async () => {
-    await editTask(
-      {
-        label: "task 3",
-        type: "testType",
-        taskType: "Deploy",
-        prop1: "value 1.3",
-      },
-      readFile
-    );
+    await editTreeItemTask(readFile, {
+      label: "task 3",
+      type: "testType",
+      taskType: "Deploy",
+      prop1: "value 1.3",
+    });
     // editor panel created
     const others = [
       {
@@ -93,15 +92,12 @@ describe("Command createTask", () => {
   });
 
   it(`does not create panel for tasks selection when called with some task being edited and user does not agree to discard the changes`, async () => {
-    await editTask(
-      {
-        label: "task 3",
-        type: "testType",
-        taskType: "Deploy",
-        prop1: "value 1.3",
-      },
-      readFile
-    );
+    await editTreeItemTask(readFile, {
+      label: "task 3",
+      type: "testType",
+      taskType: "Deploy",
+      prop1: "value 1.3",
+    });
     // editor panel created
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = panelHandler.getTaskEditor()!;
@@ -113,15 +109,12 @@ describe("Command createTask", () => {
   });
 
   it(`creates panel for tasks selection when called with some task being edited and user agrees to discard the changes`, async () => {
-    await editTask(
-      {
-        label: "task 3",
-        type: "testType",
-        taskType: "Deploy",
-        prop1: "value 1.3",
-      },
-      readFile
-    );
+    await editTreeItemTask(readFile, {
+      label: "task 3",
+      type: "testType",
+      taskType: "Deploy",
+      prop1: "value 1.3",
+    });
     // editor panel initiated
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = panelHandler.getTaskEditor()!;
@@ -142,10 +135,11 @@ describe("Command createTask", () => {
           prop1: "value 1.2",
         },
       ];
-      const projectItem = { fqn: "/user/project1" };
-      mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, projectItem.fqn);
+      const projectItem = new ProjectTreeItem("project", "/root/home/test/proj", TreeItemCollapsibleState.Collapsed);
+      mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, projectItem);
+      mockPanelHandler.expects("disposeTaskEditorPanel");
       mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, undefined);
-      await createTask(new MockTasksProvider(tasks), readFile, projectItem as any);
+      await createTask(new MockTasksProvider(tasks), readFile, projectItem);
       await createTask(new MockTasksProvider(tasks), readFile);
     });
   });

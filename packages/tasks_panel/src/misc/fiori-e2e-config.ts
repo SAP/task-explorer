@@ -15,6 +15,7 @@ import { Dictionary, compact, concat, find, includes, last, map, split, extend, 
 import { cfGetTargets, cfGetConfigFileField, DEFAULT_TARGET } from "@sap/cf-tools";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
+import { generateUniqueCode } from "../../src/utils/task-serializer";
 
 export enum TYPE_FE_DEPLOY_CFG {
   fioriDeploymentConfig = "fioriDeploymentConfig",
@@ -221,7 +222,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
     if (target === FE_DEPLOY_TRG.ABAP) {
       _tasks.push({
         type: "npm",
-        label: `Deploy to ABAP`,
+        label: `Deploy to ABAP [${generateUniqueCode()}]`,
         script: "deploy",
         options: { cwd: `${projectUri.fsPath}` },
       });
@@ -229,7 +230,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       // FE_DEPLOY_TRG.CF
       const taskBuild = {
         type: "build.mta",
-        label: `Build MTA`,
+        label: `Build MTA [${generateUniqueCode()}]`,
         taskType: "Build",
         projectPath: `${projectUri.fsPath}`,
         extensions: [],
@@ -237,7 +238,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       const taskDeploy = extend(
         {
           type: "deploy.mta.cf",
-          label: `Deploy MTA to Cloud Foundry`,
+          label: `Deploy MTA to Cloud Foundry [${generateUniqueCode()}]`,
           taskType: "Deploy",
           mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
           extensions: [],

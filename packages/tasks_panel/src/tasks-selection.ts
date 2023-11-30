@@ -6,7 +6,7 @@ import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { serializeTask } from "./utils/task-serializer";
 import { getConfiguredTasksFromCache } from "./services/tasks-provider";
-import { window } from "vscode";
+import { commands, window } from "vscode";
 import { createTaskEditorPanel } from "./panels/panels-handler";
 import { multiStepTaskSelect } from "./multi-step-select";
 import { TYPE_FE_DEPLOY_CFG, fioriE2eConfig } from "./misc/fiori-e2e-config";
@@ -60,7 +60,9 @@ export class TasksSelection {
     getLogger().debug(messages.CREATE_TASK(serializeTask(selectedTask)));
 
     newTask.__index = index;
-    return createTaskEditorPanel(newTask, this.readResource);
+    return createTaskEditorPanel(newTask, this.readResource).then(() => {
+      void commands.executeCommand("tasks-explorer.tree.select", selectedTask);
+    });
   }
 
   private getUniqueTaskLabel(label: string, existingLabels: string[]): string {

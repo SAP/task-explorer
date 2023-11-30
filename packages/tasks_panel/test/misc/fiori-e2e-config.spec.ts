@@ -405,7 +405,7 @@ specVersion: '2.4'
         .returns(taskConfig);
       mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
       await fioriE2eConfig(wsFolder, project);
-      expect(/^Deploy to ABAP$/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy to ABAP/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("npm");
       expect((tasks[1] as any).options).to.be.deep.equal({
         cwd: `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}`,
@@ -430,14 +430,14 @@ specVersion: '2.4'
       mockCommands.expects("executeCommand").withArgs("tasks-explorer.editTask").resolves();
       mockCommands.expects("executeCommand").withArgs("tasks-explorer.tree.select").resolves();
       await fioriE2eConfig(wsFolder, project);
-      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Build MTA/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("build.mta");
       expect((tasks[0] as any).taskType).to.be.equal("Build");
       expect((tasks[0] as any).projectPath).to.be.equal(
         testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath
       );
       expect((tasks[0] as any).extensions).to.be.deep.equal([]);
-      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy MTA to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("deploy.mta.cf");
       expect((tasks[1] as any).taskType).to.be.equal("Deploy");
       expect((tasks[1] as any).mtarPath).to.be.equal(

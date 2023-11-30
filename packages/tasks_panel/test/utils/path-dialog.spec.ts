@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { restore, stub } from "sinon";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { showOpenDialog } from "../../src/utils/path-dialog";
-import { editTask } from "../../src/commands/edit-task";
+import { editTreeItemTask } from "../../src/commands/edit-task";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";
 
 describe("showOpenFileDialog function", () => {
@@ -45,7 +45,7 @@ describe("showOpenFileDialog function", () => {
         __wsFolder: "path",
         __index: 0,
       };
-      await editTask(task1, readFile);
+      await editTreeItemTask(readFile, task1);
     });
 
     afterEach(() => {

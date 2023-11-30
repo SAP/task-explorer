@@ -111,7 +111,7 @@ describe("TaskEditorPanel class", () => {
       expect(panel1).exist;
       await createTaskEditorPanel(
         {
-          label: "aaa",
+          label: "aaa1",
           type: "testType",
         },
         readFile
@@ -119,6 +119,28 @@ describe("TaskEditorPanel class", () => {
       const panel2 = getTaskEditorPanel();
       expect(panel2).to.exist;
       expect(panel2).to.not.eq(panel1);
+    });
+
+    it("creates an instance on each instantiation, when it not the same", async () => {
+      await createTaskEditorPanel(
+        {
+          label: "aaa",
+          type: "testType",
+        },
+        readFile
+      );
+      const panel1 = getTaskEditorPanel();
+      expect(panel1).exist;
+      await createTaskEditorPanel(
+        {
+          label: "aaa",
+          type: "testType",
+        },
+        readFile
+      );
+      const panel2 = getTaskEditorPanel();
+      expect(panel2).to.exist;
+      expect(panel2).to.eq(panel1);
     });
   });
 

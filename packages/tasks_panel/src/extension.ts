@@ -30,7 +30,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const view = window.createTreeView("tasksPanel", { treeDataProvider: tasksTree, showCollapseAll: true });
 
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource))
+    commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, readResource))
   );
   context.subscriptions.push(commands.registerCommand("tasks-explorer.deleteTask", deleteTask));
   context.subscriptions.push(commands.registerCommand("tasks-explorer.revealTask", revealTask));

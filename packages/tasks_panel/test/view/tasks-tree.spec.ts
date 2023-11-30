@@ -6,6 +6,7 @@ import { TasksTree } from "../../src/view/tasks-tree";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 import { cloneDeep, find, reduce } from "lodash";
 import { createSandbox, SinonSandbox } from "sinon";
+import { ProjectTreeItem } from "../../src/view/task-tree-item";
 
 const tasks = [
   { type: "type1", label: "task1", __intent: "deploy", __wsFolder: "/my/project1" },
@@ -50,7 +51,7 @@ describe("TasksTree class", () => {
       expect((<any>find(items, ["label", tasks[1].__wsFolder])).fqn).to.be.equal(tasks[1].__wsFolder);
     });
 
-    it("Returns intents items when called with no arguments (single root)", async () => {
+    it("Returns a root project item when called with no arguments (single root)", async () => {
       const wsFolder = "/root/test/proj";
       const copyTasks = reduce(
         tasks,
@@ -65,9 +66,9 @@ describe("TasksTree class", () => {
       const taskProvider = new MockTasksProvider(copyTasks);
       const tasksTree = new TasksTree(taskProvider);
       const items = await tasksTree.getChildren();
-      expect(items.length).eq(2);
-      expect(find(items, ["label", copyTasks[0].__intent])).to.be.exist;
-      expect(find(items, ["label", copyTasks[3].__intent])).to.be.exist;
+      expect(items.length).eq(1);
+      expect(items[0] instanceof ProjectTreeItem).to.be.true;
+      expect(items[0].label).to.be.equal(wsFolder);
     });
 
     it("Returns tasks of specific intent when called with the intent item", async () => {

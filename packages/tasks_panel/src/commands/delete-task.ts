@@ -24,8 +24,7 @@ export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
       task.__extensionName,
     ]);
 
-    const taskEditor = getTaskEditor();
-    if (taskEditor !== undefined && taskEditor.getTask().label === treeItem.label) {
+    if (getTaskEditor()?.getTask().label === treeItem.label) {
       disposeTaskEditorPanel();
     }
 

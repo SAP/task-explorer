@@ -9,7 +9,7 @@ import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 
 mockVscode("../../src/panels/task-editor-panel");
-import { editTask, editTreeItemTask } from "../../src/commands/edit-task";
+import { editTreeItemTask } from "../../src/commands/edit-task";
 import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { TreeItemCollapsibleState } from "vscode";
 import { cloneDeep, extend } from "lodash";
@@ -197,13 +197,13 @@ describe("Command editTask", () => {
       __wsFolder: { path: "path" },
       __index: 1,
     };
-    await editTask(task1, readFile);
+    await editTreeItemTask(readFile, task1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
     const taskEditor = getTaskEditor();
     taskEditor!["rpc"]["invoke"] = invokeMock;
     taskEditor?.["setAnswers"]({ answers: { label: "aa1" } });
     MockVSCodeInfo.dialogAnswer = "cancel";
-    await editTask(task2, readFile);
+    await editTreeItemTask(readFile, task2);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
   });
 
@@ -216,7 +216,7 @@ describe("Command editTask", () => {
       __wsFolder: { path: "path" },
       __index: 0,
     };
-    await editTask(task1, readFile);
+    await editTreeItemTask(readFile, task1);
     const panel = getTaskEditorPanel();
     await panel?.dispose();
     expect(MockVSCodeInfo.disposeCalled).true;
@@ -259,7 +259,7 @@ describe("Command editTask", () => {
   //       };
   //       await editTreeItemTask(mockTaskProvider, readFile, item);
   //       expect(MockVSCodeInfo.webViewCreated).eq(0);
-  //       expect(getLoggerMessage()).to.be.equal(messages.EDIT_TASK_NOT_FOUND(serializeTask(task)));
+  //       expect(getLoggerMessage()).to.be.equal(messages.TASK_NOT_FOUND(serializeTask(task)));
   //     });
   //   });
 });
