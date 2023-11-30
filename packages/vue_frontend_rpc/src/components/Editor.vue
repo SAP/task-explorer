@@ -1,9 +1,7 @@
 <template>
-
   <v-main id="editor-component" v-if="editor">
     <v-row class="main-row ma-0 pa-0">
       <v-col class="main-col ma-0 pa-0">
-        <v-theme-provider>
         <v-card class="main-card mr-16 pb-2">
           <v-card-title class="task-intro">
             <v-img v-show="false" class="task-icon" :src="task.taskImage"></v-img>
@@ -27,20 +25,17 @@
           <v-list class="my-list-group">
             <v-list-item @click="showConnectivityInfo = !showConnectivityInfo" class="pa-0">
               <v-list-item-title class="main-list-item-title">
-                <v-icon>{{ showConnectivityInfo ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                <v-icon>{{ showConnectivityInfo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
                 General Properties
               </v-list-item-title>
             </v-list-item>
-            <v-list-item v-show="showConnectivityInfo" class="pl-0 mt-0">
+            <v-list-item style="padding-left: 30px !important" v-show="showConnectivityInfo" class="pl-0 mt-0">
               <Form ref="form" :questions="questions" @answered="onAnswered" />
             </v-list-item>
           </v-list>
         </v-card>
-  </v-theme-provider>
-
       </v-col>
     </v-row>
-
     <v-divider class="mr-16"></v-divider>
     <v-row style="height: 4rem" class="mr-16" v-if="editor" sm="auto">
       <v-col class="bottom-buttons-col" style="display: flex; align-items: center">
@@ -65,7 +60,7 @@ export default {
         firstRender: true,
         inputValid: false,
       },
-      showConnectivityInfo: false
+      showConnectivityInfo: false,
     };
   },
   computed: {
@@ -115,7 +110,9 @@ export default {
 };
 </script>
 <style>
-.my-list-group{
+.my-list-group {
   margin-left: 16px;
+  background-color: var(--vscode-editor-background, #ffffff) !important;
+  color: var(--vscode-foreground, #ffffff) !important;
 }
 </style>

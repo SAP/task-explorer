@@ -256,6 +256,7 @@ div.v-input__slot .v-select__selection {
 .main-card {
     height: 100%;
     box-shadow: none !important;
+    background-color: var(--vscode-editor-background, #ffffff) !important;
 }
 
 .main-row {

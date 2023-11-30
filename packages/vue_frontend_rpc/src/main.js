@@ -58,5 +58,4 @@ options = {};
 app.use(Form, options);
 app.use(options.vuetify ?? vuetify);
 app.config.compilerOptions.isCustomElement = (tag) => tag.startsWith("ui5-");
-app.use(vuetify);
 export default app.mount("#app");
