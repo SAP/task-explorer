@@ -33,11 +33,9 @@ body {
 }
 
 .v-application .task-label {
-    padding-left: 1rem;
     font-weight: bold;
     float: left;
     width: 60%;
-    color: var(--vscode-panelTitle-activeForeground, #4B4B4B);
 }
 
 .v-card__title.task-intro, .v-card__title.selection-intro {
@@ -256,7 +254,8 @@ div.v-input__slot .v-select__selection {
 }
 
 .main-card {
-    height: 100%
+    height: 100%;
+    box-shadow: none !important;
 }
 
 .main-row {
@@ -266,7 +265,7 @@ div.v-input__slot .v-select__selection {
 
 .main-card.v-card.v-sheet,
 .task-content.v-card.v-sheet {
-    box-shadow: none;
+    box-shadow: none !important;
     background-color: var(--vscode-editor-background, #1e1e1e);
 }
 
@@ -280,9 +279,21 @@ div.v-input__slot .v-select__selection {
 #save.v-btn--disabled {
     opacity: 0.55;
     background-color: var(--vscode-descriptionForeground,#717171) !important;
+    margin-top: 14px;
+}
+
+#save.v-btn {
+    margin-top: 14px;
+    text-transform: none;
 }
 
 #exec.v-btn--disabled {
     opacity: 0.5;
     color: transparent !important;
+}
+
+#exec.v-btn {
+    float: right;
+    color: var(--vscode-input-foreground,#ccc)!important;
+    text-transform: none;
 }

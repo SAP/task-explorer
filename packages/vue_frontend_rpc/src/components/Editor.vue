@@ -1,7 +1,9 @@
 <template>
+
   <v-main id="editor-component" v-if="editor">
     <v-row class="main-row ma-0 pa-0">
       <v-col class="main-col ma-0 pa-0">
+        <v-theme-provider>
         <v-card class="main-card mr-16 pb-2">
           <v-card-title class="task-intro">
             <v-img v-show="false" class="task-icon" :src="task.taskImage"></v-img>
@@ -9,7 +11,7 @@
             <v-spacer></v-spacer>
             <div>
               <v-divider vertical inset></v-divider>
-              <v-btn style="float: right" id="exec" text tile @click="onExec" :disabled="!isExecuteEnabled">
+              <v-btn variant="text" id="exec" tile @click="onExec" :disabled="!isExecuteEnabled">
                 <div class="exec-title">{{ task.taskIntent }}</div>
                 <div
                   :style="{
@@ -22,18 +24,20 @@
             </div>
           </v-card-title>
           <v-divider></v-divider>
-
-          <v-list value="General Properties">
-            <v-list-group value="General Properties">
-              <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="General Properties"></v-list-item>
-              </template>
-              <v-list-item>
-                <Form ref="form" :questions="questions" @answered="onAnswered" />
-              </v-list-item>
-            </v-list-group>
+          <v-list class="my-list-group">
+            <v-list-item @click="showConnectivityInfo = !showConnectivityInfo" class="pa-0">
+              <v-list-item-title class="main-list-item-title">
+                <v-icon>{{ showConnectivityInfo ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                General Properties
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item v-show="showConnectivityInfo" class="pl-0 mt-0">
+              <Form ref="form" :questions="questions" @answered="onAnswered" />
+            </v-list-item>
           </v-list>
         </v-card>
+  </v-theme-provider>
+
       </v-col>
     </v-row>
 
@@ -61,6 +65,7 @@ export default {
         firstRender: true,
         inputValid: false,
       },
+      showConnectivityInfo: false
     };
   },
   computed: {
@@ -109,3 +114,8 @@ export default {
   },
 };
 </script>
+<style>
+.my-list-group{
+  margin-left: 16px;
+}
+</style>
