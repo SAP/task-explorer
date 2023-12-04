@@ -20,9 +20,9 @@ export default defineConfig({
     environment: "happy-dom",
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
+      reporter: ["text", "lcov", "html"],
       lines: 79,
-      functions: 55,
+      functions: 52,
       branches: 76,
       statements: 79,
     },

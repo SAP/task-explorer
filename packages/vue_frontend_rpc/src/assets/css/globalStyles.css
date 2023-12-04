@@ -255,8 +255,8 @@ div.v-input__slot .v-select__selection {
 
 .main-card {
     height: 100%;
-    box-shadow: none !important;
-    background-color: var(--vscode-editor-background, #ffffff) !important;
+    box-shadow: none;
+    background-color: var(--vscode-editor-background, #ffffff);
 }
 
 .main-row {
@@ -266,7 +266,7 @@ div.v-input__slot .v-select__selection {
 
 .main-card.v-card.v-sheet,
 .task-content.v-card.v-sheet {
-    box-shadow: none !important;
+    box-shadow: none;
     background-color: var(--vscode-editor-background, #1e1e1e);
 }
 
@@ -290,11 +290,11 @@ div.v-input__slot .v-select__selection {
 
 #exec.v-btn--disabled {
     opacity: 0.5;
-    color: transparent !important;
+    color: transparent;
 }
 
 #exec.v-btn {
     float: right;
-    color: var(--vscode-input-foreground,#ccc)!important;
+    color: var(--vscode-input-foreground,#ccc);
     text-transform: none;
 }

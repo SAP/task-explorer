@@ -29,7 +29,7 @@
                 General Properties
               </v-list-item-title>
             </v-list-item>
-            <v-list-item style="padding-left: 30px !important" v-show="showConnectivityInfo" class="pl-0 mt-0">
+            <v-list-item class="my-padding-list-group pl-0 mt-0" v-show="showConnectivityInfo">
               <Form ref="form" :questions="questions" @answered="onAnswered" />
             </v-list-item>
           </v-list>
@@ -87,9 +87,8 @@ export default {
         for (const prop in question) {
           if (question[prop] === FUNCTION) {
             var that = this;
-            question[prop] = async (...args) => {
-              const response = await that.rpc.invoke("evaluateMethod", [question.name, prop, args]);
-              return response;
+            question[prop] = (...args) => {
+              return that.rpc.invoke("evaluateMethod", [question.name, prop, args]);
             };
           }
         }
@@ -112,7 +111,10 @@ export default {
 <style>
 .my-list-group {
   margin-left: 16px;
-  background-color: var(--vscode-editor-background, #ffffff) !important;
-  color: var(--vscode-foreground, #ffffff) !important;
+  background-color: var(--vscode-editor-background, #ffffff);
+  color: var(--vscode-foreground, #ffffff);
+}
+.my-padding-list-group {
+  padding-left: 30px;
 }
 </style>

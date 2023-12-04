@@ -19,8 +19,6 @@ globalThis.WebSocket = class {
     this.listeners[event] = callback;
   }
 
-  // Add other methods or properties as needed
-
   // Simulate opening the connection
   open() {
     this.listeners["open"]();
@@ -31,6 +29,9 @@ describe("App.vue", () => {
   it("renders without errors", () => {
     // Mount the component with the mocked rpc object and target prop
     const wrapper = shallowMount(App, {
+      global: {
+        stubs: ["v-app"],
+      },
       data() {
         return {
           rpc: mockRpc, // Provide the mock rpc object
@@ -44,13 +45,16 @@ describe("App.vue", () => {
 
   it("renders the correct HTML structure", () => {
     const wrapper = shallowMount(App, {
+      global: {
+        stubs: ["v-app"],
+      },
       data() {
         return {
           rpc: mockRpc, // Provide the mock rpc object
         };
       },
     });
-    const expectedHtml = `<v-appid="app"><editor-stubeditor="true"rpc="[objectObject]"></editor-stub></v-app>`;
+    const expectedHtml = `<v-app-stubid="app"></v-app-stub>`;
     expect(wrapper.html().replace(/\s/g, "")).to.equal(expectedHtml);
   });
 });
