@@ -259,6 +259,11 @@ div.v-input__slot .v-select__selection {
     background-color: var(--vscode-editor-background, #ffffff);
 }
 
+.v-card--variant-elevated.main-card {
+    background-color: var(--vscode-editor-background, #ffffff);
+    box-shadow: none;
+}
+
 .main-row {
     height: calc(100% - 4rem);
     overflow-y: auto;
@@ -297,4 +302,27 @@ div.v-input__slot .v-select__selection {
     float: right;
     color: var(--vscode-input-foreground,#ccc);
     text-transform: none;
+}
+
+#myListGroup {
+    margin-left: 16px;
+    color: var(--vscode-foreground, #ffffff);
+    background-color: var(--vscode-editor-background, #ffffff);
+}
+
+#form .v-field {
+    border-radius: 0px;
+}
+
+#form .v-input.v-input--horizontal.v-input--center-affix.v-input--density-compact.v-locale--is-ltr.v-input--dirty.v-text-field.pa-0.ma-0 {
+    background-color: var(--vscode-input-background,#3c3c3c);
+}
+
+#form .v-field.v-field--appended.v-field--center-affix.v-field--single-line.v-field--variant-outlined.v-theme--light.v-locale--is-ltr{
+    background-color: var(--vscode-input-background,#3c3c3c);
+}
+
+div.v-list.v-theme--light.v-list--density-default.v-list--one-line{
+    background-color: var(--vscode-input-background,#3c3c3c);
+    color: var(--vscode-foreground, #ffffff);
 }

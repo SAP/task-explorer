@@ -22,15 +22,15 @@
             </div>
           </v-card-title>
           <v-divider></v-divider>
-          <v-list class="my-list-group">
+          <v-list id="myListGroup">
             <v-list-item @click="showConnectivityInfo = !showConnectivityInfo" class="pa-0">
               <v-list-item-title class="main-list-item-title">
                 <v-icon>{{ showConnectivityInfo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
                 General Properties
               </v-list-item-title>
             </v-list-item>
-            <v-list-item class="my-padding-list-group pl-0 mt-0" v-show="showConnectivityInfo">
-              <Form ref="form" :questions="questions" @answered="onAnswered" />
+            <v-list-item class="pl-8 mt-0" v-show="showConnectivityInfo">
+              <Form id="form" ref="form" :questions="questions" @answered="onAnswered" />
             </v-list-item>
           </v-list>
         </v-card>
@@ -60,7 +60,7 @@ export default {
         firstRender: true,
         inputValid: false,
       },
-      showConnectivityInfo: false,
+      showConnectivityInfo: true,
     };
   },
   computed: {
@@ -108,13 +108,3 @@ export default {
   },
 };
 </script>
-<style>
-.my-list-group {
-  margin-left: 16px;
-  background-color: var(--vscode-editor-background, #ffffff);
-  color: var(--vscode-foreground, #ffffff);
-}
-.my-padding-list-group {
-  padding-left: 30px;
-}
-</style>
