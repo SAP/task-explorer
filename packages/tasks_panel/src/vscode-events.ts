@@ -1,4 +1,4 @@
-import { ConfigurationTarget, Uri, workspace, window, WebviewPanel } from "vscode";
+import { Uri, workspace, window, WebviewPanel } from "vscode";
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 
 import { AppEvents } from "./app-events";
@@ -8,6 +8,7 @@ import { executeVScodeTask } from "./services/tasks-executor";
 import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { cleanTasks } from "./utils/ws-folder";
+import { updateTasksConfiguration } from "./utils/task-serializer";
 
 export class VSCodeEvents implements AppEvents {
   private readonly contributors: IContributors;
@@ -26,7 +27,7 @@ export class VSCodeEvents implements AppEvents {
     if (tasks.length > index) {
       tasks[index] = task;
       cleanTasks(tasks);
-      await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);
+      await updateTasksConfiguration(path, tasks);
     } else {
       getLogger().error(messages.TASK_UPDATE_FAILED(), { taskIndex: index, length: tasks.length });
       window.showErrorMessage(messages.TASK_UPDATE_FAILED());
@@ -48,7 +49,9 @@ export class VSCodeEvents implements AppEvents {
     let configuredTasks: ConfiguredTask[] = tasksConfig.get("tasks") ?? [];
     configuredTasks = configuredTasks.concat(task);
     cleanTasks(configuredTasks);
-    await tasksConfig.update("tasks", configuredTasks, ConfigurationTarget.WorkspaceFolder);
+
+    await updateTasksConfiguration(path, configuredTasks);
+
     return configuredTasks.length - 1;
   }
 

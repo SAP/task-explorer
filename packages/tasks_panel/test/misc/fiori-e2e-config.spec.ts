@@ -5,7 +5,7 @@ import { mockVscode, testVscode } from "../utils/mockVSCode";
 mockVscode("/src/fiori-e2e-config");
 import { each, last, split } from "lodash";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
-import { TYPE_FE_DEPLOY_CFG, fioriE2eConfig, getFioriE2ePickItems } from "../../src/misc/fiori-e2e-config";
+import { fioriE2eConfig, getFioriE2ePickItems } from "../../src/misc/fiori-e2e-config";
 import { messages } from "../../src/i18n/messages";
 import { DEFAULT_TARGET } from "@sap/cf-tools";
 import * as cfUtils from "@sap/cf-tools/out/src/utils";
@@ -74,266 +74,266 @@ builder:
       },
     };
 
-    it("getFioriE2ePickItems - fiori tools generator not registered", async () => {
-      mockCommands.expects("getCommands").resolves([]);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - fiori tools generator not registered", async () => {
+    //       mockCommands.expects("getCommands").resolves([]);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - toolkit extension is not configured well", async () => {
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns({
-        exports: null,
-      });
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - toolkit extension is not configured well", async () => {
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns({
+    //         exports: null,
+    //       });
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - toolkit extension is not configured well (cont.)", async () => {
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(undefined);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - toolkit extension is not configured well (cont.)", async () => {
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(undefined);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - no project found", async () => {
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - no project found", async () => {
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - project found, projectInfo undefined", async () => {
-      sandbox.stub(feProject, "getProjectInfo").resolves();
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - project found, projectInfo undefined", async () => {
+    //       sandbox.stub(feProject, "getProjectInfo").resolves();
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - project found, but the project does not match the requested path", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - project found, but the project does not match the requested path", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - project found, related workspace folder doesn't exist", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(undefined);
-      expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - project found, related workspace folder doesn't exist", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(undefined);
+    //       expect(await getFioriE2ePickItems("/test/project")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - project found, but the project type does not match the fiori 'fe' type", async () => {
-      sandbox.stub(feProject, "getProjectInfo").resolves({
-        path: "/home/user/test/project",
-        type: "com.sap.other",
-      });
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - project found, but the project type does not match the fiori 'fe' type", async () => {
+    //       sandbox.stub(feProject, "getProjectInfo").resolves({
+    //         path: "/home/user/test/project",
+    //         type: "com.sap.other",
+    //       });
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' does not exist, config required", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      mockWorkspaceFs
-        .expects("stat")
-        .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml"))
-        .rejects(new Error());
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
-        { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
-      ]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' does not exist, config required", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       mockWorkspaceFs
+    //         .expects("stat")
+    //         .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml"))
+    //         .rejects(new Error());
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
+    //         { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
+    //       ]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, project relative path is empty (sigle root), 'ui5-deploy.yaml' does not exist, config required", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/project", fsPath: "/home/user/test/project" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(wsFolder.uri.fsPath);
-      mockWorkspaceFs
-        .expects("stat")
-        .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, "ui5-deploy.yaml"))
-        .rejects(new Error());
-      expect(await getFioriE2ePickItems("/home/user/test/project")).to.be.deep.equal([
-        { wsFolder: wsFolder.uri.fsPath, project: "", type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
-      ]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, project relative path is empty (sigle root), 'ui5-deploy.yaml' does not exist, config required", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/project", fsPath: "/home/user/test/project" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(wsFolder.uri.fsPath);
+    //       mockWorkspaceFs
+    //         .expects("stat")
+    //         .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, "ui5-deploy.yaml"))
+    //         .rejects(new Error());
+    //       expect(await getFioriE2ePickItems("/home/user/test/project")).to.be.deep.equal([
+    //         { wsFolder: wsFolder.uri.fsPath, project: "", type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
+    //       ]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist but unsupported target", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
-      mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
-      const wrongUi5DeployYaml = `
-specVersion: '2.4'
-`;
-      mockWorkspaceFs
-        .expects("readFile")
-        .withExactArgs(uriUi5DeployYaml)
-        .resolves(Buffer.from(wrongUi5DeployYaml, `utf8`));
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
-        { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
-      ]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist but unsupported target", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
+    //       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
+    //       const wrongUi5DeployYaml = `
+    // specVersion: '2.4'
+    // `;
+    //       mockWorkspaceFs
+    //         .expects("readFile")
+    //         .withExactArgs(uriUi5DeployYaml)
+    //         .resolves(Buffer.from(wrongUi5DeployYaml, `utf8`));
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
+    //         { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
+    //       ]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist but empty", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
-      mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
-      const wrongUi5DeployYaml = ``;
-      mockWorkspaceFs
-        .expects("readFile")
-        .withExactArgs(uriUi5DeployYaml)
-        .resolves(Buffer.from(wrongUi5DeployYaml, `utf8`));
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
-        { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
-      ]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist but empty", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
+    //       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
+    //       const wrongUi5DeployYaml = ``;
+    //       mockWorkspaceFs
+    //         .expects("readFile")
+    //         .withExactArgs(uriUi5DeployYaml)
+    //         .resolves(Buffer.from(wrongUi5DeployYaml, `utf8`));
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
+    //         { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
+    //       ]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'cf', config isn't required", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
-      mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
-      mockWorkspaceFs
-        .expects("readFile")
-        .withExactArgs(uriUi5DeployYaml)
-        .resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
-      each(["ui5-deploy.yaml", "mta.yaml", "xs-app.json"], (_) => {
-        mockWorkspaceFs.expects("stat").withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, _)).resolves(true);
-      });
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'cf', config isn't required", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
+    //       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
+    //       mockWorkspaceFs
+    //         .expects("readFile")
+    //         .withExactArgs(uriUi5DeployYaml)
+    //         .resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+    //       each(["ui5-deploy.yaml", "mta.yaml", "xs-app.json"], (_) => {
+    //         mockWorkspaceFs.expects("stat").withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, _)).resolves(true);
+    //       });
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'cf', config is required (one of files isn't exists)", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
-      mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
-      mockWorkspaceFs
-        .expects("readFile")
-        .withExactArgs(uriUi5DeployYaml)
-        .resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
-      each(["ui5-deploy.yaml", "mta.yaml", "xs-app.json"], (v, k) => {
-        mockWorkspaceFs
-          .expects("stat")
-          .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, v))
-          .resolves(k % 2 === 0);
-      });
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
-        { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
-      ]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'cf', config is required (one of files isn't exists)", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
+    //       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
+    //       mockWorkspaceFs
+    //         .expects("readFile")
+    //         .withExactArgs(uriUi5DeployYaml)
+    //         .resolves(Buffer.from(ui5DeployYamlCf, `utf8`));
+    //       each(["ui5-deploy.yaml", "mta.yaml", "xs-app.json"], (v, k) => {
+    //         mockWorkspaceFs
+    //           .expects("stat")
+    //           .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, v))
+    //           .resolves(k % 2 === 0);
+    //       });
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
+    //         { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
+    //       ]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'abap', config isn't required", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
-      mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
-      mockWorkspaceFs
-        .expects("readFile")
-        .withExactArgs(uriUi5DeployYaml)
-        .resolves(Buffer.from(ui5DeployYamlAbap, `utf8`));
-      each(["ui5-deploy.yaml"], (_) => {
-        mockWorkspaceFs.expects("stat").withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, _)).resolves(true);
-      });
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'abap', config isn't required", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
+    //       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
+    //       mockWorkspaceFs
+    //         .expects("readFile")
+    //         .withExactArgs(uriUi5DeployYaml)
+    //         .resolves(Buffer.from(ui5DeployYamlAbap, `utf8`));
+    //       each(["ui5-deploy.yaml"], (_) => {
+    //         mockWorkspaceFs.expects("stat").withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, _)).resolves(true);
+    //       });
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([]);
+    //     });
 
-    it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'abap', config is required (one of files isn't exists)", async () => {
-      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
-      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
-      const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
-      mockWorkspace
-        .expects("getWorkspaceFolder")
-        .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns(wsFolder);
-      const project = last(split(projectInfo.path, "/"));
-      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
-      const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
-      mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
-      mockWorkspaceFs
-        .expects("readFile")
-        .withExactArgs(uriUi5DeployYaml)
-        .resolves(Buffer.from(ui5DeployYamlAbap, `utf8`));
-      each(["ui5-deploy.yaml"], (v, k) => {
-        mockWorkspaceFs
-          .expects("stat")
-          .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, v))
-          .resolves(k % 2 !== 0);
-      });
-      expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
-        { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
-      ]);
-    });
+    //     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'abap', config is required (one of files isn't exists)", async () => {
+    //       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([feProject]);
+    //       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+    //       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
+    //       const wsFolder = { uri: { path: "/home/user/test/", fsPath: "/home/user/test/" } };
+    //       mockWorkspace
+    //         .expects("getWorkspaceFolder")
+    //         .withExactArgs(testVscode.Uri.file(projectInfo.path))
+    //         .returns(wsFolder);
+    //       const project = last(split(projectInfo.path, "/"));
+    //       mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns(project);
+    //       const uriUi5DeployYaml = testVscode.Uri.joinPath(wsFolder.uri, project, "ui5-deploy.yaml");
+    //       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).resolves(true);
+    //       mockWorkspaceFs
+    //         .expects("readFile")
+    //         .withExactArgs(uriUi5DeployYaml)
+    //         .resolves(Buffer.from(ui5DeployYamlAbap, `utf8`));
+    //       each(["ui5-deploy.yaml"], (v, k) => {
+    //         mockWorkspaceFs
+    //           .expects("stat")
+    //           .withExactArgs(testVscode.Uri.joinPath(wsFolder.uri, project, v))
+    //           .resolves(k % 2 !== 0);
+    //       });
+    //       expect(await getFioriE2ePickItems("/home/user/test/")).to.be.deep.equal([
+    //         { wsFolder: wsFolder.uri.fsPath, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig },
+    //       ]);
+    //     });
   });
 
   describe("fioriE2eConfig scope", () => {

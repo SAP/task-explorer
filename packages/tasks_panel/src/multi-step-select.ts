@@ -12,8 +12,18 @@ import {
 } from "vscode";
 import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
 import { messages } from "./i18n/messages";
-import { FioriProjectInfo, getFioriE2ePickItems } from "./misc/fiori-e2e-config";
+import { FioriProjectConfigInfo, getFioriE2ePickItems } from "./misc/fiori-e2e-config";
 import { ElementTreeItem, IntentTreeItem, ProjectTreeItem } from "./view/task-tree-item";
+import {
+  CAP_DEPLOYMENT_CONFIG,
+  FIORI_DEPLOYMENT_CONFIG,
+  ProjectInfo,
+  ProjectTypes,
+  collectProjects,
+} from "./misc/e2e-config";
+import { CapProjectConfigInfo, getCapE2ePickItems } from "./misc/cap-e2e-config";
+
+type ProjectConfigInfo = FioriProjectConfigInfo | CapProjectConfigInfo;
 
 const miscItem = { label: "$(list-unordered)", description: MISC, type: "intent" };
 
@@ -30,7 +40,19 @@ async function grabTasksByGroup(
   project: string,
   group?: string | undefined
 ): Promise<QuickPickItem[]> {
-  function toFioriE2ePickItems(items: FioriProjectInfo[]): QuickPickItem[] {
+  async function getConfigDeployE2ePickItems(project: string): Promise<ProjectConfigInfo[]> {
+    const items: Promise<ProjectConfigInfo | undefined>[] = [];
+    each(await collectProjects(project), (info: ProjectInfo) => {
+      if (info.style === ProjectTypes.FIORI_FE) {
+        items.push(getFioriE2ePickItems(info));
+      } else if (info.style === ProjectTypes.CAP) {
+        items.push(getCapE2ePickItems(info));
+      }
+    });
+    return Promise.all(items).then((items) => compact(items));
+  }
+
+  function toConfigDeployE2ePickItems(items: FioriProjectConfigInfo[]): QuickPickItem[] {
     return map(items, (item) => {
       return {
         label: "Define Deployment parameters",
@@ -39,17 +61,32 @@ async function grabTasksByGroup(
       };
     });
   }
-  const pickItems: any[] = [];
-  const fioriDeploymentParamItems = !group ? toFioriE2ePickItems(await getFioriE2ePickItems(project)) : [];
-  if (!isEmpty(fioriDeploymentParamItems)) {
-    pickItems.push({ label: "Fiori Configuration", kind: QuickPickItemKind.Separator });
-    pickItems.push(...fioriDeploymentParamItems);
+
+  function composeDeploymentConfigLabel(type: string): string {
+    let project = "Unknown";
+    if (type === FIORI_DEPLOYMENT_CONFIG) {
+      project = "Fiori";
+    } else if (type === CAP_DEPLOYMENT_CONFIG) {
+      project = "Cap";
+    }
+    return `${project} Configuration`;
   }
+
+  const pickItems: any[] = [];
+  const deploymentParamItems = !group ? toConfigDeployE2ePickItems(await getConfigDeployE2ePickItems(project)) : [];
+  if (!isEmpty(deploymentParamItems)) {
+    const groupByType = groupBy(deploymentParamItems, "type");
+    each(keys(groupByType), (key) => {
+      pickItems.push({ label: composeDeploymentConfigLabel(key), kind: QuickPickItemKind.Separator });
+      pickItems.push(...groupByType[key]);
+    });
+  }
+
   const tasksByProject = filter(tasks, ["__wsFolder", project]);
   each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent: string) => {
     // add a group separator
     if (isMatchDeploy(intent) || isMatchBuild(intent)) {
-      if (isEmpty(fioriDeploymentParamItems)) {
+      if (isEmpty(deploymentParamItems)) {
         if (!group || group.toLowerCase() === intent.toLowerCase()) {
           // fiori projects workaround: hide `Build`/`Deploy` npm tasks if fiori e2e deployment configuration needed
           pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });

@@ -1,5 +1,5 @@
-import { filter, map, uniq, sortBy, isMatch } from "lodash";
-import { IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "./task-tree-item";
+import { filter, map, uniq, sortBy, isMatch, isEmpty } from "lodash";
+import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "./task-tree-item";
 import {
   Event,
   EventEmitter,
@@ -37,10 +37,12 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
     return parent ? filter(tasks, ["__wsFolder", parent.fqn]) : tasks;
   }
 
-  private getIntents(tasks: ConfiguredTask[], parent?: ProjectTreeItem): IntentTreeItem[] {
+  private getIntents(tasks: ConfiguredTask[], parent: ProjectTreeItem): IntentTreeItem[] {
     const intents = sortBy(uniq(map(this.filterByFolder(tasks, parent), "__intent")));
     getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_BRANCHES("intent", intents.length));
-    return map(intents, (_) => new IntentTreeItem(_, TreeItemCollapsibleState.Collapsed, parent));
+    return !isEmpty(intents)
+      ? map(intents, (_) => new IntentTreeItem(_, TreeItemCollapsibleState.Expanded, parent))
+      : [new EmptyTaskTreeItem(parent)];
   }
 
   private getWorkspaces(wsFolders: string[]): IntentTreeItem[] {
@@ -51,7 +53,7 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
         new ProjectTreeItem(
           workspace.getWorkspaceFolder(Uri.file(wsFolder))?.name ?? "",
           wsFolder,
-          TreeItemCollapsibleState.Collapsed
+          TreeItemCollapsibleState.Expanded
         )
     );
   }

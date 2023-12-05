@@ -9,8 +9,10 @@ import { getConfiguredTasksFromCache } from "./services/tasks-provider";
 import { commands, window } from "vscode";
 import { createTaskEditorPanel } from "./panels/panels-handler";
 import { multiStepTaskSelect } from "./multi-step-select";
-import { TYPE_FE_DEPLOY_CFG, fioriE2eConfig } from "./misc/fiori-e2e-config";
+import { fioriE2eConfig } from "./misc/fiori-e2e-config";
 import { ElementTreeItem } from "./view/task-tree-item";
+import { CAP_DEPLOYMENT_CONFIG, FIORI_DEPLOYMENT_CONFIG } from "./misc/e2e-config";
+import { capE2eConfig } from "./misc/cap-e2e-config";
 
 const escapeStringRegexp = require("escape-string-regexp");
 
@@ -25,9 +27,15 @@ export class TasksSelection {
     try {
       const { task } = await multiStepTaskSelect(this.tasks, treeItem);
       if (task) {
-        return await (task.type === TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig
-          ? fioriE2eConfig(task.wsFolder, task.project)
-          : this.setSelectedTask(task));
+        let result: Promise<any>;
+        if (task.type === FIORI_DEPLOYMENT_CONFIG) {
+          result = fioriE2eConfig(task.wsFolder, task.project);
+        } else if (task.type === CAP_DEPLOYMENT_CONFIG) {
+          result = capE2eConfig(task.wsFolder, task.project);
+        } else {
+          result = this.setSelectedTask(task);
+        }
+        return await result;
       }
     } catch (e: any) {
       getLogger().debug(`Task selection failed: ${e.toString()}`);

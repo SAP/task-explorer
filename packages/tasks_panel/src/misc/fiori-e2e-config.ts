@@ -1,25 +1,19 @@
-import {
-  ConfigurationTarget,
-  GlobPattern,
-  RelativePattern,
-  TaskDefinition,
-  Uri,
-  commands,
-  extensions,
-  workspace,
-} from "vscode";
-import { BasToolkit } from "@sap-devx/app-studio-toolkit-types";
+import { RelativePattern, TaskDefinition, Uri, commands, workspace } from "vscode";
 import * as Yaml from "yaml";
 import * as path from "path";
-import { Dictionary, compact, concat, find, includes, last, map, split, extend, isEmpty, size } from "lodash";
+import { concat, find, includes, last, map, split, extend, isEmpty, size } from "lodash";
 import { cfGetTargets, cfGetConfigFileField, DEFAULT_TARGET } from "@sap/cf-tools";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
-import { generateUniqueCode } from "../../src/utils/task-serializer";
-
-export enum TYPE_FE_DEPLOY_CFG {
-  fioriDeploymentConfig = "fioriDeploymentConfig",
-}
+import {
+  FIORI_DEPLOYMENT_CONFIG,
+  ProjectInfo,
+  addTaskDefinition,
+  areResourcesReady,
+  getNotRepeatedLabel,
+  isFileExist,
+  waitForResource,
+} from "./e2e-config";
 
 enum FE_DEPLOY_TRG {
   ABAP = "abap",
@@ -39,11 +33,9 @@ const trg_files_common = ["ui5-deploy.yaml"];
 const trg_files_abap = concat(trg_files_common, []);
 const trg_files_cf = concat(trg_files_common, ["mta.yaml", "xs-app.json"]);
 
-export type FioriProjectInfo = {
-  wsFolder: string;
-  project: string;
-  type: TYPE_FE_DEPLOY_CFG;
-};
+export interface FioriProjectConfigInfo extends ProjectInfo {
+  type: string;
+}
 
 async function readTextFile(uri: Uri): Promise<string> {
   const buffer = await workspace.fs.readFile(uri);
@@ -62,15 +54,7 @@ async function detectDeployTarget(ui5DeployYaml: Uri): Promise<FE_DEPLOY_TRG | u
   }
 }
 
-export async function getFioriE2ePickItems(wsFolder: string): Promise<FioriProjectInfo[]> {
-  async function isFileExist(uri: Uri): Promise<boolean> {
-    try {
-      return !!(await workspace.fs.stat(uri));
-    } catch (e) {
-      return false;
-    }
-  }
-
+export async function getFioriE2ePickItems(info: ProjectInfo): Promise<FioriProjectConfigInfo | undefined> {
   async function isConfigured(target: FE_DEPLOY_TRG | undefined, projectPath: Uri): Promise<boolean> {
     if (!target) {
       // error [reading|parsing|unexpected structure] yaml file
@@ -95,102 +79,21 @@ export async function getFioriE2ePickItems(wsFolder: string): Promise<FioriProje
     return result;
   }
 
-  function asWsRelativePath(absPath: string): string {
-    let project = workspace.asRelativePath(absPath, false);
-    if (project === absPath) {
-      project = ""; // single root
-    }
-    return project;
-  }
-
   async function isCommandRegistered(command: string): Promise<boolean> {
     return commands.getCommands().then((allCommands) => {
       return allCommands.includes(command);
     });
   }
 
-  const items: Promise<FioriProjectInfo | undefined>[] = [];
   // start analyzing when the corresponding generator command exists and is registered in devspace, otherwise the config e2e deployment option should not be displayed
   if (await isCommandRegistered(cmd_launch_deploy_config)) {
-    const requestedFolder = Uri.file(wsFolder);
-    const btaExtension: any = extensions.getExtension("SAPOSS.app-studio-toolkit");
-    const basToolkitAPI: BasToolkit = btaExtension?.exports;
-    const workspaceAPI = basToolkitAPI?.workspaceAPI ?? { getProjects: () => Promise.resolve([]) };
-
-    for (const project of await workspaceAPI.getProjects()) {
-      const item = project.getProjectInfo().then((info) => {
-        if (info) {
-          const workspaceFolder = workspace.getWorkspaceFolder(Uri.file(info.path));
-          if (workspaceFolder?.uri.fsPath.startsWith(requestedFolder.fsPath)) {
-            if (info.type === "com.sap.fe") {
-              const project = asWsRelativePath(info.path);
-              return isConfigRequired(workspaceFolder.uri, project).then((isRequired: boolean) => {
-                return isRequired ? { wsFolder, project, type: TYPE_FE_DEPLOY_CFG.fioriDeploymentConfig } : undefined;
-              });
-            }
-          }
-        }
-      });
-      items.push(item);
+    if (await isConfigRequired(Uri.file(info.wsFolder), info.project)) {
+      return Object.assign(info, { type: FIORI_DEPLOYMENT_CONFIG });
     }
   }
-  return Promise.all(items).then((items) => compact(items));
 }
 
 export async function fioriE2eConfig(wsFolder: string, project: string): Promise<any> {
-  async function waitForResource(
-    pattern: GlobPattern,
-    ignoreCreateEvents?: boolean,
-    ignoreChangeEvents?: boolean,
-    ignoreDeleteEvents?: boolean
-  ): Promise<boolean> {
-    return new Promise((resolve) => {
-      const fileWatcher = workspace.createFileSystemWatcher(
-        pattern,
-        ignoreCreateEvents,
-        ignoreChangeEvents,
-        ignoreDeleteEvents
-      );
-      function endWatch() {
-        fileWatcher.dispose();
-        resolve(true);
-      }
-      fileWatcher.onDidChange(() => endWatch());
-      fileWatcher.onDidCreate(() => endWatch());
-      fileWatcher.onDidDelete(() => endWatch());
-    });
-  }
-
-  /**
-   *
-   * @param promises - Promise<boolean>[] array to waiting for
-   * @param timeout - maximum wait time in seconds
-   * @returns
-   */
-  async function areResourcesReady(promises: Promise<boolean>[], timeout = 5): Promise<boolean> {
-    return Promise.race([
-      Promise.all(promises),
-      new Promise((resolve) => setTimeout(() => resolve(false), timeout * 1000)),
-    ]).then((status) => {
-      if (typeof status === "boolean") {
-        // timeout occurred
-        return status; // false
-      } else {
-        // [statuses]
-        return !includes(status as Dictionary<boolean>, false);
-      }
-    });
-  }
-
-  async function addTaskDefinition(tasks: TaskDefinition[]): Promise<any> {
-    const tasksConfig = workspace.getConfiguration("tasks", Uri.file(wsFolder));
-    await tasksConfig.update(
-      "tasks",
-      concat(tasksConfig.get("tasks") ?? [], tasks),
-      ConfigurationTarget.WorkspaceFolder
-    );
-  }
-
   async function populateCfDetails(): Promise<CfDetails> {
     try {
       const targets = await cfGetTargets();
@@ -222,7 +125,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
     if (target === FE_DEPLOY_TRG.ABAP) {
       _tasks.push({
         type: "npm",
-        label: `Deploy to ABAP [${generateUniqueCode()}]`,
+        label: getNotRepeatedLabel(wsFolder, `Deploy to ABAP`),
         script: "deploy",
         options: { cwd: `${projectUri.fsPath}` },
       });
@@ -230,7 +133,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       // FE_DEPLOY_TRG.CF
       const taskBuild = {
         type: "build.mta",
-        label: `Build MTA [${generateUniqueCode()}]`,
+        label: getNotRepeatedLabel(wsFolder, `Build MTA`),
         taskType: "Build",
         projectPath: `${projectUri.fsPath}`,
         extensions: [],
@@ -238,7 +141,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
       const taskDeploy = extend(
         {
           type: "deploy.mta.cf",
-          label: `Deploy MTA to Cloud Foundry [${generateUniqueCode()}]`,
+          label: getNotRepeatedLabel(wsFolder, `Deploy MTA to Cloud Foundry`),
           taskType: "Deploy",
           mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
           extensions: [],
@@ -249,7 +152,7 @@ export async function fioriE2eConfig(wsFolder: string, project: string): Promise
 
       _tasks.push(taskBuild, taskDeploy);
     }
-    return addTaskDefinition(_tasks).then(() => {
+    return addTaskDefinition(wsFolder, _tasks).then(() => {
       if (target === FE_DEPLOY_TRG.CF) {
         void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [last(_tasks)] } });
       }

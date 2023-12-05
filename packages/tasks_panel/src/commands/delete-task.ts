@@ -1,8 +1,8 @@
-import { ConfigurationTarget, Uri, window, workspace } from "vscode";
+import { Uri, window, workspace } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { TaskTreeItem } from "../view/task-tree-item";
-import { serializeTask } from "../utils/task-serializer";
+import { serializeTask, updateTasksConfiguration } from "../utils/task-serializer";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
 import { disposeTaskEditorPanel, getTaskEditor } from "../panels/panels-handler";
@@ -35,7 +35,7 @@ export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
     cleanTasks(tasks);
     if (tasks.length > taskIndex) {
       tasks.splice(taskIndex, 1);
-      await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);
+      await updateTasksConfiguration(wsFolderPath, tasks);
       getLogger().debug(messages.DELETE_TASK(serializeTask(task)));
     } else {
       getLogger().error(messages.TASK_DELETE_FAILED(), { taskIndex, legth: tasks.length });
