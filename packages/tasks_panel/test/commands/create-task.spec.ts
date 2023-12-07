@@ -35,6 +35,8 @@ describe("Command createTask", () => {
     return "aaa";
   };
 
+  const mockTaskProvider = new MockTasksProvider(tasks);
+
   let sandbox: SinonSandbox;
   let mockPanelHandler: SinonMock;
   before(() => {
@@ -71,7 +73,7 @@ describe("Command createTask", () => {
   });
 
   it(`creates panel for tasks selection when called with some task opened for editing but not changed`, async () => {
-    await editTreeItemTask(readFile, {
+    await editTreeItemTask(mockTaskProvider, readFile, {
       label: "task 3",
       type: "testType",
       taskType: "Deploy",
@@ -92,7 +94,7 @@ describe("Command createTask", () => {
   });
 
   it(`does not create panel for tasks selection when called with some task being edited and user does not agree to discard the changes`, async () => {
-    await editTreeItemTask(readFile, {
+    await editTreeItemTask(mockTaskProvider, readFile, {
       label: "task 3",
       type: "testType",
       taskType: "Deploy",
@@ -109,7 +111,7 @@ describe("Command createTask", () => {
   });
 
   it(`creates panel for tasks selection when called with some task being edited and user agrees to discard the changes`, async () => {
-    await editTreeItemTask(readFile, {
+    await editTreeItemTask(mockTaskProvider, readFile, {
       label: "task 3",
       type: "testType",
       taskType: "Deploy",

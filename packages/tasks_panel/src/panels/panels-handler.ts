@@ -7,7 +7,7 @@ import { TaskEditor } from "../task-editor";
 import { VSCodeEvents } from "../vscode-events";
 import { TasksSelection } from "../tasks-selection";
 import { isEqual } from "lodash";
-import { ElementTreeItem } from "src/view/task-tree-item";
+import { ElementTreeItem } from "../../src/view/task-tree-item";
 
 let taskEditorPanel: TaskEditorPanel | undefined;
 

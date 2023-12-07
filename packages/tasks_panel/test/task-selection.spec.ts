@@ -11,6 +11,7 @@ import * as taskProvider from "../src/services/tasks-provider";
 import * as panelHandler from "../src/panels/panels-handler";
 import * as multiStepSelection from "../src/multi-step-select";
 import * as e2eConfig from "../src/misc/fiori-e2e-config";
+// import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
 
 const roots = ["/user/projects/project1", "/user/projects/project2"];
 
@@ -70,6 +71,7 @@ describe("the TasksSelection class", () => {
     sandbox.restore();
   });
 
+  // const provider = new taskProvider.TasksProvider(new MockTaskTypeProvider());
   const taskSelection = new TasksSelection(appEvents, tasks, readFile);
 
   it("constructor", () => {

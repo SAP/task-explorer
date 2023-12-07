@@ -1,7 +1,10 @@
 import { GlobPattern, TaskDefinition, Uri, extensions, workspace } from "vscode";
 import { BasToolkit } from "@sap-devx/app-studio-toolkit-types";
-import { Dictionary, compact, concat, includes, map } from "lodash";
-import { updateTasksConfiguration } from "../../src/utils/task-serializer";
+import { Dictionary, compact, concat, extend, find, includes, isEmpty, last, size, split } from "lodash";
+import { getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
+import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tools";
+import { getLogger } from "../../src/logger/logger-wrapper";
+import * as path from "path";
 
 // export const PROJECT_TYPES = {
 //     CAP_PROJ: "com.sap.cap",
@@ -19,8 +22,16 @@ export enum ProjectTypes {
   HANA,
 }
 
+type CfDetails = {
+  cfTarget: string;
+  cfEndpoint: string;
+  cfOrg: string;
+  cfSpace: string;
+};
+
 export const FIORI_DEPLOYMENT_CONFIG = "fioriDeploymentConfig";
 export const CAP_DEPLOYMENT_CONFIG = "capDeploymentConfig";
+export const HANA_DEPLOYMENT_CONFIG = "hanaDeploymentConfig";
 
 export interface ProjectInfo {
   wsFolder: string;
@@ -119,8 +130,10 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
 }
 
 export async function addTaskDefinition(wsFolder: string, tasks: TaskDefinition[]): Promise<any> {
-  const tasksConfig = workspace.getConfiguration("tasks", Uri.file(wsFolder));
-  await updateTasksConfiguration(wsFolder, concat(tasksConfig.get("tasks") ?? [], tasks));
+  return updateTasksConfiguration(
+    wsFolder,
+    concat(workspace.getConfiguration("tasks", Uri.file(wsFolder)).get("tasks") ?? [], tasks)
+  );
 }
 
 export async function isFileExist(uri: Uri): Promise<boolean> {
@@ -131,11 +144,47 @@ export async function isFileExist(uri: Uri): Promise<boolean> {
   }
 }
 
-export function getNotRepeatedLabel(wsFolder: string, label: string): string {
-  const labels = map((workspace.getConfiguration("tasks", Uri.file(wsFolder)).get("tasks") ?? []) as any[], "label");
-  let candidate = label;
-  while (labels.includes(candidate)) {
-    candidate = `copy of ${candidate}`;
+export async function generateMtaDeployTasks(wsFolder: string, project: string): Promise<TaskDefinition[]> {
+  async function populateCfDetails(): Promise<CfDetails> {
+    try {
+      const targets = await cfGetTargets();
+      if (isEmpty(targets) || (size(targets) === 1 && targets[0].label === DEFAULT_TARGET)) {
+        throw new Error("No CF targets found");
+      }
+      const targetName = find(targets, "isCurrent")?.label;
+      if (!targetName) {
+        throw new Error("No CF current target defined");
+      }
+      return {
+        cfTarget: targetName,
+        cfEndpoint: (await cfGetConfigFileField("Target", targetName)) ?? "",
+        cfOrg: (await cfGetConfigFileField("OrganizationFields", targetName))?.Name ?? "",
+        cfSpace: (await cfGetConfigFileField("SpaceFields", targetName))?.Name ?? "",
+      };
+    } catch (e: any) {
+      getLogger().debug(`Can not populate cf target details`, { reason: e.toString() });
+      return { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" };
+    }
   }
-  return candidate;
+  const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
+  const taskBuild = {
+    type: "build.mta",
+    label: getUniqueTaskLabel(`Build MTA`),
+    taskType: "Build",
+    projectPath: `${projectUri.fsPath}`,
+    extensions: [],
+  };
+  const taskDeploy = extend(
+    {
+      type: "deploy.mta.cf",
+      label: getUniqueTaskLabel(`Deploy MTA to Cloud Foundry`),
+      taskType: "Deploy",
+      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+      extensions: [],
+      dependsOn: [`${taskBuild.label}`],
+    },
+    await populateCfDetails()
+  );
+
+  return [taskBuild, taskDeploy];
 }

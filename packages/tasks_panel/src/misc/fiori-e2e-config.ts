@@ -1,8 +1,6 @@
 import { RelativePattern, TaskDefinition, Uri, commands, workspace } from "vscode";
 import * as Yaml from "yaml";
-import * as path from "path";
-import { concat, find, includes, last, map, split, extend, isEmpty, size } from "lodash";
-import { cfGetTargets, cfGetConfigFileField, DEFAULT_TARGET } from "@sap/cf-tools";
+import { concat, find, includes, last, map } from "lodash";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
 import {
@@ -10,22 +8,16 @@ import {
   ProjectInfo,
   addTaskDefinition,
   areResourcesReady,
-  getNotRepeatedLabel,
+  generateMtaDeployTasks,
   isFileExist,
   waitForResource,
 } from "./e2e-config";
+import { getUniqueTaskLabel } from "../../src/utils/task-serializer";
 
 enum FE_DEPLOY_TRG {
   ABAP = "abap",
   CF = "cf",
 }
-
-type CfDetails = {
-  cfTarget: string;
-  cfEndpoint: string;
-  cfOrg: string;
-  cfSpace: string;
-};
 
 const cmd_launch_deploy_config = "sap.ux.appGenerator.launchDeployConfig";
 
@@ -93,83 +85,43 @@ export async function getFioriE2ePickItems(info: ProjectInfo): Promise<FioriProj
   }
 }
 
-export async function fioriE2eConfig(wsFolder: string, project: string): Promise<any> {
-  async function populateCfDetails(): Promise<CfDetails> {
-    try {
-      const targets = await cfGetTargets();
-      if (isEmpty(targets) || (size(targets) === 1 && targets[0].label === DEFAULT_TARGET)) {
-        throw new Error("No CF targets found");
-      }
-      const targetName = find(targets, "isCurrent")?.label;
-      if (!targetName) {
-        throw new Error("No CF current target defined");
-      }
-      return {
-        cfTarget: targetName,
-        cfEndpoint: (await cfGetConfigFileField("Target", targetName)) ?? "",
-        cfOrg: (await cfGetConfigFileField("OrganizationFields", targetName))?.Name ?? "",
-        cfSpace: (await cfGetConfigFileField("SpaceFields", targetName))?.Name ?? "",
-      };
-    } catch (e: any) {
-      getLogger().debug(`Can not populate cf target details`, { reason: e.toString() });
-      return { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" };
-    }
-  }
-
+export async function fioriE2eConfig(data: { wsFolder: string; project: string }): Promise<void> {
   async function completeTasksDefinition(target: FE_DEPLOY_TRG | undefined): Promise<any> {
     if (!target) {
       throw new Error(messages.err_task_definition_unsupported_target);
     }
-    const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
     const _tasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
       _tasks.push({
         type: "npm",
-        label: getNotRepeatedLabel(wsFolder, `Deploy to ABAP`),
+        label: getUniqueTaskLabel(`Deploy to ABAP`),
         script: "deploy",
-        options: { cwd: `${projectUri.fsPath}` },
+        options: { cwd: `${Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath}` },
       });
     } else {
-      // FE_DEPLOY_TRG.CF
-      const taskBuild = {
-        type: "build.mta",
-        label: getNotRepeatedLabel(wsFolder, `Build MTA`),
-        taskType: "Build",
-        projectPath: `${projectUri.fsPath}`,
-        extensions: [],
-      };
-      const taskDeploy = extend(
-        {
-          type: "deploy.mta.cf",
-          label: getNotRepeatedLabel(wsFolder, `Deploy MTA to Cloud Foundry`),
-          taskType: "Deploy",
-          mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
-          extensions: [],
-          dependsOn: [`${taskBuild.label}`],
-        },
-        await populateCfDetails()
-      );
-
-      _tasks.push(taskBuild, taskDeploy);
+      _tasks.push(...(await generateMtaDeployTasks(data.wsFolder, data.project)));
     }
-    return addTaskDefinition(wsFolder, _tasks).then(() => {
-      if (target === FE_DEPLOY_TRG.CF) {
-        void commands.executeCommand("tasks-explorer.editTask", { command: { arguments: [last(_tasks)] } });
-      }
-      void commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
+    return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
+      return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
+        return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
+      });
     });
   }
 
   const ui5DeployYaml = waitForResource(
-    new RelativePattern(wsFolder, `${project ? `${project}/` : ``}ui5-deploy.yaml`),
+    new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}ui5-deploy.yaml`),
     false,
     false,
     true
   );
-  await commands.executeCommand(cmd_launch_deploy_config, { fsPath: Uri.joinPath(Uri.file(wsFolder), project).fsPath });
+
+  await commands.executeCommand(cmd_launch_deploy_config, {
+    fsPath: Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath,
+  });
+
   if (await areResourcesReady([ui5DeployYaml])) {
-    await completeTasksDefinition(
-      await detectDeployTarget(Uri.joinPath(Uri.file(wsFolder), project, "ui5-deploy.yaml"))
+    return completeTasksDefinition(
+      await detectDeployTarget(Uri.joinPath(Uri.file(data.wsFolder), data.project, "ui5-deploy.yaml"))
     );
   }
 }

@@ -2,14 +2,23 @@ import { commands, window } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
+import { find, isMatch } from "lodash";
 import { createTaskEditorPanel, getTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
+import { ITasksProvider } from "../../src/services/definitions";
+import { getLogger } from "../../src/logger/logger-wrapper";
 
 export async function editTreeItemTask(
+  taskProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
   task: ConfiguredTask
 ): Promise<void> {
-  if (task) {
-    return editTask(task, readResource);
+  const _task = find(await taskProvider.getConfiguredTasks(), (_) => {
+    return isMatch(_, task);
+  });
+  if (_task) {
+    return editTask(_task, readResource);
+  } else {
+    getLogger().debug(`Task edit:: requested task not found`, { label: task.label });
   }
 }
 

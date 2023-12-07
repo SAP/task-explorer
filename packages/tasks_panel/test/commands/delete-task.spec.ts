@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { createSandbox, SinonMock, SinonSandbox, SinonSpy } from "sinon";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { MockConfigTask, mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
+import { MockTasksProvider } from "../utils/mockTasksProvider";
 
 mockVscode("../../src/panels/task-editor-panel");
 import { deleteTask } from "../../src/commands/delete-task";
@@ -17,6 +18,14 @@ describe("Command deleteTask", () => {
     return "aaa";
   };
 
+  const tasks = [
+    {
+      label: "task 1",
+      type: "testType",
+      taskType: "Deploy",
+      prop1: "value 1.1",
+    },
+  ];
   let sandbox: SinonSandbox;
   let spyGetConfiguration: SinonSpy;
   const wsFolder = "wsFolder1";
@@ -55,7 +64,7 @@ describe("Command deleteTask", () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
     const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
-    await editTreeItemTask(readFile, task1);
+    await editTreeItemTask(new MockTasksProvider(tasks), readFile, task1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
     mockWindow
       .expects("showInformationMessage")

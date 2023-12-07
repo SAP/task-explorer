@@ -1,5 +1,8 @@
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { randomBytes } from "crypto";
+import escapeStringRegexp = require("escape-string-regexp");
+import { filter, map } from "lodash";
+import { getConfiguredTasksFromCache } from "../../src/services/tasks-provider";
 import { ConfigurationTarget, TaskDefinition, Uri, commands, languages, window, workspace } from "vscode";
 
 export function serializeTask(task: ConfiguredTask): string {
@@ -11,6 +14,30 @@ export function generateUniqueCode(): string {
     return randomBytes(2).toString("hex").toUpperCase();
   }
   return `${generateGroup()}-${generateGroup()}`;
+}
+
+export function getUniqueTaskLabel(label: string): string {
+  const existingLabels = map(getConfiguredTasksFromCache(), "label");
+  // tasks created from auto detected tasks templates multiple times
+  // will receive name: "<task_name> (<index>)"
+  // where index is the next free number, starting from 2
+  const fixedTaskLabel = escapeStringRegexp(label);
+  const taskRegex = new RegExp(`^${fixedTaskLabel}( [(](\\d)*[)])$`);
+  let index = 0;
+  const similarTasks = filter(existingLabels, (_) => taskRegex.test(_));
+  if (similarTasks.length > 0) {
+    const similarTasksIndexes: number[] = map(similarTasks, (_) => {
+      const matchArr = taskRegex.exec(_);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- TODO: verify
+      return Number(matchArr![1].replace("(", "").replace(")", ""));
+    });
+    index = Math.max(...similarTasksIndexes) + 1;
+  } else if (existingLabels.find((_) => _ === label)) {
+    // identical match
+    index = 2;
+  }
+  const taskSuffix = index === 0 ? "" : ` (${index})`;
+  return label + taskSuffix;
 }
 
 const BTN_PROBLEMS = "Show problems";

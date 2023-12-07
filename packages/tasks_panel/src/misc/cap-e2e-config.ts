@@ -1,4 +1,4 @@
-import { RelativePattern, TaskDefinition, Uri, commands } from "vscode";
+import { RelativePattern, Uri, commands } from "vscode";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { getLogger } from "../../src/logger/logger-wrapper";
 import {
@@ -7,7 +7,7 @@ import {
   ProjectTypes,
   addTaskDefinition,
   areResourcesReady,
-  getNotRepeatedLabel,
+  generateMtaDeployTasks,
   isFileExist,
   waitForResource,
 } from "./e2e-config";
@@ -51,18 +51,13 @@ function invokeCommand(config: { cmd: string; args: string[]; cwd: string }, add
 
 export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectConfigInfo | undefined> {
   async function isCdsAvailable(): Promise<boolean> {
-    try {
-      await invokeCommand({ cmd: "cds", args: ["help"], cwd: info.wsFolder }, []);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return invokeCommand({ cmd: "cds", args: ["help"], cwd: info.wsFolder }, [])
+      .then(() => true)
+      .catch(() => false);
   }
 
   async function isConfigRequired(wsFolder: Uri, project: string): Promise<boolean> {
-    const projectPath = Uri.joinPath(wsFolder, project);
-    const path = Uri.joinPath(projectPath, "mta.yaml");
-    return !(await isFileExist(path));
+    return !(await isFileExist(Uri.joinPath(wsFolder, project, "mta.yaml")));
   }
 
   if (info.style !== ProjectTypes.CAP) {
@@ -76,30 +71,24 @@ export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectC
   }
 }
 
-export async function capE2eConfig(wsFolder: string, project: string): Promise<any> {
+export async function capE2eConfig(data: { wsFolder: string; project: string }): Promise<void> {
   const mtaYaml = waitForResource(
-    new RelativePattern(wsFolder, `${project ? `${project}/` : ``}mta.yaml`),
+    new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
     false,
     false,
     true
   );
 
-  async function completeTasksDefinition(): Promise<any> {
-    const _tasks: TaskDefinition[] = [];
-    _tasks.push({
-      type: "npm",
-      label: getNotRepeatedLabel(wsFolder, `Deploy CAP`),
-      script: "deploy",
-      options: { cwd: `${Uri.joinPath(Uri.file(wsFolder), project).fsPath}` },
-    });
-
-    return addTaskDefinition(wsFolder, _tasks).then(() => {
-      void commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
-    });
-  }
-
-  await invokeCommand({ cwd: Uri.joinPath(Uri.file(wsFolder), project).fsPath, cmd: "cds", args: ["add", "mta"] }, []);
+  await invokeCommand(
+    { cwd: Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath, cmd: "cds", args: ["add", "mta"] },
+    []
+  );
   if (await areResourcesReady([mtaYaml])) {
-    await completeTasksDefinition();
+    const _tasks = await generateMtaDeployTasks(data.wsFolder, data.project);
+    return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
+      return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
+        return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
+      });
+    });
   }
 }

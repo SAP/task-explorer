@@ -24,5 +24,7 @@ export async function selectTreeItem(
         getLogger().warn(messages.TASK_NOT_FOUND(serializeTask(task)));
       }
     });
+  } else {
+    getLogger().debug(`Task not found or unsupported.`, { label: task.label });
   }
 }
