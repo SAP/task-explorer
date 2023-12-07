@@ -1,38 +1,26 @@
-import { TaskDefinition, Uri, commands, workspace } from "vscode";
+import { commands } from "vscode";
 import {
   HANA_DEPLOYMENT_CONFIG,
+  LabelType,
   ProjectInfo,
   ProjectTypes,
   addTaskDefinition,
   generateMtaDeployTasks,
+  isTasksConfigured,
 } from "./e2e-config";
-import { find, isMatch, last, reduce } from "lodash";
+import { last } from "lodash";
 
 export interface HanaProjectConfigInfo extends ProjectInfo {
   type: string;
 }
 
 export async function getHanaE2ePickItems(info: ProjectInfo): Promise<HanaProjectConfigInfo | undefined> {
-  function isConfigRequired(_tasks: TaskDefinition[]): boolean {
-    const tasks: TaskDefinition[] = workspace.getConfiguration("tasks", Uri.file(info.wsFolder)).get("tasks") ?? [];
-    return !reduce(
-      _tasks,
-      (acc, task) => {
-        acc =
-          acc &&
-          !!find(tasks, (_) => {
-            return isMatch(_, task);
-          });
-        return acc;
-      },
-      true
-    );
-  }
-
   if (info.style !== ProjectTypes.HANA) {
     return;
   }
-  if (isConfigRequired(await generateMtaDeployTasks(info.wsFolder, info.project))) {
+  if (
+    !isTasksConfigured(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))
+  ) {
     return Object.assign(info, { type: HANA_DEPLOYMENT_CONFIG });
   }
 }

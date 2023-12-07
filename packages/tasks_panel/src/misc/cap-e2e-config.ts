@@ -3,12 +3,14 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { getLogger } from "../../src/logger/logger-wrapper";
 import {
   CAP_DEPLOYMENT_CONFIG,
+  LabelType,
   ProjectInfo,
   ProjectTypes,
   addTaskDefinition,
   areResourcesReady,
   generateMtaDeployTasks,
   isFileExist,
+  isTasksConfigured,
   waitForResource,
 } from "./e2e-config";
 import { last } from "lodash";
@@ -56,8 +58,11 @@ export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectC
       .catch(() => false);
   }
 
-  async function isConfigRequired(wsFolder: Uri, project: string): Promise<boolean> {
-    return !(await isFileExist(Uri.joinPath(wsFolder, project, "mta.yaml")));
+  async function isConfigured(): Promise<boolean> {
+    return (
+      (await isFileExist(Uri.joinPath(Uri.file(info.wsFolder), info.project, "mta.yaml"))) &&
+      isTasksConfigured(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))
+    );
   }
 
   if (info.style !== ProjectTypes.CAP) {
@@ -65,30 +70,34 @@ export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectC
   }
 
   if (await isCdsAvailable()) {
-    if (await isConfigRequired(Uri.file(info.wsFolder), info.project)) {
+    if (!(await isConfigured())) {
       return Object.assign(info, { type: CAP_DEPLOYMENT_CONFIG });
     }
   }
 }
 
 export async function capE2eConfig(data: { wsFolder: string; project: string }): Promise<void> {
-  const mtaYaml = waitForResource(
-    new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
-    false,
-    false,
-    true
-  );
-
-  await invokeCommand(
-    { cwd: Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath, cmd: "cds", args: ["add", "mta"] },
-    []
-  );
+  let mtaYaml = Promise.resolve(true);
+  if (!(await isFileExist(Uri.joinPath(Uri.file(data.wsFolder), data.project, "mta.yaml")))) {
+    mtaYaml = waitForResource(
+      new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
+      false,
+      false,
+      true
+    );
+    await invokeCommand(
+      { cwd: Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath, cmd: "cds", args: ["add", "mta"] },
+      []
+    );
+  }
   if (await areResourcesReady([mtaYaml])) {
     const _tasks = await generateMtaDeployTasks(data.wsFolder, data.project);
-    return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
-      return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
-        return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
+    if (!isTasksConfigured(data.wsFolder, _tasks)) {
+      return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
+        return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
+          return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
+        });
       });
-    });
+    }
   }
 }

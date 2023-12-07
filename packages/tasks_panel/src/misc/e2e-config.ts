@@ -1,6 +1,19 @@
 import { GlobPattern, TaskDefinition, Uri, extensions, workspace } from "vscode";
 import { BasToolkit } from "@sap-devx/app-studio-toolkit-types";
-import { Dictionary, compact, concat, extend, find, includes, isEmpty, last, size, split } from "lodash";
+import {
+  Dictionary,
+  compact,
+  concat,
+  extend,
+  find,
+  includes,
+  isEmpty,
+  isMatch,
+  last,
+  reduce,
+  size,
+  split,
+} from "lodash";
 import { getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
 import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tools";
 import { getLogger } from "../../src/logger/logger-wrapper";
@@ -109,9 +122,9 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
               style = ProjectTypes.FIORI_FE;
             } else if (/^com\.sap\.cap(\.java)?$/.test(info.type)) {
               style = ProjectTypes.CAP;
-            } else if (info.type === "cpm.sap.lcap") {
+            } else if (info.type === "com.sap.lcap") {
               style = ProjectTypes.LCAP;
-            } else if (info.type === "cpm.sap.hana") {
+            } else if (info.type === "com.sap.hana") {
               style = ProjectTypes.HANA;
             }
             if (style !== undefined) {
@@ -144,7 +157,16 @@ export async function isFileExist(uri: Uri): Promise<boolean> {
   }
 }
 
-export async function generateMtaDeployTasks(wsFolder: string, project: string): Promise<TaskDefinition[]> {
+export enum LabelType {
+  uniq,
+  sequence,
+}
+
+export async function generateMtaDeployTasks(
+  wsFolder: string,
+  project: string,
+  labelType = LabelType.uniq
+): Promise<TaskDefinition[]> {
   async function populateCfDetails(): Promise<CfDetails> {
     try {
       const targets = await cfGetTargets();
@@ -167,17 +189,19 @@ export async function generateMtaDeployTasks(wsFolder: string, project: string):
     }
   }
   const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
+  let label = `Build MTA`;
   const taskBuild = {
     type: "build.mta",
-    label: getUniqueTaskLabel(`Build MTA`),
+    label: labelType === LabelType.uniq ? getUniqueTaskLabel(label) : label,
     taskType: "Build",
     projectPath: `${projectUri.fsPath}`,
     extensions: [],
   };
+  label = `Deploy MTA to Cloud Foundry`;
   const taskDeploy = extend(
     {
       type: "deploy.mta.cf",
-      label: getUniqueTaskLabel(`Deploy MTA to Cloud Foundry`),
+      label: labelType === LabelType.uniq ? getUniqueTaskLabel(label) : label,
       taskType: "Deploy",
       mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
       extensions: [],
@@ -187,4 +211,20 @@ export async function generateMtaDeployTasks(wsFolder: string, project: string):
   );
 
   return [taskBuild, taskDeploy];
+}
+
+export function isTasksConfigured(wsFolder: string, _tasks: TaskDefinition[]): boolean {
+  const tasks: TaskDefinition[] = workspace.getConfiguration("tasks", Uri.file(wsFolder)).get("tasks") ?? [];
+  return reduce(
+    _tasks,
+    (acc, task) => {
+      acc =
+        acc &&
+        !!find(tasks, (_) => {
+          return isMatch(_, task);
+        });
+      return acc;
+    },
+    true
+  );
 }
