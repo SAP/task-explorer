@@ -80,7 +80,8 @@ describe("the VscodeEvents class", () => {
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
         testVscode.ConfigurationTarget.WorkspaceFolder
       );
-      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledTwice).to.be.true;
+      expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
     });
 
     it("updates task in tasks configuration. `task 2` instead of `task two`, webview panel not exists", async () => {
@@ -100,7 +101,8 @@ describe("the VscodeEvents class", () => {
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
         testVscode.ConfigurationTarget.WorkspaceFolder
       );
-      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledTwice).to.be.true;
     });
 
     it("logs error on try to update task with wrong index", async () => {
@@ -133,7 +135,8 @@ describe("the VscodeEvents class", () => {
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
         testVscode.ConfigurationTarget.WorkspaceFolder
       );
-      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledTwice).to.be.true;
+      expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
     });
 
     it("adds new task to the empty configuration and returns its index", async () => {

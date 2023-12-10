@@ -41,7 +41,8 @@ async function editTask(task: ConfiguredTask, readResource: (file: string) => Pr
       messages.DISCARD_CHANGES_BUTTON_TEXT()
     );
     if (decision !== messages.DISCARD_CHANGES_BUTTON_TEXT()) {
-      void commands.executeCommand("tasks-explorer.tree.select", getTaskEditorPanel()?.getLoadedTask());
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified by condition above
+      void commands.executeCommand("tasks-explorer.tree.select", getTaskEditorPanel()!.getLoadedTask());
       return;
     }
   }

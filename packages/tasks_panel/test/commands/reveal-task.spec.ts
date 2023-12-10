@@ -19,14 +19,6 @@ describe("Command revealTask", () => {
     return "aaa";
   };
 
-  const tasks = [
-    {
-      label: "task 1",
-      type: "testType",
-      taskType: "Deploy",
-      prop1: "value 1.1",
-    },
-  ];
   let sandbox: SinonSandbox;
   const wsFolder = "wsFolder1";
 
@@ -86,7 +78,7 @@ describe("Command revealTask", () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
     const item1 = new TaskTreeItem(0, "test", label, wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
-    await editTreeItemTask(new MockTasksProvider(tasks), readFile, task1);
+    await editTreeItemTask(new MockTasksProvider([task1]), readFile, task1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
 
     const resource = Uri.joinPath(Uri.file(task1.__wsFolder), ".vscode", "tasks.json");

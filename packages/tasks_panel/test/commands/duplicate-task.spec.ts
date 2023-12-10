@@ -83,7 +83,8 @@ describe("Command duplicateTask", () => {
       new MockConfigTask("aaa", "test"),
       new MockConfigTask("copy of aaa", "test"),
     ]);
-    expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+    expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+    expect(spyGetConfiguration.calledTwice).to.be.true;
   });
 
   it("task found, compose label for duplicated task", async () => {
@@ -99,6 +100,7 @@ describe("Command duplicateTask", () => {
       new MockConfigTask("copy of aaa", "test"),
       new MockConfigTask("copy of copy of aaa", "test"),
     ]);
-    expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+    expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+    expect(spyGetConfiguration.calledTwice).to.be.true;
   });
 });

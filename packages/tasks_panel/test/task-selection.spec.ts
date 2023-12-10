@@ -10,7 +10,9 @@ import { cloneDeep, extend, map } from "lodash";
 import * as taskProvider from "../src/services/tasks-provider";
 import * as panelHandler from "../src/panels/panels-handler";
 import * as multiStepSelection from "../src/multi-step-select";
-import * as e2eConfig from "../src/misc/fiori-e2e-config";
+import * as commonE2eConfig from "../src/misc/common-e2e-config";
+import { getUniqueTaskLabel } from "../src/utils/task-serializer";
+import { FIORI_DEPLOYMENT_CONFIG } from "../src/misc/e2e-config";
 // import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
 
 const roots = ["/user/projects/project1", "/user/projects/project2"];
@@ -80,22 +82,22 @@ describe("the TasksSelection class", () => {
     expect(taskSelection["readResource"]).to.be.equal(readFile);
   });
 
-  // it("select - fiori E2E config item selected", async () => {
-  //   const fioriE2e = {
-  //     type: e2eConfig.TYPE_DEPLOY_CFG.fioriDeploymentConfig,
-  //     wsFolder: "ws-folder",
-  //     project: "my-project",
-  //   };
-  //   sandbox
-  //     .stub(multiStepSelection, "multiStepTaskSelect")
-  //     .withArgs(taskSelection["tasks"])
-  //     .resolves({ task: fioriE2e });
-  //   mockPanelHandler.expects("createTaskEditorPanel").never();
-  //   const mockFioriE2EConfig = sandbox.mock(e2eConfig);
-  //   mockFioriE2EConfig.expects("fioriE2eConfig").withExactArgs(fioriE2e.wsFolder, fioriE2e.project).resolves();
-  //   await taskSelection.select();
-  //   mockFioriE2EConfig.verify();
-  // });
+  it("select - completeDeployConfig triggered", async () => {
+    const fioriE2e = {
+      type: FIORI_DEPLOYMENT_CONFIG,
+      wsFolder: "ws-folder",
+      project: "my-project",
+    };
+    sandbox
+      .stub(multiStepSelection, "multiStepTaskSelect")
+      .withArgs(taskSelection["tasks"])
+      .resolves({ task: fioriE2e });
+    mockPanelHandler.expects("createTaskEditorPanel").never();
+    const mockCommonE2EConfig = sandbox.mock(commonE2eConfig);
+    mockCommonE2EConfig.expects("completeDeployConfig").withExactArgs(fioriE2e).resolves();
+    await taskSelection.select();
+    mockCommonE2EConfig.verify();
+  });
 
   it("select - task selected", async () => {
     sandbox.stub(taskProvider, "getConfiguredTasksFromCache").returns(tasks);
@@ -105,7 +107,7 @@ describe("the TasksSelection class", () => {
       .resolves({ task: cloneDeep(taskContributed1) });
     const expectedTask = extend(cloneDeep(tasks[0]), {
       __index: 0,
-      label: taskSelection["getUniqueTaskLabel"](tasks[0].label, map(tasks, "label")),
+      label: getUniqueTaskLabel(tasks[0].label),
     });
     mockPanelHandler.expects("createTaskEditorPanel").withExactArgs(expectedTask, readFile).resolves();
     await taskSelection.select();
@@ -123,38 +125,6 @@ describe("the TasksSelection class", () => {
     mockPanelHandler.expects("createTaskEditorPanel").never();
     mockWindow.expects("showErrorMessage").withExactArgs(error.toString());
     await taskSelection.select();
-  });
-
-  describe("getUniqueTaskLabel method", () => {
-    const instance = new TasksSelection(new MockAppEvents(), tasks, readFile);
-
-    it("returns input value if it's unique", () => {
-      expect(instance["getUniqueTaskLabel"]("newTask", ["someLabel"])).to.eq("newTask");
-    });
-
-    it("returns input value with suffix (2) if it's not unique", () => {
-      expect(instance["getUniqueTaskLabel"]("task 2", ["task 2"])).to.eq("task 2 (2)");
-    });
-
-    it("returns input value with suffix (2) if it's not unique and contains special characters", () => {
-      expect(instance["getUniqueTaskLabel"]("task (1) /path", ["task (1) /path"])).to.eq("task (1) /path (2)");
-    });
-
-    it("returns input value with suffix (3) if 2 similar tasks found", () => {
-      expect(instance["getUniqueTaskLabel"]("task 3", ["task 3", "task 3 (2)"])).to.eq("task 3 (3)");
-    });
-
-    it("returns input value looking similar to existing but having some prefix", () => {
-      expect(instance["getUniqueTaskLabel"]("my task 3", ["task 3", "task 3 (2)"])).to.eq("my task 3");
-    });
-
-    it("returns input value looking similar to existing but having some suffix", () => {
-      expect(instance["getUniqueTaskLabel"]("task 3 (2).", ["task 3", "task 3 (2)"])).to.eq("task 3 (2).");
-    });
-
-    it("returns input value with suffix (11) if similar task with suffix (10) found", () => {
-      expect(instance["getUniqueTaskLabel"]("task 3", ["task 3", "task 3 (10)"])).to.eq("task 3 (11)");
-    });
   });
 
   describe("the setSelectedTask method", () => {

@@ -179,6 +179,9 @@ export const testVscode: any = {
     showTextDocument: async () => {
       throw new Error("not implemented");
     },
+    showWarningMessage: async () => {
+      throw new Error("not implemented");
+    },
     withProgress: (
       options: {
         location: number;
@@ -256,6 +259,13 @@ export const testVscode: any = {
   QuickPickItemKind: {
     Separator: -1,
     Default: 0,
+  },
+  languages: {
+    onDidChangeDiagnostics: () => {
+      return {
+        dispose: () => true,
+      };
+    },
   },
 };
 

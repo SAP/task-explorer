@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { mockVscode, resetTestVSCode, testVscode } from "../utils/mockVSCode";
-import { IntentTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
-import { TreeItemCollapsibleState } from "vscode";
+import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
+import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { stub } from "sinon";
 
 mockVscode("src/view/tasks-tree-item");
@@ -11,7 +11,16 @@ describe("IntentTreeItem class", () => {
     resetTestVSCode();
   });
 
-  it("IntenTreeItem instance virifying", () => {
+  it("IntentTreeItem instance verifying", () => {
+    const label = "my-label";
+    const item = new IntentTreeItem(label, TreeItemCollapsibleState.Expanded);
+    expect(item.collapsibleState).to.be.equal(TreeItemCollapsibleState.Expanded);
+    expect(item.label).to.be.equal(label);
+    expect(item.contextValue).to.be.equal("intent");
+    expect(item.tooltip).to.be.equal("");
+  });
+
+  it("IntentTreeItem - misc", () => {
     const label = "my-label";
     const item = new IntentTreeItem(label, TreeItemCollapsibleState.Expanded);
     expect(item.collapsibleState).to.be.equal(TreeItemCollapsibleState.Expanded);
@@ -44,10 +53,23 @@ describe("TaskTreeItem class", () => {
   });
 
   it("TaskTreeItem instance, with command", () => {
-    const command = { title: "title", command: "command", arguments: [{ name: "name" }] };
+    const command = { title: "title", command: "command", arguments: [{ name: "name", __intent: "other" }] };
     const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem, command);
     expect(item.command).to.be.deep.equal(command);
     expect(item.contextValue).to.be.equal("task--idle");
+    expect(item.iconPath).to.be.deep.equal(new ThemeIcon("inspect"));
+  });
+
+  it("TaskTreeItem instance, with command task.intent = 'deploy'", () => {
+    const command = { title: "title", command: "command", arguments: [{ name: "name", __intent: "deploy" }] };
+    const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem, command);
+    expect(item.iconPath).to.be.deep.equal(new ThemeIcon("rocket"));
+  });
+
+  it("TaskTreeItem instance, with command task.intent = 'Build'", () => {
+    const command = { title: "title", command: "command", arguments: [{ name: "name", __intent: "build" }] };
+    const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem, command);
+    expect(item.iconPath).to.be.deep.equal(new ThemeIcon("package"));
   });
 
   it("TaskTreeItem instance, with command, running", () => {
@@ -55,5 +77,19 @@ describe("TaskTreeItem class", () => {
     const command = { title: "title", command: "command", arguments: [{ label, type }] };
     const item = new TaskTreeItem(index, type, label, wsFolder, state, parentItem, command);
     expect(item.contextValue).to.be.equal("task--running");
+  });
+
+  it("EmptyTreeItem instance - inpect", () => {
+    const parentItem = new ProjectTreeItem("dummy", "/home/dummy/project", TreeItemCollapsibleState.Expanded);
+    const item = new EmptyTaskTreeItem(parentItem);
+    expect(item.contextValue).to.be.undefined;
+    expect(item.label).to.be.equal("Create a task");
+    expect(item.collapsibleState).to.be.equal(TreeItemCollapsibleState.None);
+    expect(item.iconPath).to.be.deep.equal(new ThemeIcon("add"));
+    expect(item.command).to.be.deep.equal({
+      command: "tasks-explorer.createTask",
+      title: "Create Task",
+      arguments: [parentItem],
+    });
   });
 });

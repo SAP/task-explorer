@@ -94,12 +94,7 @@ describe("Command createTask", () => {
   });
 
   it(`does not create panel for tasks selection when called with some task being edited and user does not agree to discard the changes`, async () => {
-    await editTreeItemTask(mockTaskProvider, readFile, {
-      label: "task 3",
-      type: "testType",
-      taskType: "Deploy",
-      prop1: "value 1.3",
-    });
+    await editTreeItemTask(mockTaskProvider, readFile, tasks[0]);
     // editor panel created
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = panelHandler.getTaskEditor()!;
@@ -111,12 +106,7 @@ describe("Command createTask", () => {
   });
 
   it(`creates panel for tasks selection when called with some task being edited and user agrees to discard the changes`, async () => {
-    await editTreeItemTask(mockTaskProvider, readFile, {
-      label: "task 3",
-      type: "testType",
-      taskType: "Deploy",
-      prop1: "value 1.3",
-    });
+    await editTreeItemTask(mockTaskProvider, readFile, tasks[1]);
     // editor panel initiated
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppress for test scope
     const taskEditor: TaskEditor = panelHandler.getTaskEditor()!;
@@ -139,9 +129,10 @@ describe("Command createTask", () => {
       ];
       const projectItem = new ProjectTreeItem("project", "/root/home/test/proj", TreeItemCollapsibleState.Collapsed);
       mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, projectItem);
-      mockPanelHandler.expects("disposeTaskEditorPanel");
+      mockPanelHandler.expects("disposeTaskEditorPanel").atLeast(2);
       mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, undefined);
       await createTask(new MockTasksProvider(tasks), readFile, projectItem);
+      await panelHandler.createTaskEditorPanel(tasks[0], readFile);
       await createTask(new MockTasksProvider(tasks), readFile);
     });
   });
