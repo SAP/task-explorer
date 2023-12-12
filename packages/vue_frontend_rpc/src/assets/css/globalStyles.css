@@ -35,7 +35,8 @@ body {
 .v-application .task-label {
     font-weight: bold;
     float: left;
-    width: 60%;
+    width: 80%;
+    white-space: pre-line;
 }
 
 .v-card__title.task-intro, .v-card__title.selection-intro {
