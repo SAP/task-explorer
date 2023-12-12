@@ -88,7 +88,7 @@ export default {
           if (question[prop] === FUNCTION) {
             var that = this;
             question[prop] = (...args) => {
-              return that.rpc.invoke("evaluateMethod", [question.name, prop, args]);
+              return that.rpc.invoke("evaluateMethod", [args, question.name, prop]);
             };
           }
         }
