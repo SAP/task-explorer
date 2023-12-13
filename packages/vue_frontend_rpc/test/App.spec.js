@@ -1,6 +1,6 @@
+import { expect } from "chai";
 import { shallowMount } from "@vue/test-utils";
 import App from "../src/App";
-import { expect } from "vitest";
 
 // Mock the rpc object with the required methods
 const mockRpc = {
