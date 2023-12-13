@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/SAP/task-explorer/compare/v4.5.0...v4.6.0) (2023-12-13)
+
+### Features
+
+- **platform:** frontend vue3, vite node18 ([#328](https://github.com/SAP/task-explorer/issues/328)) ([d7af75f](https://github.com/SAP/task-explorer/commit/d7af75f47e858f1b7fab9f14d115b3fe726dc8da)), closes [#346](https://github.com/SAP/task-explorer/issues/346)
+
 # [4.5.0](https://github.com/SAP/task-explorer/compare/v4.4.1...v4.5.0) (2023-09-06)
 
 ### Features
