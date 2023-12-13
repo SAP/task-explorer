@@ -4,5 +4,7 @@ module.exports = {
   },
   globals: {
     acquireVsCodeApi: true,
+    jest: true,
+    window: true,
   },
 };

@@ -9,6 +9,10 @@ const path = require("path");
 const config = {
   entry: "./src/dummy.js",
   output: { path: path.resolve(__dirname, "dummy") },
-  plugins: [new CopyPlugin([{ from: "../vue_frontend_rpc/dist/", to: "../dist/media/", force: true }])],
+  plugins: [
+    new CopyPlugin({
+      patterns: [{ from: "../vue_frontend_rpc/dist/", to: "../dist/media/", force: true }],
+    }),
+  ],
 };
 module.exports = config;

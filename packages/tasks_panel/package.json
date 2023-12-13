@@ -1,7 +1,7 @@
 {
   "name": "vscode-tasks-explorer-tasks-panel",
   "displayName": "Task Explorer",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "private": true,
   "categories": [],
   "keywords": [],
@@ -231,6 +231,7 @@
     "@sap/cf-tools": "3.2.0",
     "@sap_oss/task_contrib_types": "^4.3.1",
     "@vscode-logging/logger": "1.2.3",
+    "cheerio": "^1.0.0-rc.12",
     "datauri": "4.1.0",
     "escape-string-regexp": "4.0.0",
     "lodash": "4.17.21",
@@ -239,13 +240,15 @@
     "yaml": "2.3.1"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.31",
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.184",
     "@types/sinon": "^10.0.13",
     "@types/vscode": "1.75.0",
     "@types/ws": "^7.2.3",
-    "@vscode-tasks-explorer/vue_frontend_rpc": "^4.4.0",
+    "@vscode-tasks-explorer/vue_frontend_rpc": "^4.6.0",
+    "copy-webpack-plugin": "^11.0.0",
     "fs-extra": "10.1.0",
     "proxyquire": "2.1.3",
     "sinon": "^14.0.0",

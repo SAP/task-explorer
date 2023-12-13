@@ -9,12 +9,13 @@ module.exports = {
   parserOptions: {
     // The `ecmaVersion` should align to the supported features of our target runtimes (browsers / nodejs / others)
     // Consult with: https://kangax.github.io/compat-table/es2016plus/
-    ecmaVersion: 2017,
+    ecmaVersion: 2020,
   },
   env: {
     commonjs: true,
     mocha: true,
     node: true,
+    es2020: true,
   },
   rules: {
     "eslint-comments/require-description": ["error", { ignore: [] }],

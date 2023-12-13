@@ -7,8 +7,7 @@
 <script>
 import { RpcBrowser } from "@sap-devx/webview-rpc/out.browser/rpc-browser";
 import { RpcBrowserWebSockets } from "@sap-devx/webview-rpc/out.browser/rpc-browser-ws";
-import { forEach } from "lodash";
-import Editor from "./components/Editor";
+import Editor from "./components/Editor.vue";
 
 function initialState() {
   return {
@@ -27,19 +26,20 @@ export default {
   },
 
   created() {
-    /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
-    if (this.isInVsCode()) {
-      this.setupVSCodeRpc();
-    }
-    // istanbul ignore if - None Productive local-dev only flow.
-    if (location.port === "8090") {
-      // Local Development Flow
-      // Assumes a WS server is already up and waiting.
-      this.setupWsRPC(8081);
-    }
+    this.setupRpc();
   },
 
   methods: {
+    setupRpc() {
+      if (this.isInVsCode()) {
+        this.setupVSCodeRpc();
+      } else {
+        // Local Development Flow
+        // Assumes a WS server is already up and waiting.
+        this.setupWsRPC(8081);
+      }
+    },
+
     isInVsCode() {
       return typeof acquireVsCodeApi !== "undefined";
     },
@@ -77,14 +77,13 @@ export default {
 
     async initRpc() {
       const functions = ["setTask", "setTasks"];
-      forEach(functions, (funcName) => {
+      functions.forEach((funcName) => {
         this.rpc.registerMethod({
           func: this[funcName],
           thisArg: this,
           name: funcName,
         });
       });
-
       await this.rpc.invoke("onFrontendReady");
     },
 
