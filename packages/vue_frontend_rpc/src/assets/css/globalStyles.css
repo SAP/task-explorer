@@ -33,8 +33,10 @@ body {
 }
 
 .v-application .task-label {
-    padding-left: 1rem;
     font-weight: bold;
+    float: left;
+    width: 80%;
+    white-space: pre-line;
 }
 
 .v-card__title.task-intro, .v-card__title.selection-intro {
@@ -67,7 +69,7 @@ i.v-icon.notranslate.material-icons {
 }
 
 .exec-title {
-    color: var(--vscode-editor-foreground);
+    color: var(--vscode-editor-foreground, #4B4B4B);
 }
 
 span.v-btn__content {
@@ -253,7 +255,14 @@ div.v-input__slot .v-select__selection {
 }
 
 .main-card {
-    height: 100%
+    height: 100%;
+    box-shadow: none;
+    background-color: var(--vscode-editor-background, #ffffff);
+}
+
+.v-card--variant-elevated.main-card {
+    background-color: var(--vscode-editor-background, #ffffff);
+    box-shadow: none;
 }
 
 .main-row {
@@ -277,8 +286,44 @@ div.v-input__slot .v-select__selection {
 #save.v-btn--disabled {
     opacity: 0.55;
     background-color: var(--vscode-descriptionForeground,#717171) !important;
+    margin-top: 14px;
+}
+
+#save.v-btn {
+    margin-top: 14px;
+    text-transform: none;
 }
 
 #exec.v-btn--disabled {
     opacity: 0.5;
+    color: transparent;
+}
+
+#exec.v-btn {
+    float: right;
+    color: var(--vscode-input-foreground,#ccc);
+    text-transform: none;
+}
+
+#myListGroup {
+    margin-left: 16px;
+    color: var(--vscode-foreground, #ffffff);
+    background-color: var(--vscode-editor-background, #ffffff);
+}
+
+#form .v-field {
+    border-radius: 0px;
+}
+
+#form .v-input.v-input--horizontal.v-input--center-affix.v-input--density-compact.v-locale--is-ltr.v-input--dirty.v-text-field.pa-0.ma-0 {
+    background-color: var(--vscode-input-background,#3c3c3c);
+}
+
+#form .v-field.v-field--appended.v-field--center-affix.v-field--single-line.v-field--variant-outlined.v-theme--light.v-locale--is-ltr{
+    background-color: var(--vscode-input-background,#3c3c3c);
+}
+
+div.v-list.v-theme--light.v-list--density-default.v-list--one-line{
+    background-color: var(--vscode-input-background,#3c3c3c);
+    color: var(--vscode-foreground, #ffffff);
 }
