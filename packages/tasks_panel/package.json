@@ -223,7 +223,7 @@
     ]
   },
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "dependencies": {
     "@sap-devx/app-studio-toolkit-types": "1.15.13",
