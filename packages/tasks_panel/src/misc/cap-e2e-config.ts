@@ -10,7 +10,7 @@ import {
   areResourcesReady,
   generateMtaDeployTasks,
   isFileExist,
-  isTasksConfigured,
+  isTasksSettled,
   waitForResource,
 } from "./e2e-config";
 import { last } from "lodash";
@@ -19,6 +19,7 @@ export interface CapProjectConfigInfo extends ProjectInfo {
   type: string;
 }
 
+/* istanbul ignore next */
 function invokeCommand(config: { cmd: string; args: string[]; cwd: string }, additionalArgs: string[]): Promise<void> {
   function executeSpawn(
     config: { cmd: string; args: string[]; cwd: string },
@@ -61,7 +62,7 @@ export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectC
   async function isConfigured(): Promise<boolean> {
     return (
       (await isFileExist(Uri.joinPath(Uri.file(info.wsFolder), info.project, "mta.yaml"))) &&
-      isTasksConfigured(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))
+      isTasksSettled(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))
     );
   }
 
@@ -92,12 +93,10 @@ export async function capE2eConfig(data: { wsFolder: string; project: string }):
   }
   if (await areResourcesReady([mtaYaml])) {
     const _tasks = await generateMtaDeployTasks(data.wsFolder, data.project);
-    if (!isTasksConfigured(data.wsFolder, _tasks)) {
-      return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
-        return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
-          return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
-        });
+    return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
+      return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
+        return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
       });
-    }
+    });
   }
 }

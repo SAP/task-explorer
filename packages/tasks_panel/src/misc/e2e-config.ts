@@ -19,15 +19,6 @@ import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tool
 import { getLogger } from "../../src/logger/logger-wrapper";
 import * as path from "path";
 
-// export const PROJECT_TYPES = {
-//     CAP_PROJ: "com.sap.cap",
-//     CAP_JAVA_PROJ: "com.sap.cap.java",
-//     BAS_PROJ: "com.sap.bas.empty",
-//     FIORI_FE_PROJ: "com.sap.fe",
-//     FIORI_PROJ: "com.sap.ui",
-//     LCAP_PROJ: "com.sap.lcap",
-//   };
-
 export enum ProjectTypes {
   FIORI_FE,
   CAP,
@@ -122,8 +113,6 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
               style = ProjectTypes.FIORI_FE;
             } else if (/^com\.sap\.cap(\.java)?$/.test(info.type)) {
               style = ProjectTypes.CAP;
-            } else if (info.type === "com.sap.lcap") {
-              style = ProjectTypes.LCAP;
             } else if (info.type === "com.sap.hana") {
               style = ProjectTypes.HANA;
             }
@@ -145,7 +134,7 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
 export async function addTaskDefinition(wsFolder: string, tasks: TaskDefinition[]): Promise<any> {
   return updateTasksConfiguration(
     wsFolder,
-    concat(workspace.getConfiguration("tasks", Uri.file(wsFolder)).get("tasks") ?? [], tasks)
+    concat(workspace.getConfiguration("tasks", Uri.file(wsFolder))?.get("tasks") ?? [], tasks)
   );
 }
 
@@ -177,6 +166,7 @@ export async function generateMtaDeployTasks(
       if (!targetName) {
         throw new Error("No CF current target defined");
       }
+      /* istanbul ignore next */
       return {
         cfTarget: targetName,
         cfEndpoint: (await cfGetConfigFileField("Target", targetName)) ?? "",
@@ -203,7 +193,7 @@ export async function generateMtaDeployTasks(
       type: "deploy.mta.cf",
       label: labelType === LabelType.uniq ? getUniqueTaskLabel(label) : label,
       taskType: "Deploy",
-      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(compact(split(wsFolder, path.sep)))}_0.0.1.mtar`,
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     },
@@ -213,7 +203,7 @@ export async function generateMtaDeployTasks(
   return [taskBuild, taskDeploy];
 }
 
-export function isTasksConfigured(wsFolder: string, _tasks: TaskDefinition[]): boolean {
+export function isTasksSettled(wsFolder: string, _tasks: TaskDefinition[]): boolean {
   const tasks: TaskDefinition[] = workspace.getConfiguration("tasks", Uri.file(wsFolder)).get("tasks") ?? [];
   return reduce(
     _tasks,

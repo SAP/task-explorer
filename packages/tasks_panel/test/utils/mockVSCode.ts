@@ -225,6 +225,12 @@ export const testVscode: any = {
     Collapsed: 1,
     Expanded: 2,
   },
+  FileType: {
+    Unknown: 0,
+    File: 1,
+    Directory: 2,
+    SymbolicLink: 64,
+  },
   tasks: {
     fetchTasks: async (): Promise<any> => {
       return MockVSCodeInfo.allTasks;

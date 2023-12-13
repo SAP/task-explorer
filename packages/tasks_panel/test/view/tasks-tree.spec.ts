@@ -6,7 +6,7 @@ import { TasksTree } from "../../src/view/tasks-tree";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 import { cloneDeep, find, reduce } from "lodash";
 import { createSandbox, SinonSandbox } from "sinon";
-import { EmptyTaskTreeItem, ProjectTreeItem } from "../../src/view/task-tree-item";
+import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem } from "../../src/view/task-tree-item";
 
 const tasks = [
   { type: "type1", label: "task1", __intent: "deploy", __wsFolder: "/my/project1" },
@@ -107,10 +107,20 @@ describe("TasksTree class", () => {
 
     it("create roots items, when workspace folder incorrect", async () => {
       sandbox.stub(testVscode.workspace, "getWorkspaceFolder").returns(undefined);
-      const taskProvider = new MockTasksProvider(tasks);
-      const tasksTree = new TasksTree(taskProvider);
+      const tasksTree = new TasksTree(new MockTasksProvider(tasks));
       const items = await tasksTree.getChildren();
       expect(items.length).eq(0);
+    });
+
+    it("create roots items, when workspace structure broken", async () => {
+      testVscode.workspace.workspaceFolders = [{ uri: { fsPath: "/other/root/folder" } }];
+      expect(
+        (
+          await new TasksTree(new MockTasksProvider(tasks)).getChildren(
+            new IntentTreeItem("some", testVscode.TreeItemCollapsibleState.Expanded)
+          )
+        ).length
+      ).eq(0);
     });
   });
 

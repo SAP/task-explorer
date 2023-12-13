@@ -6,7 +6,7 @@ import {
   ProjectTypes,
   addTaskDefinition,
   generateMtaDeployTasks,
-  isTasksConfigured,
+  isTasksSettled,
 } from "./e2e-config";
 import { last } from "lodash";
 
@@ -18,9 +18,7 @@ export async function getHanaE2ePickItems(info: ProjectInfo): Promise<HanaProjec
   if (info.style !== ProjectTypes.HANA) {
     return;
   }
-  if (
-    !isTasksConfigured(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))
-  ) {
+  if (!isTasksSettled(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))) {
     return Object.assign(info, { type: HANA_DEPLOYMENT_CONFIG });
   }
 }

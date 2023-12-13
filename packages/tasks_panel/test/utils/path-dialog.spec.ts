@@ -5,8 +5,9 @@ import { expect } from "chai";
 import { restore, stub } from "sinon";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { showOpenDialog } from "../../src/utils/path-dialog";
-// import { editTask } from "../../src/commands/edit-task";
+import { editTreeItemTask } from "../../src/commands/edit-task";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";
+import { MockTasksProvider } from "./mockTasksProvider";
 
 describe("showOpenFileDialog function", () => {
   it("returns expected file path", async () => {
@@ -31,34 +32,34 @@ describe("showOpenFileDialog function", () => {
     });
   });
 
-  // describe("uses workspace folder of the task if input is not provided ", () => {
-  //   const readFile = async function (): Promise<string> {
-  //     return "aaa";
-  //   };
+  describe("uses workspace folder of the task if input is not provided ", () => {
+    const readFile = async function (): Promise<string> {
+      return "aaa";
+    };
 
-  //   beforeEach(async () => {
-  //     stub(fs, "readFile").returns(Promise.resolve("buf" as unknown as Buffer));
-  //     const task1: ConfiguredTask = {
-  //       type: "test",
-  //       label: "task 1",
-  //       __intent: "Deploy",
-  //       __wsFolder: "path",
-  //       __index: 0,
-  //     };
-  //     await editTask(task1, readFile);
-  //   });
+    beforeEach(async () => {
+      stub(fs, "readFile").returns(Promise.resolve("buf" as unknown as Buffer));
+      const task1: ConfiguredTask = {
+        type: "test",
+        label: "task 1",
+        __intent: "Deploy",
+        __wsFolder: "path",
+        __index: 0,
+      };
+      await editTreeItemTask(new MockTasksProvider([task1]), readFile, task1);
+    });
 
-  //   afterEach(() => {
-  //     disposeTaskEditorPanel();
-  //     restore();
-  //   });
+    afterEach(() => {
+      disposeTaskEditorPanel();
+      restore();
+    });
 
-  //   it("returns folder in the workspace path", async () => {
-  //     expect(await showOpenDialog("", false, true)).to.eq(join("path", "Folder1"));
-  //   });
+    it("returns folder in the workspace path", async () => {
+      expect(await showOpenDialog("", false, true)).to.eq(join("path", "Folder1"));
+    });
 
-  //   it("returns file in the workspace path", async () => {
-  //     expect(await showOpenDialog("", true, false)).to.eq(join("path", "File1"));
-  //   });
-  // });
+    it("returns file in the workspace path", async () => {
+      expect(await showOpenDialog("", true, false)).to.eq(join("path", "File1"));
+    });
+  });
 });

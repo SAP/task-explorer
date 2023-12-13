@@ -6,14 +6,13 @@ import { MockAppEvents } from "./utils/mockAppEvents";
 import { MockContributorWithOnSave } from "./utils/mockContributor";
 import { TasksSelection } from "../src/tasks-selection";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
-import { cloneDeep, extend, map } from "lodash";
+import { cloneDeep, extend } from "lodash";
 import * as taskProvider from "../src/services/tasks-provider";
 import * as panelHandler from "../src/panels/panels-handler";
 import * as multiStepSelection from "../src/multi-step-select";
 import * as commonE2eConfig from "../src/misc/common-e2e-config";
 import { getUniqueTaskLabel } from "../src/utils/task-serializer";
 import { FIORI_DEPLOYMENT_CONFIG } from "../src/misc/e2e-config";
-// import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
 
 const roots = ["/user/projects/project1", "/user/projects/project2"];
 
@@ -73,7 +72,6 @@ describe("the TasksSelection class", () => {
     sandbox.restore();
   });
 
-  // const provider = new taskProvider.TasksProvider(new MockTaskTypeProvider());
   const taskSelection = new TasksSelection(appEvents, tasks, readFile);
 
   it("constructor", () => {

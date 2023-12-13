@@ -51,6 +51,7 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
       wsFolders,
       (wsFolder) =>
         new ProjectTreeItem(
+          /* istanbul ignore next */
           workspace.getWorkspaceFolder(Uri.file(wsFolder))?.name ?? "",
           wsFolder,
           TreeItemCollapsibleState.Expanded
