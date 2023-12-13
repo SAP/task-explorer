@@ -6,6 +6,9 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: # workaround for OpenSSL issue with webpack5 on node17+ https://github.com/webpack/webpack/issues/14532
+          command: |
+            echo 'export NODE_OPTIONS=--openssl-legacy-provider' >> $BASH_ENV
       - run: yarn
       - run: yarn run ci
       - run:
