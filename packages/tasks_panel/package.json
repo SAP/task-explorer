@@ -76,6 +76,14 @@
         "command": "tasks-explorer.stopTask",
         "title": "Stop",
         "icon": "$(chrome-maximize)"
+      },
+      {
+        "command": "tasks-explorer.action.build",
+        "title": "Run Build"
+      },
+      {
+        "command": "tasks-explorer.action.deploy",
+        "title": "Run Deploy"
       }
     ],
     "configuration": {
@@ -147,6 +155,14 @@
         },
         {
           "command": "tasks-explorer.tree.select",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.action.build",
+          "when": "false"
+        },
+        {
+          "command": "tasks-explorer.action.deploy",
           "when": "false"
         }
       ],
@@ -223,7 +239,7 @@
     ]
   },
   "activationEvents": [
-    "onStartupFinished"
+    "*"
   ],
   "dependencies": {
     "@sap-devx/app-studio-toolkit-types": "1.15.13",
@@ -259,5 +275,27 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "icon": "icon.png"
+  "icon": "icon.png",
+  "basContributes": {
+    "quick.access.actions": [
+      {
+        "id": "quick.access.action.build",
+        "label": "Build",
+        "codicon": "symbol-method",
+        "params": {
+          "command": "tasks-explorer.action.build"
+        },
+        "position": 20
+      },
+      {
+        "id": "quick.access.action.deploy",
+        "label": "Deploy",
+        "codicon": "rocket",
+        "params": {
+          "command": "tasks-explorer.action.deploy"
+        },
+        "position": 30
+      }
+    ]
+  }
 }
