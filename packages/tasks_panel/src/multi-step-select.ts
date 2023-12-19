@@ -17,6 +17,10 @@ import { ProjectConfigInfo, composeDeploymentConfigLabel, getConfigDeployPickIte
 
 const miscItem = { label: "$(list-unordered)", description: MISC, type: "intent" };
 
+function isMatchBuildOrDeploy(intent: string): boolean {
+  return isMatchBuild(intent) || isMatchDeploy(intent);
+}
+
 function grabProjectItems(tasks: ConfiguredTask[], project?: string): QuickPickItem[] {
   const projects = keys(groupBy(tasks, "__wsFolder"));
   const items = project && projects.includes(project) ? [project] : projects;
@@ -41,7 +45,8 @@ async function grabTasksByGroup(
   }
 
   const pickItems: any[] = [];
-  const deploymentParamItems = !group ? toConfigDeployE2ePickItems(await getConfigDeployPickItems(project)) : [];
+  const deploymentParamItems =
+    !group || isMatchBuildOrDeploy(group) ? toConfigDeployE2ePickItems(await getConfigDeployPickItems(project)) : [];
   if (!isEmpty(deploymentParamItems)) {
     const groupByType = groupBy(deploymentParamItems, "type");
     each(keys(groupByType), (key) => {
@@ -53,7 +58,7 @@ async function grabTasksByGroup(
   const tasksByProject = filter(tasks, ["__wsFolder", project]);
   each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent: string) => {
     // add a group separator
-    if (isMatchDeploy(intent) || isMatchBuild(intent)) {
+    if (isMatchBuildOrDeploy(intent)) {
       if (isEmpty(deploymentParamItems)) {
         if (!group || group.toLowerCase() === intent.toLowerCase()) {
           // fiori projects workaround: hide `Build`/`Deploy` npm tasks if fiori e2e deployment configuration needed

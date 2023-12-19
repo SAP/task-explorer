@@ -3,7 +3,7 @@ import { randomBytes } from "crypto";
 import escapeStringRegexp = require("escape-string-regexp");
 import { filter, map } from "lodash";
 import { getConfiguredTasksFromCache } from "../../src/services/tasks-provider";
-import { ConfigurationTarget, TaskDefinition, Uri, commands, languages, window, workspace } from "vscode";
+import { ConfigurationTarget, TaskDefinition, Uri, languages, workspace } from "vscode";
 
 export function serializeTask(task: ConfiguredTask): string {
   return JSON.stringify(task);
@@ -40,7 +40,6 @@ export function getUniqueTaskLabel(label: string): string {
   return label + taskSuffix;
 }
 
-const BTN_PROBLEMS = "Show problems";
 export async function updateTasksConfiguration(
   folder: string,
   tasks: (ConfiguredTask | TaskDefinition)[]
@@ -50,14 +49,16 @@ export async function updateTasksConfiguration(
   const handler = languages.onDidChangeDiagnostics((e) => {
     const tasksPath = Uri.joinPath(url, ".vscode", "tasks.json");
     if (e.uris.map((v) => v.path).includes(tasksPath.path)) {
-      void window
-        .showWarningMessage(`There are tasks definitions errors. See the problems for details.`, BTN_PROBLEMS)
-        .then(async (answer: string | undefined) => {
-          if (answer === BTN_PROBLEMS) {
-            await window.showTextDocument(tasksPath);
-            await commands.executeCommand("workbench.actions.view.problems");
-          }
-        });
+      // temporary disabled - TODO: enable when we have a way to detect an actual problems a more arrurately
+      // const BTN_PROBLEMS = "Show problems";
+      // void window
+      //   .showWarningMessage(`There are tasks definitions errors. See the problems for details.`, BTN_PROBLEMS)
+      //   .then(async (answer: string | undefined) => {
+      //     if (answer === BTN_PROBLEMS) {
+      //       await window.showTextDocument(tasksPath);
+      //       await commands.executeCommand("workbench.actions.view.problems");
+      //     }
+      //   });
     }
   });
 

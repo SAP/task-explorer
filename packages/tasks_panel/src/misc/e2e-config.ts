@@ -107,7 +107,8 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
       project.getProjectInfo().then((info) => {
         if (info) {
           const workspaceFolder = workspace.getWorkspaceFolder(Uri.file(info.path));
-          if (workspaceFolder?.uri.fsPath.startsWith(requestedFolder.fsPath)) {
+          // closing the paths with '/' to avoid partial matches like 'project1' and 'project10
+          if (`${workspaceFolder?.uri.path}/`.startsWith(`${requestedFolder.path}/`)) {
             let style: ProjectTypes | undefined;
             if (info.type === "com.sap.fe") {
               style = ProjectTypes.FIORI_FE;

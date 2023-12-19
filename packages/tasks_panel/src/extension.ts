@@ -48,12 +48,18 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand("tasks-explorer.tree.select", partial(selectTreeItem, view, tasksTree, tasksProvider))
   );
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.action.build", partial(actionBuild, view, tasksTree, tasksProvider))
+    commands.registerCommand(
+      "tasks-explorer.action.build",
+      partial(actionBuild, view, tasksTree, tasksProvider, context)
+    )
   );
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.action.deploy", partial(actionDeploy, view, tasksTree, tasksProvider))
+    commands.registerCommand(
+      "tasks-explorer.action.deploy",
+      partial(actionDeploy, view, tasksTree, tasksProvider, context)
+    )
   );
-  context.subscriptions.push(subscribeLastTaskRun());
+  context.subscriptions.push(subscribeLastTaskRun(context));
 }
 
 function initializeLogger(context: ExtensionContext): void {
