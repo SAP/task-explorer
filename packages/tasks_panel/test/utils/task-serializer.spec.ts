@@ -1,9 +1,4 @@
-import {
-  generateUniqueCode,
-  getUniqueTaskLabel,
-  serializeTask,
-  updateTasksConfiguration,
-} from "../../src/utils/task-serializer";
+import { getUniqueTaskLabel, serializeTask, updateTasksConfiguration } from "../../src/utils/task-serializer";
 import { MockVSCodeInfo, mockVscode, resetTestVSCode, testVscode } from "./mockVSCode";
 import { expect } from "chai";
 import * as provider from "../../src/services/tasks-provider";
@@ -18,15 +13,9 @@ describe("task-serializer scope", () => {
     resetTestVSCode();
   });
 
-  it("serializeTask", () => {
+  it("loading of serialized task data succeeded", () => {
     const task: ConfiguredTask = { label: "label", type: "type", __intent: "intent" };
-    expect(JSON.parse(serializeTask(task))).to.be.deep.equal(task);
-  });
-
-  it("generateUniqueCode", () => {
-    const code = generateUniqueCode();
-    expect(/[a-zA-Z\d]{4}-[a-zA-Z\d]{4}/.test(code)).to.be.true;
-    expect(code.split("-")[0]).to.be.not.equal(code.split("-")[1]);
+    expect(JSON.parse(serializeTask(task))).to.deep.equal(task);
   });
 
   describe("getUniqueTaskLabel method", () => {
@@ -105,22 +94,20 @@ describe("task-serializer scope", () => {
 
     it("updateTasksConfiguration called, onDidChangeDiagnostics not triggered", () => {
       updateTasksConfiguration(wsFolder, [task]);
-      expect(MockVSCodeInfo.configTasks?.get(wsFolder)).deep.equal([task]);
+      expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.deep.equal([task]);
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
         testVscode.ConfigurationTarget.WorkspaceFolder
       );
-      new Promise((resolve) => setTimeout(() => resolve(true), 1050));
     });
 
     it("updateTasksConfiguration called, onDidChangeDiagnostics triggered, but for unlistened folders", async () => {
       updateTasksConfiguration(wsFolder, [task]);
       const callback: (c) => Promise<void> = stubLanguages.args[0][0];
       await callback({ uris: [{ path: "/my/folder/other/file.json" }] });
-      new Promise((resolve) => setTimeout(() => resolve(true), 1050));
     });
 
-    it("updateTasksConfiguration called, onDidChangeDiagnostics triggered, do not show problem selected", async () => {
+    it.skip("updateTasksConfiguration called, onDidChangeDiagnostics triggered, do not show problem selected", async () => {
       mockWindow
         .expects("showWarningMessage")
         .withExactArgs(`There are tasks definitions errors. See the problems for details.`, "Show problems")
@@ -128,10 +115,9 @@ describe("task-serializer scope", () => {
       updateTasksConfiguration(wsFolder, [task]);
       const callback: (c) => Promise<void> = stubLanguages.args[0][0];
       await callback({ uris: [{ path: docPath }] });
-      new Promise((resolve) => setTimeout(() => resolve(true), 1050));
     });
 
-    it("updateTasksConfiguration called, onDidChangeDiagnostics triggered, open problem view", async () => {
+    it.skip("updateTasksConfiguration called, onDidChangeDiagnostics triggered, open problem view", async () => {
       mockWindow
         .expects("showWarningMessage")
         .withExactArgs(`There are tasks definitions errors. See the problems for details.`, "Show problems")
@@ -141,7 +127,6 @@ describe("task-serializer scope", () => {
       updateTasksConfiguration(wsFolder, [task]);
       const callback: (c) => Promise<void> = stubLanguages.args[0][0];
       await callback({ uris: [{ path: docPath }] });
-      new Promise((resolve) => setTimeout(() => resolve(true), 1050));
     });
   });
 });

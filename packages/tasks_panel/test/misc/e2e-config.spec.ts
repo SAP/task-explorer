@@ -1,20 +1,19 @@
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
 import {
-  LabelType,
-  ProjectTypes,
+  ProjTypes,
   addTaskDefinition,
   areResourcesReady,
   collectProjects,
   generateMtaDeployTasks,
-  isFileExist,
+  doesFileExist,
   isTasksSettled,
-  waitForResource,
+  waitForFileResource,
 } from "../../src/misc/e2e-config";
 import { expect } from "chai";
 import { MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 import * as utils from "../../src/utils/task-serializer";
 import { afterEach } from "mocha";
-import { concat, extend, last, split } from "lodash";
+import { concat, last, split } from "lodash";
 import * as cfTools from "@sap/cf-tools/out/src/cf-local";
 import * as path from "path";
 
@@ -56,19 +55,19 @@ describe("e2e-config scope", () => {
     it("waitForResource - onDidChange callback triggered", async () => {
       mockWorkspace.expects("createFileSystemWatcher").withExactArgs(pattern, false, false, true).returns(watcher);
       setTimeout(() => callbacks["change"]());
-      expect(await waitForResource(pattern, false, false, true)).to.be.true;
+      expect(await waitForFileResource(pattern, false, false, true)).to.be.true;
     });
 
     it("waitForResource - onDidCreate callback triggered", async () => {
       mockWorkspace.expects("createFileSystemWatcher").withExactArgs(pattern, false, false, false).returns(watcher);
       setTimeout(() => callbacks["create"]());
-      expect(await waitForResource(pattern, false, false, false)).to.be.true;
+      expect(await waitForFileResource(pattern, false, false, false)).to.be.true;
     });
 
     it("waitForResource - onDidDelete callback triggered", async () => {
       mockWorkspace.expects("createFileSystemWatcher").withExactArgs(pattern, false, false, true).returns(watcher);
       setTimeout(() => callbacks["delete"]());
-      expect(await waitForResource(pattern, false, false, true)).to.be.true;
+      expect(await waitForFileResource(pattern, false, false, true)).to.be.true;
     });
   });
 
@@ -205,7 +204,7 @@ describe("e2e-config scope", () => {
         {
           wsFolder,
           project: "project",
-          style: ProjectTypes.FIORI_FE,
+          style: ProjTypes.FIORI_FE,
         },
       ]);
     });
@@ -226,7 +225,7 @@ describe("e2e-config scope", () => {
         {
           wsFolder,
           project: "my",
-          style: ProjectTypes.CAP,
+          style: ProjTypes.CAP,
         },
       ]);
     });
@@ -247,7 +246,7 @@ describe("e2e-config scope", () => {
         {
           wsFolder,
           project: "my",
-          style: ProjectTypes.CAP,
+          style: ProjTypes.CAP,
         },
       ]);
     });
@@ -270,7 +269,7 @@ describe("e2e-config scope", () => {
         {
           wsFolder,
           project: "",
-          style: ProjectTypes.HANA,
+          style: ProjTypes.HANA,
         },
       ]);
     });
@@ -337,12 +336,12 @@ describe("e2e-config scope", () => {
 
     it("isFileExist - does exist", async () => {
       mockWorkspaceFs.expects("stat").withExactArgs(url).resolves({ type: testVscode.FileType.File });
-      expect(await isFileExist(url)).be.true;
+      expect(await doesFileExist(url)).be.true;
     });
 
     it("isFileExist - does NOT exist", async () => {
       mockWorkspaceFs.expects("stat").withExactArgs(url).rejects(new Error("File not found"));
-      expect(await isFileExist(url)).be.false;
+      expect(await doesFileExist(url)).be.false;
     });
   });
 
@@ -379,7 +378,7 @@ describe("e2e-config scope", () => {
       mockCfTools.expects("cfGetTargets").resolves([]);
       expect(await generateMtaDeployTasks(wsFolder, project)).be.deep.equal([
         taskBuild,
-        extend(taskDeploy, { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" }),
+        { ...taskDeploy, ...{ cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" } },
       ]);
     });
 
@@ -387,7 +386,7 @@ describe("e2e-config scope", () => {
       mockCfTools.expects("cfGetTargets").resolves([{ label: "target1" }]);
       expect(await generateMtaDeployTasks(wsFolder, project)).be.deep.equal([
         taskBuild,
-        extend(taskDeploy, { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" }),
+        { ...taskDeploy, ...{ cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" } },
       ]);
     });
 
@@ -396,20 +395,20 @@ describe("e2e-config scope", () => {
       mockCfTools.expects("cfGetTargets").resolves([{ label: targetName, isCurrent: true }]);
       expect(await generateMtaDeployTasks(wsFolder, project)).be.deep.equal([
         taskBuild,
-        extend(taskDeploy, { cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" }),
+        { ...taskDeploy, ...{ cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" } },
       ]);
     });
 
     it("generateMtaDeployTasks - sequence label type, cf target found", async () => {
       const targetName = "target3";
       mockCfTools.expects("cfGetTargets").resolves([{ label: targetName, isCurrent: true }]);
-      expect(await generateMtaDeployTasks(wsFolder, "", LabelType.sequence)).be.deep.equal([
-        extend(taskBuild, { projectPath: `${wsFolder}` }),
-        extend(
-          taskDeploy,
-          { cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" },
-          { mtarPath: `${wsFolder}/mta_archives/project_0.0.1.mtar` }
-        ),
+      expect(await generateMtaDeployTasks(wsFolder, "", "sequence")).be.deep.equal([
+        { ...taskBuild, ...{ projectPath: `${wsFolder}` } },
+        {
+          ...taskDeploy,
+          ...{ cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" },
+          ...{ mtarPath: `${wsFolder}/mta_archives/project_0.0.1.mtar` },
+        },
       ]);
     });
   });

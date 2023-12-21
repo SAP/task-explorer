@@ -71,9 +71,9 @@ describe("TasksTree class", () => {
       const taskProvider = new MockTasksProvider(copyTasks);
       const tasksTree = new TasksTree(taskProvider);
       const items = await tasksTree.getChildren();
-      expect(items.length).eq(1);
-      expect(items[0] instanceof ProjectTreeItem).to.be.true;
-      expect(items[0].label).to.be.equal(wsFolder);
+      expect(items).to.be.lengthOf(1);
+      expect(items[0]).to.be.an.instanceof(ProjectTreeItem);
+      expect(items[0].label).to.equal(wsFolder);
     });
 
     it("Returns tasks of specific intent when called with the intent item", async () => {
@@ -85,12 +85,12 @@ describe("TasksTree class", () => {
       const tasksTree = new TasksTree(taskProvider);
       const rootItems = await tasksTree.getChildren();
       const intents = await tasksTree.getChildren(find(rootItems, ["label", tasks[2].__wsFolder]));
-      expect(intents.length).eq(2);
+      expect(intents).to.be.lengthOf(2);
       let taskByIntent = await tasksTree.getChildren(intents[0]);
-      expect(taskByIntent.length).eq(1);
+      expect(taskByIntent).to.be.lengthOf(1);
       expect(taskByIntent[0].label).eq("task3");
       taskByIntent = await tasksTree.getChildren(intents[1]);
-      expect(taskByIntent.length).eq(1);
+      expect(taskByIntent).to.be.lengthOf(1);
       expect(taskByIntent[0].label).eq("task2");
     });
 
@@ -101,26 +101,23 @@ describe("TasksTree class", () => {
       const item = rootItems[0];
       delete (item as any).fqn;
       const children = await tasksTree.getChildren(item);
-      expect(children.length).to.eq(1);
-      expect(children[0] instanceof EmptyTaskTreeItem).to.be.true;
+      expect(children).to.be.lengthOf(1);
+      expect(children[0]).to.be.instanceOf(EmptyTaskTreeItem);
     });
 
     it("create roots items, when workspace folder incorrect", async () => {
       sandbox.stub(testVscode.workspace, "getWorkspaceFolder").returns(undefined);
       const tasksTree = new TasksTree(new MockTasksProvider(tasks));
       const items = await tasksTree.getChildren();
-      expect(items.length).eq(0);
+      expect(items).to.be.empty;
     });
 
     it("create roots items, when workspace structure broken", async () => {
       testVscode.workspace.workspaceFolders = [{ uri: { fsPath: "/other/root/folder" } }];
-      expect(
-        (
-          await new TasksTree(new MockTasksProvider(tasks)).getChildren(
-            new IntentTreeItem("some", testVscode.TreeItemCollapsibleState.Expanded)
-          )
-        ).length
-      ).eq(0);
+      const taskChildren = await new TasksTree(new MockTasksProvider(tasks)).getChildren(
+        new IntentTreeItem("some", testVscode.TreeItemCollapsibleState.Expanded)
+      );
+      expect(taskChildren).to.be.empty;
     });
   });
 
@@ -141,7 +138,7 @@ describe("TasksTree class", () => {
       ];
       const tasksTree = new TasksTree(new MockTasksProvider(tasks));
       const i = await tasksTree.findTreeItem(tasks[3]);
-      expect(i?.command?.arguments?.[0]).to.be.equal(tasks[3]);
+      expect(i?.command?.arguments?.[0]).to.equal(tasks[3]);
     });
 
     it("findTreeItem - element not exists", async () => {

@@ -9,8 +9,8 @@ import {
   addTaskDefinition,
   areResourcesReady,
   generateMtaDeployTasks,
-  isFileExist,
-  waitForResource,
+  doesFileExist,
+  waitForFileResource,
 } from "./e2e-config";
 import { getUniqueTaskLabel } from "../../src/utils/task-serializer";
 
@@ -55,7 +55,7 @@ export async function getFioriE2ePickItems(info: ProjectInfo): Promise<FioriProj
     const resources: Promise<boolean>[] = [Promise.resolve(true)];
     resources.push(
       ...map(target === FE_DEPLOY_TRG.ABAP ? trg_files_abap : trg_files_cf, (file) =>
-        isFileExist(Uri.joinPath(projectPath, file))
+        doesFileExist(Uri.joinPath(projectPath, file))
       )
     );
     return Promise.all(resources).then((values) => !includes(values, false));
@@ -65,7 +65,7 @@ export async function getFioriE2ePickItems(info: ProjectInfo): Promise<FioriProj
     let result = true;
     const projectPath = Uri.joinPath(wsFolder, project);
     const path = Uri.joinPath(projectPath, "ui5-deploy.yaml");
-    if (await isFileExist(path)) {
+    if (await doesFileExist(path)) {
       result = !(await isConfigured(await detectDeployTarget(path), projectPath));
     }
     return result;
@@ -78,10 +78,11 @@ export async function getFioriE2ePickItems(info: ProjectInfo): Promise<FioriProj
   }
 
   // start analyzing when the corresponding generator command exists and is registered in devspace, otherwise the config e2e deployment option should not be displayed
-  if (await isCommandRegistered(cmd_launch_deploy_config)) {
-    if (await isConfigRequired(Uri.file(info.wsFolder), info.project)) {
-      return Object.assign(info, { type: FIORI_DEPLOYMENT_CONFIG });
-    }
+  if (
+    (await isCommandRegistered(cmd_launch_deploy_config)) &&
+    (await isConfigRequired(Uri.file(info.wsFolder), info.project))
+  ) {
+    return { ...info, ...{ type: FIORI_DEPLOYMENT_CONFIG } };
   }
 }
 
@@ -90,25 +91,23 @@ export async function fioriE2eConfig(data: { wsFolder: string; project: string }
     if (!target) {
       throw new Error(messages.err_task_definition_unsupported_target);
     }
-    const _tasks: TaskDefinition[] = [];
+    const targetTasks: TaskDefinition[] = [];
     if (target === FE_DEPLOY_TRG.ABAP) {
-      _tasks.push({
+      targetTasks.push({
         type: "npm",
         label: getUniqueTaskLabel(`Deploy to ABAP`),
         script: "deploy",
         options: { cwd: `${Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath}` },
       });
     } else {
-      _tasks.push(...(await generateMtaDeployTasks(data.wsFolder, data.project)));
+      targetTasks.push(...(await generateMtaDeployTasks(data.wsFolder, data.project)));
     }
-    return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
-      return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
-        return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
-      });
-    });
+    await addTaskDefinition(data.wsFolder, targetTasks);
+    await commands.executeCommand("tasks-explorer.editTask", last(targetTasks));
+    void commands.executeCommand("tasks-explorer.tree.select", last(targetTasks));
   }
 
-  const ui5DeployYaml = waitForResource(
+  const ui5DeployYaml = waitForFileResource(
     new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}ui5-deploy.yaml`),
     false,
     false,

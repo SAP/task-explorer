@@ -17,14 +17,17 @@ import {
 import { getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
 import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tools";
 import { getLogger } from "../../src/logger/logger-wrapper";
-import * as path from "path";
+import { sep } from "path";
 
-export enum ProjectTypes {
-  FIORI_FE,
-  CAP,
-  LCAP,
-  HANA,
-}
+export const ProjTypes = {
+  FIORI_FE: "fiori_fe",
+  CAP: "cap",
+  LCAP: "lcap",
+  HANA: "hana",
+} as const;
+
+// Convert object key in a type
+export type ProjectTypes = typeof ProjTypes[keyof typeof ProjTypes];
 
 type CfDetails = {
   cfTarget: string;
@@ -43,7 +46,7 @@ export interface ProjectInfo {
   style: ProjectTypes;
 }
 
-export async function waitForResource(
+export async function waitForFileResource(
   pattern: GlobPattern,
   ignoreCreateEvents?: boolean,
   ignoreChangeEvents?: boolean,
@@ -66,12 +69,6 @@ export async function waitForResource(
   });
 }
 
-/**
- *
- * @param promises - Promise<boolean>[] array to waiting for
- * @param timeout - maximum wait time in seconds
- * @returns
- */
 export async function areResourcesReady(promises: Promise<boolean>[], timeout = 5): Promise<boolean> {
   return Promise.race([
     Promise.all(promises),
@@ -107,15 +104,14 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
       project.getProjectInfo().then((info) => {
         if (info) {
           const workspaceFolder = workspace.getWorkspaceFolder(Uri.file(info.path));
-          // closing the paths with '/' to avoid partial matches like 'project1' and 'project10
-          if (`${workspaceFolder?.uri.path}/`.startsWith(`${requestedFolder.path}/`)) {
+          if (workspaceFolder?.uri.fsPath.startsWith(requestedFolder.fsPath)) {
             let style: ProjectTypes | undefined;
             if (info.type === "com.sap.fe") {
-              style = ProjectTypes.FIORI_FE;
+              style = ProjTypes.FIORI_FE;
             } else if (/^com\.sap\.cap(\.java)?$/.test(info.type)) {
-              style = ProjectTypes.CAP;
+              style = ProjTypes.CAP;
             } else if (info.type === "com.sap.hana") {
-              style = ProjectTypes.HANA;
+              style = ProjTypes.HANA;
             }
             if (style !== undefined) {
               return {
@@ -139,7 +135,7 @@ export async function addTaskDefinition(wsFolder: string, tasks: TaskDefinition[
   );
 }
 
-export async function isFileExist(uri: Uri): Promise<boolean> {
+export async function doesFileExist(uri: Uri): Promise<boolean> {
   try {
     return !!(await workspace.fs.stat(uri));
   } catch (e) {
@@ -147,15 +143,12 @@ export async function isFileExist(uri: Uri): Promise<boolean> {
   }
 }
 
-export enum LabelType {
-  uniq,
-  sequence,
-}
+export type LabelType = "uniq" | "sequence";
 
 export async function generateMtaDeployTasks(
   wsFolder: string,
   project: string,
-  labelType = LabelType.uniq
+  labelType: LabelType = "uniq"
 ): Promise<TaskDefinition[]> {
   async function populateCfDetails(): Promise<CfDetails> {
     try {
@@ -167,7 +160,6 @@ export async function generateMtaDeployTasks(
       if (!targetName) {
         throw new Error("No CF current target defined");
       }
-      /* istanbul ignore next */
       return {
         cfTarget: targetName,
         cfEndpoint: (await cfGetConfigFileField("Target", targetName)) ?? "",
@@ -180,21 +172,21 @@ export async function generateMtaDeployTasks(
     }
   }
   const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
-  let label = `Build MTA`;
+  const buildTaskLabel = `Build MTA`;
   const taskBuild = {
     type: "build.mta",
-    label: labelType === LabelType.uniq ? getUniqueTaskLabel(label) : label,
+    label: labelType === "uniq" ? getUniqueTaskLabel(buildTaskLabel) : buildTaskLabel,
     taskType: "Build",
     projectPath: `${projectUri.fsPath}`,
     extensions: [],
   };
-  label = `Deploy MTA to Cloud Foundry`;
+  const deployTaskLabel = `Deploy MTA to Cloud Foundry`;
   const taskDeploy = extend(
     {
       type: "deploy.mta.cf",
-      label: labelType === LabelType.uniq ? getUniqueTaskLabel(label) : label,
+      label: labelType === "uniq" ? getUniqueTaskLabel(deployTaskLabel) : deployTaskLabel,
       taskType: "Deploy",
-      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(compact(split(wsFolder, path.sep)))}_0.0.1.mtar`,
+      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(compact(split(wsFolder, sep)))}_0.0.1.mtar`,
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     },
@@ -204,16 +196,14 @@ export async function generateMtaDeployTasks(
   return [taskBuild, taskDeploy];
 }
 
-export function isTasksSettled(wsFolder: string, _tasks: TaskDefinition[]): boolean {
+export function isTasksSettled(wsFolder: string, targetTasks: TaskDefinition[]): boolean {
   const tasks: TaskDefinition[] = workspace.getConfiguration("tasks", Uri.file(wsFolder)).get("tasks") ?? [];
   return reduce(
-    _tasks,
+    targetTasks,
     (acc, task) => {
-      acc =
-        acc &&
-        !!find(tasks, (_) => {
-          return isMatch(_, task);
-        });
+      acc &&= !!find(tasks, (_) => {
+        return isMatch(_, task);
+      });
       return acc;
     },
     true
