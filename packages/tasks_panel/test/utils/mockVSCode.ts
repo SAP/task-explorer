@@ -179,6 +179,9 @@ export const testVscode: any = {
     showTextDocument: async () => {
       throw new Error("not implemented");
     },
+    showWarningMessage: async () => {
+      throw new Error("not implemented");
+    },
     withProgress: (
       options: {
         location: number;
@@ -222,6 +225,12 @@ export const testVscode: any = {
     Collapsed: 1,
     Expanded: 2,
   },
+  FileType: {
+    Unknown: 0,
+    File: 1,
+    Directory: 2,
+    SymbolicLink: 64,
+  },
   tasks: {
     fetchTasks: async (): Promise<any> => {
       return MockVSCodeInfo.allTasks;
@@ -256,6 +265,13 @@ export const testVscode: any = {
   QuickPickItemKind: {
     Separator: -1,
     Default: 0,
+  },
+  languages: {
+    onDidChangeDiagnostics: () => {
+      return {
+        dispose: () => true,
+      };
+    },
   },
 };
 

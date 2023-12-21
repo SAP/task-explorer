@@ -1,10 +1,11 @@
-import { ConfigurationTarget, Uri, window, workspace } from "vscode";
+import { Uri, window, workspace } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { cleanTasks } from "../utils/ws-folder";
 import { cloneDeep, filter, find, map } from "lodash";
+import { updateTasksConfiguration } from "../../src/utils/task-serializer";
 
 export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
   try {
@@ -28,7 +29,7 @@ export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
       const copyTask = cloneDeep(found);
       copyTask.label = copyName;
       tasks.push(copyTask);
-      await tasksConfig.update("tasks", tasks, ConfigurationTarget.WorkspaceFolder);
+      await updateTasksConfiguration(task.__wsFolder, tasks);
     } else {
       throw new Error(messages.configuration_task_not_found(task.label));
     }

@@ -5,8 +5,9 @@ import { expect } from "chai";
 import { restore, stub } from "sinon";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { showOpenDialog } from "../../src/utils/path-dialog";
-import { editTask } from "../../src/commands/edit-task";
+import { editTreeItemTask } from "../../src/commands/edit-task";
 import { disposeTaskEditorPanel } from "../../src/panels/panels-handler";
+import { MockTasksProvider } from "./mockTasksProvider";
 
 describe("showOpenFileDialog function", () => {
   it("returns expected file path", async () => {
@@ -45,7 +46,7 @@ describe("showOpenFileDialog function", () => {
         __wsFolder: "path",
         __index: 0,
       };
-      await editTask(task1, readFile);
+      await editTreeItemTask(new MockTasksProvider([task1]), readFile, task1);
     });
 
     afterEach(() => {

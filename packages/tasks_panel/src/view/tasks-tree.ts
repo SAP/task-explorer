@@ -1,5 +1,5 @@
-import { filter, map, uniq, sortBy, isMatch } from "lodash";
-import { IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "./task-tree-item";
+import { filter, map, uniq, sortBy, isMatch, isEmpty } from "lodash";
+import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "./task-tree-item";
 import {
   Event,
   EventEmitter,
@@ -37,10 +37,12 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
     return parent ? filter(tasks, ["__wsFolder", parent.fqn]) : tasks;
   }
 
-  private getIntents(tasks: ConfiguredTask[], parent?: ProjectTreeItem): IntentTreeItem[] {
+  private getIntents(tasks: ConfiguredTask[], parent: ProjectTreeItem): IntentTreeItem[] {
     const intents = sortBy(uniq(map(this.filterByFolder(tasks, parent), "__intent")));
     getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_BRANCHES("intent", intents.length));
-    return map(intents, (_) => new IntentTreeItem(_, TreeItemCollapsibleState.Collapsed, parent));
+    return !isEmpty(intents)
+      ? map(intents, (_) => new IntentTreeItem(_, TreeItemCollapsibleState.Expanded, parent))
+      : [new EmptyTaskTreeItem(parent)];
   }
 
   private getWorkspaces(wsFolders: string[]): IntentTreeItem[] {
@@ -49,16 +51,16 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
       wsFolders,
       (wsFolder) =>
         new ProjectTreeItem(
+          /* istanbul ignore next */
           workspace.getWorkspaceFolder(Uri.file(wsFolder))?.name ?? "",
           wsFolder,
-          TreeItemCollapsibleState.Collapsed
+          TreeItemCollapsibleState.Expanded
         )
     );
   }
 
-  private getRoots(tasks: ConfiguredTask[]): TreeItem[] {
-    const wsFolders = uniq(map(tasks, "__wsFolder"));
-    return wsFolders.length === 1 ? this.getIntents(tasks) : this.getWorkspaces(wsFolders);
+  private getRoots(): TreeItem[] {
+    return this.getWorkspaces(map(workspace.workspaceFolders, (_) => _.uri.fsPath));
   }
 
   private async getIntentChildren(tasks: ConfiguredTask[], element: TreeItem) {
@@ -82,7 +84,7 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
   public async getChildren(element?: TreeItem): Promise<TreeItem[]> {
     const tasks = await this.tasksProvider.getConfiguredTasks();
     if (element === undefined) {
-      return this.getRoots(tasks);
+      return this.getRoots();
     } else if (element instanceof ProjectTreeItem) {
       return this.getIntents(tasks, element);
     } else {

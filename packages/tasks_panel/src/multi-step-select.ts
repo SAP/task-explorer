@@ -12,7 +12,8 @@ import {
 } from "vscode";
 import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
 import { messages } from "./i18n/messages";
-import { FioriProjectInfo, getFioriE2ePickItems } from "./misc/fiori-e2e-config";
+import { ElementTreeItem, IntentTreeItem, ProjectTreeItem } from "./view/task-tree-item";
+import { ProjectConfigInfo, composeDeploymentConfigLabel, getConfigDeployPickItems } from "./misc/common-e2e-config";
 
 const miscItem = { label: "$(list-unordered)", description: MISC, type: "intent" };
 
@@ -24,32 +25,52 @@ function grabProjectItems(tasks: ConfiguredTask[], project?: string): QuickPickI
   });
 }
 
-async function grabTasksByGroup(tasks: ConfiguredTask[], project: string): Promise<QuickPickItem[]> {
-  function toFioriE2ePickItems(items: FioriProjectInfo[]): QuickPickItem[] {
+async function grabTasksByGroup(
+  tasks: ConfiguredTask[],
+  project: string,
+  group?: string | undefined
+): Promise<QuickPickItem[]> {
+  function toConfigDeployE2ePickItems(items: ProjectConfigInfo[]): QuickPickItem[] {
     return map(items, (item) => {
       return {
-        label: `Define Deployment parameters - ${item.project || item.wsFolder}`,
+        label: "Define Deployment parameters",
+        detail: `${item.project || item.wsFolder}`,
         ...item,
       };
     });
   }
+
   const pickItems: any[] = [];
-  const fioriDeploymentParamItems = toFioriE2ePickItems(await getFioriE2ePickItems(project));
-  if (!isEmpty(fioriDeploymentParamItems)) {
-    pickItems.push({ label: "Fiori Configuration", kind: QuickPickItemKind.Separator });
-    pickItems.push(...fioriDeploymentParamItems);
+  const deploymentParamItems = !group ? toConfigDeployE2ePickItems(await getConfigDeployPickItems(project)) : [];
+  if (!isEmpty(deploymentParamItems)) {
+    const groupByType = groupBy(deploymentParamItems, "type");
+    each(keys(groupByType), (key) => {
+      pickItems.push({ label: composeDeploymentConfigLabel(key), kind: QuickPickItemKind.Separator });
+      pickItems.push(...groupByType[key]);
+    });
   }
+
   const tasksByProject = filter(tasks, ["__wsFolder", project]);
-  each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent) => {
+  each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent: string) => {
     // add a group separator
     if (isMatchDeploy(intent) || isMatchBuild(intent)) {
-      if (isEmpty(fioriDeploymentParamItems)) {
-        // fiori projects workaround: hide `Build`/`Deploy` npm tasks if fiori e2e deployment configuration needed
-        pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
-        pickItems.push(...filter(tasksByProject, ["__intent", intent]));
+      if (isEmpty(deploymentParamItems)) {
+        if (!group || group.toLowerCase() === intent.toLowerCase()) {
+          // fiori projects workaround: hide `Build`/`Deploy` npm tasks if fiori e2e deployment configuration needed
+          pickItems.push({ label: intent, kind: QuickPickItemKind.Separator });
+          pickItems.push(
+            ...compact(
+              map(tasksByProject, (_) => {
+                if (_.__intent === intent) {
+                  return extend({}, { ..._ }, { description: _.type }, _.description ? { detail: _.description } : {});
+                }
+              })
+            )
+          );
+        }
       }
     } else {
-      if (!find(pickItems, miscItem)) {
+      if (!group && !find(pickItems, miscItem)) {
         // add a special item (once) --> 'Miscellaneous' group
         pickItems.push({ label: MISC, kind: QuickPickItemKind.Separator });
         pickItems.push(miscItem);
@@ -61,13 +82,17 @@ async function grabTasksByGroup(tasks: ConfiguredTask[], project: string): Promi
 
 function grabMiscTasksByProject(tasks: ConfiguredTask[], project: string): QuickPickItem[] {
   const tasksByProject = filter(tasks, ["__wsFolder", project]);
-  return filter(tasksByProject, (_) => {
-    return !isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent);
-  });
+  return compact(
+    map(tasksByProject, (_) => {
+      if (!isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent)) {
+        return { ..._, description: _.type };
+      }
+    })
+  );
 }
 
 /* istanbul ignore next */
-export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: string): Promise<any> {
+export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: ElementTreeItem): Promise<any> {
   interface State {
     title: string;
     step: number;
@@ -77,11 +102,32 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
     task: QuickPickItem;
   }
 
+  function getContextProject(): string | undefined {
+    let project;
+    if (treeItem instanceof ProjectTreeItem) {
+      project = treeItem.fqn;
+    } else if (treeItem instanceof IntentTreeItem) {
+      project = (treeItem.parent as ProjectTreeItem)?.fqn;
+    }
+    return project;
+  }
+
+  function getContextIntent(): string | undefined {
+    if (treeItem instanceof IntentTreeItem) {
+      return treeItem.label?.toString();
+    }
+  }
+
   async function collectInputs(): Promise<State> {
     const state = {} as Partial<State>;
-    const projects = grabProjectItems(tasks, project);
+    const projects = grabProjectItems(tasks, getContextProject());
     let step: InputStep;
-    if (size(projects) > 1) {
+
+    if (getContextIntent() === MISC) {
+      state.project = find(projects, ["description", getContextProject()]) || projects[0];
+      state.taskByGroup = miscItem;
+      step = (input) => pickMiscTask(input, state);
+    } else if (size(projects) > 1) {
       step = (input) => pickProjects(input, state);
     } else {
       state.project = projects[0];
@@ -92,7 +138,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   }
 
   async function pickProjects(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = grabProjectItems(tasks, project);
+    const pickItems = grabProjectItems(tasks, getContextProject());
     state.project = await input.showQuickPick({
       placeholder: messages.create_task_pick_project_placeholder,
       items: pickItems,
@@ -103,7 +149,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   }
 
   async function pickTaskByGroup(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = await grabTasksByGroup(tasks, state.project?.description as string);
+    const pickItems = await grabTasksByGroup(tasks, state.project?.description ?? "", getContextIntent());
     state.taskByGroup = await input.showQuickPick({
       placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
@@ -118,7 +164,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
   }
 
   async function pickMiscTask(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = grabMiscTasksByProject(tasks, state.project?.description as string);
+    const pickItems = grabMiscTasksByProject(tasks, state.project?.description ?? "");
     state.task = await input.showQuickPick({
       placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
@@ -135,7 +181,9 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], project?: str
     });
   }
 
-  return collectInputs();
+  const state = await collectInputs();
+  delete state.task?.description; // supposed added for a QuickPick purpose
+  return state;
 }
 
 class InputFlowAction {

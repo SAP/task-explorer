@@ -13,7 +13,12 @@
         "--extensionDevelopmentPath=${workspaceRoot}/packages/tasks_panel",
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode_task_contrib"
       ],
-      "outFiles": ["${workspaceRoot}/dist/src/**/*.js"]
+      "outFiles": ["${workspaceRoot}/dist/src/**/*.js"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/packages/tasks_panel/**",
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
     },
     {
       "type": "node",

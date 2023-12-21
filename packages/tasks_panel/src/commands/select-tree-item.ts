@@ -21,8 +21,10 @@ export async function selectTreeItem(
       if (treeItem) {
         return view.reveal(treeItem, { select: true, focus: true, expand: true });
       } else {
-        getLogger().warn(messages.EDIT_TASK_NOT_FOUND(serializeTask(task)));
+        getLogger().warn(messages.TASK_NOT_FOUND(serializeTask(task)));
       }
     });
+  } else {
+    getLogger().debug(`Task not found or unsupported.`, { label: task.label });
   }
 }

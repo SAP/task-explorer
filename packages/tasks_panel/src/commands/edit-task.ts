@@ -1,41 +1,28 @@
-import { window } from "vscode";
+import { commands, window } from "vscode";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { getSWA } from "../utils/swa";
-import { createTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
-import { ITasksProvider } from "../services/definitions";
-import { find, has, isMatch } from "lodash";
-import { serializeTask } from "../utils/task-serializer";
-import { getLogger } from "../logger/logger-wrapper";
+import { find, isMatch } from "lodash";
+import { createTaskEditorPanel, getTaskEditorPanel, getTaskInProcess } from "../panels/panels-handler";
+import { ITasksProvider } from "../../src/services/definitions";
+import { getLogger } from "../../src/logger/logger-wrapper";
 
 export async function editTreeItemTask(
-  tasksProvider: ITasksProvider,
+  taskProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
-  treeItem: TaskTreeItem
+  task: ConfiguredTask
 ): Promise<void> {
-  function isConfiguredTask(task: ConfiguredTask): boolean {
-    return has(task, "__intent");
-  }
-  let task = treeItem.command?.arguments?.[0];
-  const isTaskAttached = !!task;
-
-  if (task && !isConfiguredTask(task)) {
-    // request for edit task programmatically
-    task = find(await tasksProvider.getConfiguredTasks(), (_) => {
-      return isMatch(_, task);
-    });
-  }
-
-  if (task) {
-    return editTask(task, readResource);
-  } else if (isTaskAttached) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified above
-    getLogger().debug(messages.EDIT_TASK_NOT_FOUND(serializeTask(treeItem.command!.arguments![0])));
+  const matchingTask = find(await taskProvider.getConfiguredTasks(), (_) => {
+    return isMatch(_, task);
+  });
+  if (matchingTask) {
+    return editTask(matchingTask, readResource);
+  } else {
+    getLogger().debug(`Task edit: requested task not found`, { label: task.label });
   }
 }
 
-export async function editTask(task: ConfiguredTask, readResource: (file: string) => Promise<string>): Promise<void> {
+async function editTask(task: ConfiguredTask, readResource: (file: string) => Promise<string>): Promise<void> {
   getSWA().track(messages.SWA_EDIT_TASK_EVENT(), [
     messages.SWA_TASK_EXPLORER_PARAM(),
     task.__intent,
@@ -54,6 +41,8 @@ export async function editTask(task: ConfiguredTask, readResource: (file: string
       messages.DISCARD_CHANGES_BUTTON_TEXT()
     );
     if (decision !== messages.DISCARD_CHANGES_BUTTON_TEXT()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- confirmed by validating of taskInProcess, which is resolved by getTaskEditorPanel()
+      void commands.executeCommand("tasks-explorer.tree.select", getTaskEditorPanel()!.getLoadedTask());
       return;
     }
   }

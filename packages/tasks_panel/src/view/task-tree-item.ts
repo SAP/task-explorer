@@ -3,6 +3,7 @@ import { TreeItem, TreeItemCollapsibleState, Command, tasks, ThemeIcon } from "v
 import { isMatchBuild, isMatchDeploy } from "../../src/utils/ws-folder";
 
 type TaskStatus = "idle" | "running";
+export type ElementTreeItem = ProjectTreeItem | IntentTreeItem | TaskTreeItem;
 
 class TreeTooltiplessItem extends TreeItem {
   constructor(label: string, collapsibleState: TreeItemCollapsibleState) {
@@ -25,6 +26,7 @@ class BranchTreeItem extends TreeTooltiplessItem {
 export class ProjectTreeItem extends BranchTreeItem {
   constructor(label: string, public fqn: string, collapsibleState: TreeItemCollapsibleState) {
     super(label, collapsibleState, "project");
+    this.iconPath = new ThemeIcon("folder");
   }
 }
 export class IntentTreeItem extends BranchTreeItem {
@@ -53,6 +55,18 @@ export class TaskTreeItem extends TreeTooltiplessItem {
   }
 }
 
+export class EmptyTaskTreeItem extends TreeTooltiplessItem {
+  constructor(public readonly parent: ProjectTreeItem) {
+    super("Create a task", TreeItemCollapsibleState.None);
+    this.iconPath = getIcon();
+    this.command = {
+      command: "tasks-explorer.createTask",
+      title: "Create Task",
+      arguments: [parent],
+    };
+  }
+}
+
 function getTaskStatus(task: any): TaskStatus {
   return find(tasks.taskExecutions, (_) => {
     return _.task.name === task.label && _.task.definition.type === task.type;
@@ -61,8 +75,10 @@ function getTaskStatus(task: any): TaskStatus {
     : "idle";
 }
 
-function getIcon(intent: string): ThemeIcon {
-  if (isMatchDeploy(intent)) {
+function getIcon(intent?: string): ThemeIcon {
+  if (!intent) {
+    return new ThemeIcon("add");
+  } else if (isMatchDeploy(intent)) {
     return new ThemeIcon("rocket");
   } else if (isMatchBuild(intent)) {
     return new ThemeIcon("package");
