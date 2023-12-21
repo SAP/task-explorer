@@ -55,8 +55,7 @@ export class TasksSelection {
     getLogger().debug(messages.CREATE_TASK(serializeTask(selectedTask)));
 
     newTask.__index = index;
-    return createTaskEditorPanel(newTask, this.readResource).then(() => {
-      void commands.executeCommand("tasks-explorer.tree.select", selectedTask);
-    });
+    await createTaskEditorPanel(newTask, this.readResource);
+    void commands.executeCommand("tasks-explorer.tree.select", selectedTask);
   }
 }

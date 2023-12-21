@@ -4,7 +4,7 @@ import {
   FIORI_DEPLOYMENT_CONFIG,
   HANA_DEPLOYMENT_CONFIG,
   ProjectInfo,
-  ProjectTypes,
+  ProjTypes,
   collectProjects,
 } from "./e2e-config";
 import { FioriProjectConfigInfo, fioriE2eConfig, getFioriE2ePickItems } from "./fiori-e2e-config";
@@ -16,11 +16,9 @@ import { compact, reduce } from "lodash";
 export type ProjectConfigInfo = FioriProjectConfigInfo | CapProjectConfigInfo | HanaProjectConfigInfo;
 
 export function isDeploymentConfigTask(task: TaskDefinition): boolean {
-  return (
-    task.type === FIORI_DEPLOYMENT_CONFIG || task.type === HANA_DEPLOYMENT_CONFIG || task.type === CAP_DEPLOYMENT_CONFIG
-  );
+  return [FIORI_DEPLOYMENT_CONFIG, HANA_DEPLOYMENT_CONFIG, CAP_DEPLOYMENT_CONFIG].includes(task.type);
 }
-export function completeDeployConfig(task: any): Promise<void> {
+export async function completeDeployConfig(task: any): Promise<void> {
   if (task.type === FIORI_DEPLOYMENT_CONFIG) {
     return fioriE2eConfig({ wsFolder: task.wsFolder, project: task.project });
   } else if (task.type === CAP_DEPLOYMENT_CONFIG) {
@@ -30,23 +28,22 @@ export function completeDeployConfig(task: any): Promise<void> {
   }
 
   getLogger().debug("completeDeployConfig:: unsupported configuration task type", { type: task.type });
-  return Promise.resolve();
 }
 
 export async function getConfigDeployPickItems(project: string): Promise<ProjectConfigInfo[]> {
   const items = reduce(
     await collectProjects(project),
     (acc, info: ProjectInfo) => {
-      if (info.style === ProjectTypes.FIORI_FE) {
+      if (info.style === ProjTypes.FIORI_FE) {
         acc.push(getFioriE2ePickItems(info));
-      } else if (info.style === ProjectTypes.CAP) {
+      } else if (info.style === ProjTypes.CAP) {
         acc.push(getCapE2ePickItems(info));
-      } else if (info.style === ProjectTypes.HANA) {
+      } else if (info.style === ProjTypes.HANA) {
         acc.push(getHanaE2ePickItems(info));
       }
       return acc;
     },
-    [] as any[]
+    [] as Promise<ProjectConfigInfo | undefined>[]
   );
   return Promise.all(items).then((items) => compact(items));
 }

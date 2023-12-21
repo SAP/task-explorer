@@ -121,7 +121,7 @@ describe("TaskEditorPanel class", () => {
       expect(panel2).to.not.eq(panel1);
     });
 
-    it("creates an instance on each instantiation, when it not the same", async () => {
+    it("verify a two created instances are the same instance if they are created with the same task", async () => {
       await createTaskEditorPanel(
         {
           label: "aaa",

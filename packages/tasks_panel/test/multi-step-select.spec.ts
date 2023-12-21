@@ -3,7 +3,7 @@ import { mockVscode, testVscode } from "./utils/mockVSCode";
 
 mockVscode("/src/multi-step-select");
 import { __internal } from "../src/multi-step-select";
-import { cloneDeep, map, uniq } from "lodash";
+import { map, uniq } from "lodash";
 import { MISC } from "../src/utils/ws-folder";
 import * as e2eConfig from "../src/misc/common-e2e-config";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
@@ -107,13 +107,13 @@ describe("multi-step-selection scope", () => {
 
   it("grabTasksByGroup - `build` group required", async () => {
     mockFioriE2eCinfig.expects("getConfigDeployPickItems").never();
-    expect(await __internal.grabTasksByGroup(tasks, roots[0], "BuIld")).to.be.deep.equal([
+    expect(await __internal.grabTasksByGroup(tasks, roots[0], "BuIld")).to.deep.equal([
       { label: taskContributed1.__intent, kind: testVscode.QuickPickItemKind.Separator },
-      Object.assign(
-        cloneDeep(taskContributed1),
-        { description: taskContributed1.type },
-        { detail: taskContributed1.description }
-      ),
+      {
+        ...taskContributed1,
+        ...{ description: taskContributed1.type },
+        ...{ detail: taskContributed1.description },
+      },
     ]);
   });
 
@@ -121,7 +121,7 @@ describe("multi-step-selection scope", () => {
     mockFioriE2eCinfig.expects("getConfigDeployPickItems").never();
     expect(await __internal.grabTasksByGroup(tasks, roots[2], "deplOy")).to.be.deep.equal([
       { label: taskContributed5.__intent, kind: testVscode.QuickPickItemKind.Separator },
-      Object.assign(cloneDeep(taskContributed5), { description: taskContributed5.type }),
+      { ...taskContributed5, ...{ description: taskContributed5.type } },
     ]);
   });
 
@@ -134,11 +134,11 @@ describe("multi-step-selection scope", () => {
     mockFioriE2eCinfig.expects("getConfigDeployPickItems").resolves([]);
     expect(await __internal.grabTasksByGroup(tasks, roots[0])).to.be.deep.equal([
       { label: taskContributed1.__intent, kind: testVscode.QuickPickItemKind.Separator },
-      Object.assign(
-        cloneDeep(taskContributed1),
-        { description: taskContributed1.type },
-        { detail: taskContributed1.description }
-      ),
+      {
+        ...taskContributed1,
+        ...{ description: taskContributed1.type },
+        ...{ detail: taskContributed1.description },
+      },
       { label: MISC, kind: testVscode.QuickPickItemKind.Separator },
       __internal.miscItem,
     ]);
@@ -167,8 +167,8 @@ describe("multi-step-selection scope", () => {
 
   it("grabMiscTasksByProject", async () => {
     expect(__internal.grabMiscTasksByProject(tasks, roots[1])).to.be.deep.equal([
-      Object.assign(taskNotContributed, { description: taskNotContributed.type }),
-      Object.assign(taskContributed4, { description: taskContributed4.type }),
+      { ...taskNotContributed, ...{ description: taskNotContributed.type } },
+      { ...taskContributed4, ...{ description: taskContributed4.type } },
     ]);
   });
 

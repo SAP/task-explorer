@@ -124,34 +124,34 @@ describe("common-e2e-config scope", () => {
         .once()
         .withExactArgs(project)
         .resolves([
-          Object.assign({}, info, { style: e2eConfig.ProjectTypes.FIORI_FE }, { project: "project1" }),
-          Object.assign({}, info, { style: e2eConfig.ProjectTypes.CAP }, { project: "project2" }),
-          Object.assign({}, info, { style: "other" }, { project: "project4" }),
-          Object.assign({}, info, { style: e2eConfig.ProjectTypes.HANA }, { project: "project3" }),
+          { ...info, ...{ style: e2eConfig.ProjTypes.FIORI_FE }, ...{ project: "project1" } },
+          { ...info, ...{ style: e2eConfig.ProjTypes.CAP }, ...{ project: "project2" } },
+          { ...info, ...{ style: "other" }, ...{ project: "project4" } },
+          { ...info, ...{ style: e2eConfig.ProjTypes.HANA }, ...{ project: "project3" } },
         ]);
 
       mockHanaE2eConfig
         .expects("getHanaE2ePickItems")
         .once()
-        .withExactArgs(Object.assign({}, info, { style: e2eConfig.ProjectTypes.HANA }, { project: "project3" }))
-        .resolves(Object.assign({}, info, { type: e2eConfig.HANA_DEPLOYMENT_CONFIG }, { project: "project3" }));
+        .withExactArgs({ ...info, ...{ style: e2eConfig.ProjTypes.HANA }, ...{ project: "project3" } })
+        .resolves({ ...info, ...{ type: e2eConfig.HANA_DEPLOYMENT_CONFIG }, ...{ project: "project3" } });
 
       mockFioriE2eConfig
         .expects("getFioriE2ePickItems")
         .once()
-        .withExactArgs(Object.assign({}, info, { style: e2eConfig.ProjectTypes.FIORI_FE }, { project: "project1" }))
-        .resolves(Object.assign({}, info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG }, { project: "project1" }));
+        .withExactArgs({ ...info, ...{ style: e2eConfig.ProjTypes.FIORI_FE }, ...{ project: "project1" } })
+        .resolves({ ...info, ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG }, ...{ project: "project1" } });
 
       mockCapE2eConfig
         .expects("getCapE2ePickItems")
         .once()
-        .withExactArgs(Object.assign({}, info, { style: e2eConfig.ProjectTypes.CAP }, { project: "project2" }))
-        .resolves(Object.assign({}, info, { type: e2eConfig.CAP_DEPLOYMENT_CONFIG }, { project: "project2" }));
+        .withExactArgs({ ...info, ...{ style: e2eConfig.ProjTypes.CAP }, ...{ project: "project2" } })
+        .resolves({ ...info, ...{ type: e2eConfig.CAP_DEPLOYMENT_CONFIG }, ...{ project: "project2" } });
 
       expect(await getConfigDeployPickItems(project)).to.be.deep.equal([
-        Object.assign({}, info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG }, { project: "project1" }),
-        Object.assign({}, info, { type: e2eConfig.CAP_DEPLOYMENT_CONFIG }, { project: "project2" }),
-        Object.assign({}, info, { type: e2eConfig.HANA_DEPLOYMENT_CONFIG }, { project: "project3" }),
+        { ...info, ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG }, ...{ project: "project1" } },
+        { ...info, ...{ type: e2eConfig.CAP_DEPLOYMENT_CONFIG }, ...{ project: "project2" } },
+        { ...info, ...{ type: e2eConfig.HANA_DEPLOYMENT_CONFIG }, ...{ project: "project3" } },
       ]);
     });
   });

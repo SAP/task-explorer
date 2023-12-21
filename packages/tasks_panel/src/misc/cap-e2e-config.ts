@@ -3,15 +3,14 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { getLogger } from "../../src/logger/logger-wrapper";
 import {
   CAP_DEPLOYMENT_CONFIG,
-  LabelType,
   ProjectInfo,
-  ProjectTypes,
+  ProjTypes,
   addTaskDefinition,
   areResourcesReady,
   generateMtaDeployTasks,
-  isFileExist,
+  doesFileExist,
   isTasksSettled,
-  waitForResource,
+  waitForFileResource,
 } from "./e2e-config";
 import { last } from "lodash";
 
@@ -19,7 +18,6 @@ export interface CapProjectConfigInfo extends ProjectInfo {
   type: string;
 }
 
-/* istanbul ignore next */
 function invokeCommand(config: { cmd: string; args: string[]; cwd: string }, additionalArgs: string[]): Promise<void> {
   function executeSpawn(
     config: { cmd: string; args: string[]; cwd: string },
@@ -61,42 +59,42 @@ export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectC
 
   async function isConfigured(): Promise<boolean> {
     return (
-      (await isFileExist(Uri.joinPath(Uri.file(info.wsFolder), info.project, "mta.yaml"))) &&
-      isTasksSettled(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, LabelType.sequence))
+      (await doesFileExist(Uri.joinPath(Uri.file(info.wsFolder), info.project, "mta.yaml"))) &&
+      isTasksSettled(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, "sequence"))
     );
   }
 
-  if (info.style !== ProjectTypes.CAP) {
-    return;
-  }
-
-  if (await isCdsAvailable()) {
-    if (!(await isConfigured())) {
-      return Object.assign(info, { type: CAP_DEPLOYMENT_CONFIG });
-    }
+  if (info.style === ProjTypes.CAP && (await isCdsAvailable()) && !(await isConfigured())) {
+    return { ...info, ...{ type: CAP_DEPLOYMENT_CONFIG } };
   }
 }
 
 export async function capE2eConfig(data: { wsFolder: string; project: string }): Promise<void> {
-  let mtaYaml = Promise.resolve(true);
-  if (!(await isFileExist(Uri.joinPath(Uri.file(data.wsFolder), data.project, "mta.yaml")))) {
-    mtaYaml = waitForResource(
-      new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
-      false,
-      false,
-      true
+  const resourcesPromises: Promise<boolean>[] = [];
+  if (!(await doesFileExist(Uri.joinPath(Uri.file(data.wsFolder), data.project, "mta.yaml")))) {
+    resourcesPromises.push(
+      waitForFileResource(
+        new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
+        false,
+        false,
+        true
+      )
     );
     await invokeCommand(
       { cwd: Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath, cmd: "cds", args: ["add", "mta"] },
       []
     );
   }
-  if (await areResourcesReady([mtaYaml])) {
-    const _tasks = await generateMtaDeployTasks(data.wsFolder, data.project);
-    return addTaskDefinition(data.wsFolder, _tasks).then(async () => {
-      return commands.executeCommand("tasks-explorer.editTask", last(_tasks)).then(() => {
-        return commands.executeCommand("tasks-explorer.tree.select", last(_tasks));
-      });
+  if (await areResourcesReady(resourcesPromises)) {
+    const mtaDeployTasks = await generateMtaDeployTasks(data.wsFolder, data.project);
+    await addTaskDefinition(data.wsFolder, mtaDeployTasks);
+    await commands.executeCommand("tasks-explorer.editTask", last(mtaDeployTasks));
+    await commands.executeCommand("tasks-explorer.tree.select", last(mtaDeployTasks));
+  } else {
+    getLogger().error("capE2eConfig: failed to configure deployment tasks", {
+      wsFolder: data.wsFolder,
+      project: data.project,
+      file: "mta.yaml",
     });
   }
 }

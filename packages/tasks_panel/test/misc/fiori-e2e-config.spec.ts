@@ -63,7 +63,7 @@ builder:
     const info: e2eConfig.ProjectInfo = {
       wsFolder: "/test/projects",
       project: "unit-test",
-      style: e2eConfig.ProjectTypes.FIORI_FE,
+      style: e2eConfig.ProjTypes.FIORI_FE,
     };
     const uriUi5DeployYaml = testVscode.Uri.joinPath(
       testVscode.Uri.file(info.wsFolder),
@@ -79,17 +79,19 @@ builder:
     it("getFioriE2ePickItems - 'ui5-deploy.yaml' does not exist, config required", async () => {
       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).rejects(new Error());
-      expect(await getFioriE2ePickItems(info)).to.be.deep.equal(
-        Object.assign(info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG })
-      );
+      expect(await getFioriE2ePickItems(info)).to.be.deep.equal({
+        ...info,
+        ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG },
+      });
     });
 
     it("getFioriE2ePickItems - fiori project found, project relative path is empty (sigle root), 'ui5-deploy.yaml' does not exist, config required", async () => {
       mockCommands.expects("getCommands").resolves(["sap.ux.appGenerator.launchDeployConfig"]);
       mockWorkspaceFs.expects("stat").withExactArgs(uriUi5DeployYaml).rejects(new Error());
-      expect(await getFioriE2ePickItems(info)).to.be.deep.equal(
-        Object.assign(info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG })
-      );
+      expect(await getFioriE2ePickItems(info)).to.be.deep.equal({
+        ...info,
+        ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG },
+      });
     });
 
     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist but unsupported target", async () => {
@@ -102,9 +104,10 @@ builder:
         .expects("readFile")
         .withExactArgs(uriUi5DeployYaml)
         .resolves(Buffer.from(wrongUi5DeployYaml, `utf8`));
-      expect(await getFioriE2ePickItems(info)).to.be.deep.equal(
-        Object.assign(info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG })
-      );
+      expect(await getFioriE2ePickItems(info)).to.be.deep.equal({
+        ...info,
+        ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG },
+      });
     });
 
     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist but empty", async () => {
@@ -115,9 +118,10 @@ builder:
         .expects("readFile")
         .withExactArgs(uriUi5DeployYaml)
         .resolves(Buffer.from(wrongUi5DeployYaml, `utf8`));
-      expect(await getFioriE2ePickItems(info)).to.be.deep.equal(
-        Object.assign(info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG })
-      );
+      expect(await getFioriE2ePickItems(info)).to.be.deep.equal({
+        ...info,
+        ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG },
+      });
     });
 
     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'cf', config isn't required", async () => {
@@ -149,9 +153,10 @@ builder:
           .withExactArgs(testVscode.Uri.joinPath(testVscode.Uri.file(info.wsFolder), info.project, v))
           .resolves(k % 2 === 0);
       });
-      expect(await getFioriE2ePickItems(info)).to.be.deep.equal(
-        Object.assign(info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG })
-      );
+      expect(await getFioriE2ePickItems(info)).to.be.deep.equal({
+        ...info,
+        ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG },
+      });
     });
 
     it("getFioriE2ePickItems - fiori project found, 'ui5-deploy.yaml' exist, target 'abap', config isn't required", async () => {
@@ -185,9 +190,10 @@ builder:
           )
           .resolves(k % 2 !== 0);
       });
-      expect(await getFioriE2ePickItems(info)).to.be.deep.equal(
-        Object.assign(info, { type: e2eConfig.FIORI_DEPLOYMENT_CONFIG })
-      );
+      expect(await getFioriE2ePickItems(info)).to.be.deep.equal({
+        ...info,
+        ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG },
+      });
     });
   });
 

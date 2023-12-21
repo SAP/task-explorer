@@ -1,5 +1,4 @@
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
-import { randomBytes } from "crypto";
 import escapeStringRegexp = require("escape-string-regexp");
 import { filter, map } from "lodash";
 import { getConfiguredTasksFromCache } from "../../src/services/tasks-provider";
@@ -7,13 +6,6 @@ import { ConfigurationTarget, TaskDefinition, Uri, commands, languages, window, 
 
 export function serializeTask(task: ConfiguredTask): string {
   return JSON.stringify(task);
-}
-
-export function generateUniqueCode(): string {
-  function generateGroup(): string {
-    return randomBytes(2).toString("hex").toUpperCase();
-  }
-  return `${generateGroup()}-${generateGroup()}`;
 }
 
 export function getUniqueTaskLabel(label: string): string {

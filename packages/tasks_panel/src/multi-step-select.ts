@@ -62,7 +62,7 @@ async function grabTasksByGroup(
             ...compact(
               map(tasksByProject, (_) => {
                 if (_.__intent === intent) {
-                  return extend({ ..._ }, { description: _.type }, _.description ? { detail: _.description } : {});
+                  return extend({}, { ..._ }, { description: _.type }, _.description ? { detail: _.description } : {});
                 }
               })
             )
@@ -149,7 +149,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
   }
 
   async function pickTaskByGroup(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = await grabTasksByGroup(tasks, state.project?.description || "", getContextIntent());
+    const pickItems = await grabTasksByGroup(tasks, state.project?.description ?? "", getContextIntent());
     state.taskByGroup = await input.showQuickPick({
       placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
@@ -164,7 +164,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
   }
 
   async function pickMiscTask(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = grabMiscTasksByProject(tasks, state.project?.description || "");
+    const pickItems = grabMiscTasksByProject(tasks, state.project?.description ?? "");
     state.task = await input.showQuickPick({
       placeholder: messages.create_task_pick_task_placeholder,
       items: pickItems,
@@ -181,10 +181,9 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
     });
   }
 
-  return collectInputs().then((state) => {
-    delete state.task?.description; // supposed added for a QuickPick purpose
-    return state;
-  });
+  const state = await collectInputs();
+  delete state.task?.description; // supposed added for a QuickPick purpose
+  return state;
 }
 
 class InputFlowAction {

@@ -12,13 +12,13 @@ export async function editTreeItemTask(
   readResource: (file: string) => Promise<string>,
   task: ConfiguredTask
 ): Promise<void> {
-  const _task = find(await taskProvider.getConfiguredTasks(), (_) => {
+  const matchingTask = find(await taskProvider.getConfiguredTasks(), (_) => {
     return isMatch(_, task);
   });
-  if (_task) {
-    return editTask(_task, readResource);
+  if (matchingTask) {
+    return editTask(matchingTask, readResource);
   } else {
-    getLogger().debug(`Task edit:: requested task not found`, { label: task.label });
+    getLogger().debug(`Task edit: requested task not found`, { label: task.label });
   }
 }
 
@@ -41,7 +41,7 @@ async function editTask(task: ConfiguredTask, readResource: (file: string) => Pr
       messages.DISCARD_CHANGES_BUTTON_TEXT()
     );
     if (decision !== messages.DISCARD_CHANGES_BUTTON_TEXT()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- verified by condition above
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- confirmed by validating of taskInProcess, which is resolved by getTaskEditorPanel()
       void commands.executeCommand("tasks-explorer.tree.select", getTaskEditorPanel()!.getLoadedTask());
       return;
     }
