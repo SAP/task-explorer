@@ -2,7 +2,7 @@ import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import escapeStringRegexp = require("escape-string-regexp");
 import { filter, map } from "lodash";
 import { getConfiguredTasksFromCache } from "../../src/services/tasks-provider";
-import { ConfigurationTarget, TaskDefinition, Uri, commands, languages, window, workspace } from "vscode";
+import { ConfigurationTarget, TaskDefinition, Uri, languages, workspace } from "vscode";
 
 export function serializeTask(task: ConfiguredTask): string {
   return JSON.stringify(task);
@@ -60,4 +60,8 @@ export async function updateTasksConfiguration(
   setTimeout(() => {
     handler.dispose(); // unregister for diagnostic notifications after flow finished
   }, 1000);
+}
+
+export function exceptionToString(e: any) {
+  return e?.toString?.() ?? "unknown error";
 }

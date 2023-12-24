@@ -1,17 +1,17 @@
-import { ExtensionContext, TreeItem, TreeView, window } from "vscode";
+import { ExtensionContext, window } from "vscode";
 import { TasksTree } from "../view/tasks-tree";
 import { ITasksProvider } from "../services/definitions";
-import { runQaCommand } from "./action";
+import { runAction } from "./action";
+import { exceptionToString } from "../utils/task-serializer";
 
 export async function actionDeploy(
-  view: TreeView<TreeItem>,
   dataProvider: TasksTree,
   taskProvider: ITasksProvider,
   context: ExtensionContext
 ): Promise<void> {
   try {
-    await runQaCommand("deploy", dataProvider, taskProvider, context);
+    await runAction("deploy", dataProvider, taskProvider, context);
   } catch (error) {
-    void window.showWarningMessage((error as any).message);
+    void window.showErrorMessage(exceptionToString(error));
   }
 }

@@ -13,8 +13,8 @@ describe("IntentTreeItem class", () => {
 
   it("IntentTreeItem instance verifying", () => {
     const label = "my-label";
-    const item = new IntentTreeItem(label, TreeItemCollapsibleState.Expanded);
-    expect(item.collapsibleState).to.equal(TreeItemCollapsibleState.Expanded);
+    const item = new IntentTreeItem(label);
+    expect(item.collapsibleState).to.equal(TreeItemCollapsibleState.Collapsed);
     expect(item.label).to.equal(label);
     expect(item.contextValue).to.equal("intent");
     expect(item.tooltip).to.equal("");
@@ -94,7 +94,7 @@ describe("TaskTreeItem class", () => {
   });
 
   it("EmptyTreeItem instance - inpect", () => {
-    const parentItem = new ProjectTreeItem("dummy", "/home/dummy/project", TreeItemCollapsibleState.Expanded);
+    const parentItem = new ProjectTreeItem("dummy", "/home/dummy/project");
     const item = new EmptyTaskTreeItem(parentItem);
     expect(item.contextValue).to.be.undefined;
     expect(item.label).to.be.equal("Create a task");

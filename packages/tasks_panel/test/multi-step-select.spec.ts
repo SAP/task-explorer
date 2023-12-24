@@ -106,7 +106,7 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabTasksByGroup - `build` group required", async () => {
-    mockFioriE2eCinfig.expects("getConfigDeployPickItems").never();
+    mockFioriE2eCinfig.expects("getConfigDeployPickItems").resolves([]);
     expect(await __internal.grabTasksByGroup(tasks, roots[0], "BuIld")).to.deep.equal([
       { label: taskContributed1.__intent, kind: testVscode.QuickPickItemKind.Separator },
       {
@@ -118,7 +118,7 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabTasksByGroup - `deploy` group required", async () => {
-    mockFioriE2eCinfig.expects("getConfigDeployPickItems").never();
+    mockFioriE2eCinfig.expects("getConfigDeployPickItems").resolves([]);
     expect(await __internal.grabTasksByGroup(tasks, roots[2], "deplOy")).to.be.deep.equal([
       { label: taskContributed5.__intent, kind: testVscode.QuickPickItemKind.Separator },
       { ...taskContributed5, ...{ description: taskContributed5.type } },

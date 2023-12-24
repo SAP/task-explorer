@@ -1,4 +1,9 @@
-import { getUniqueTaskLabel, serializeTask, updateTasksConfiguration } from "../../src/utils/task-serializer";
+import {
+  exceptionToString,
+  getUniqueTaskLabel,
+  serializeTask,
+  updateTasksConfiguration,
+} from "../../src/utils/task-serializer";
 import { MockVSCodeInfo, mockVscode, resetTestVSCode, testVscode } from "./mockVSCode";
 import { expect } from "chai";
 import * as provider from "../../src/services/tasks-provider";
@@ -107,11 +112,7 @@ describe("task-serializer scope", () => {
       await callback({ uris: [{ path: "/my/folder/other/file.json" }] });
     });
 
-    it.skip("updateTasksConfiguration called, onDidChangeDiagnostics triggered, do not show problem selected", async () => {
-      mockWindow
-        .expects("showWarningMessage")
-        .withExactArgs(`There are tasks definitions errors. See the problems for details.`, "Show problems")
-        .resolves();
+    it("updateTasksConfiguration called, onDidChangeDiagnostics triggered, do not show problem selected", async () => {
       updateTasksConfiguration(wsFolder, [task]);
       const callback: (c) => Promise<void> = stubLanguages.args[0][0];
       await callback({ uris: [{ path: docPath }] });
@@ -127,6 +128,21 @@ describe("task-serializer scope", () => {
       updateTasksConfiguration(wsFolder, [task]);
       const callback: (c) => Promise<void> = stubLanguages.args[0][0];
       await callback({ uris: [{ path: docPath }] });
+    });
+  });
+
+  describe("exceptionToString method scope", () => {
+    it("Error type exception cathed", () => {
+      const err = new Error("error");
+      expect(exceptionToString(err)).to.equal(err.toString());
+    });
+
+    it("Empty object catched", () => {
+      expect(exceptionToString(Object.create(null))).to.equal("unknown error");
+    });
+
+    it("undefined value catched", () => {
+      expect(exceptionToString(undefined)).to.equal("unknown error");
     });
   });
 });

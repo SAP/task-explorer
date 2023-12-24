@@ -12,7 +12,6 @@ import { createSandbox, SinonMock, SinonSandbox } from "sinon";
 import { expect } from "chai";
 import { fail } from "assert";
 import { ProjectTreeItem } from "../../src/view/task-tree-item";
-import { TreeItemCollapsibleState } from "vscode";
 
 describe("Command createTask", () => {
   const tasks = [
@@ -127,7 +126,7 @@ describe("Command createTask", () => {
           prop1: "value 1.2",
         },
       ];
-      const projectItem = new ProjectTreeItem("project", "/root/home/test/proj", TreeItemCollapsibleState.Collapsed);
+      const projectItem = new ProjectTreeItem("project", "/root/home/test/proj");
       mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, projectItem);
       mockPanelHandler.expects("disposeTaskEditorPanel").atLeast(2);
       mockPanelHandler.expects("createTasksSelection").withExactArgs(tasks, readFile, undefined);

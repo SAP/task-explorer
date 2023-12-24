@@ -14,7 +14,7 @@ import {
   size,
   split,
 } from "lodash";
-import { getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
+import { exceptionToString, getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
 import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tools";
 import { getLogger } from "../../src/logger/logger-wrapper";
 import { sep } from "path";
@@ -167,7 +167,7 @@ export async function generateMtaDeployTasks(
         cfSpace: (await cfGetConfigFileField("SpaceFields", targetName))?.Name ?? "",
       };
     } catch (e: any) {
-      getLogger().debug(`Can not populate cf target details`, { reason: e.toString() });
+      getLogger().debug(`Can not populate cf target details`, { reason: exceptionToString(e) });
       return { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" };
     }
   }
