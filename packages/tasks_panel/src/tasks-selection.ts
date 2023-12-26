@@ -4,7 +4,7 @@ import { AppEvents } from "./app-events";
 import { getSWA } from "./utils/swa";
 import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
-import { getUniqueTaskLabel, serializeTask } from "./utils/task-serializer";
+import { exceptionToString, getUniqueTaskLabel, serializeTask } from "./utils/task-serializer";
 import { commands, window } from "vscode";
 import { createTaskEditorPanel } from "./panels/panels-handler";
 import { multiStepTaskSelect } from "./multi-step-select";
@@ -25,8 +25,8 @@ export class TasksSelection {
         return await (isDeploymentConfigTask(task) ? completeDeployConfig(task) : this.setSelectedTask(task));
       }
     } catch (e: any) {
-      getLogger().debug(`Task selection failed: ${e.toString()}`);
-      window.showErrorMessage(e.toString());
+      getLogger().debug(`Task selection failed: ${exceptionToString(e)}`);
+      window.showErrorMessage(exceptionToString(e));
     }
   }
   private async setSelectedTask(selectedTask: ConfiguredTask): Promise<void> {

@@ -12,7 +12,7 @@ import {
   doesFileExist,
   waitForFileResource,
 } from "./e2e-config";
-import { getUniqueTaskLabel } from "../../src/utils/task-serializer";
+import { exceptionToString, getUniqueTaskLabel } from "../../src/utils/task-serializer";
 
 enum FE_DEPLOY_TRG {
   ABAP = "abap",
@@ -42,7 +42,7 @@ async function detectDeployTarget(ui5DeployYaml: Uri): Promise<FE_DEPLOY_TRG | u
     }
     return find(yamlContext.builder.customTasks, ["name", "deploy-to-abap"]) ? FE_DEPLOY_TRG.ABAP : FE_DEPLOY_TRG.CF;
   } catch (e: any) {
-    getLogger().error(e.toString());
+    getLogger().error(exceptionToString(e));
   }
 }
 

@@ -57,7 +57,7 @@ describe("cap-e2e-config scope", () => {
         .withArgs("cds", ["help"], { cwd: info.wsFolder })
         .returns(fakeSpawnEventEmitter);
       setTimeout(() => fakeSpawnEventEmitter.stdout.emit("data", "cds help"));
-      setTimeout(() => fakeSpawnEventEmitter.emit("exit", 2), 200);
+      setTimeout(() => fakeSpawnEventEmitter.emit("exit", 2), 100);
       expect(await getCapE2ePickItems(info)).to.be.undefined;
     });
 

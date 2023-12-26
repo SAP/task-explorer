@@ -203,7 +203,14 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: { extensionPath: "path", subscriptions: { push: (disposable) => disposable } },
+  ExtensionContext: {
+    extensionPath: "path",
+    subscriptions: { push: (disposable) => disposable },
+    workspaceState: {
+      get: () => true,
+      update: () => true,
+    },
+  },
   TreeItem: class {
     constructor(public label: string, public collapsibleState: any) {}
   },
@@ -253,6 +260,11 @@ export const testVscode: any = {
           }),
         100
       );
+      return {
+        dispose: () => true,
+      };
+    },
+    onDidStartTask: () => {
       return {
         dispose: () => true,
       };

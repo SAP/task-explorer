@@ -4,7 +4,7 @@ import { TaskTreeItem } from "../view/task-tree-item";
 import { getSWA } from "../utils/swa";
 import { messages } from "../i18n/messages";
 import { getLogger } from "../logger/logger-wrapper";
-import { serializeTask } from "../utils/task-serializer";
+import { exceptionToString, serializeTask } from "../utils/task-serializer";
 import { window } from "vscode";
 
 export async function terminateTaskFromTree(treeItem: TaskTreeItem): Promise<void> {
@@ -22,7 +22,7 @@ export async function terminateTaskFromTree(treeItem: TaskTreeItem): Promise<voi
     await terminateVScodeTask(task);
     getLogger().debug(messages.TERMINATE_TASK(serializeTask(task)));
   } catch (e: any) {
-    getLogger().error(e.toString());
-    void window.showErrorMessage(e.toString());
+    getLogger().error(exceptionToString(e));
+    void window.showErrorMessage(exceptionToString(e));
   }
 }

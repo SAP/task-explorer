@@ -4,6 +4,7 @@ import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
 import { messages } from "../i18n/messages";
+import { exceptionToString } from "../utils/task-serializer";
 
 export class Contributors implements IContributors {
   private readonly eventHandlers: ITaskTypeEventHandler[] = [];
@@ -105,7 +106,7 @@ export class Contributors implements IContributors {
         });
       })
       .catch((e) => {
-        getLogger().error(e.toString());
+        getLogger().error(exceptionToString(e));
       })
       .finally(() => {
         void commands.executeCommand("setContext", "ext.isViewVisible", this.tasksEditorContributorsMap.size > 0);

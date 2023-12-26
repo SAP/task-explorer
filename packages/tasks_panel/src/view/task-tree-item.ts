@@ -24,13 +24,21 @@ class BranchTreeItem extends TreeTooltiplessItem {
   }
 }
 export class ProjectTreeItem extends BranchTreeItem {
-  constructor(label: string, public fqn: string, collapsibleState: TreeItemCollapsibleState) {
+  constructor(
+    label: string,
+    public fqn: string,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
+  ) {
     super(label, collapsibleState, "project");
     this.iconPath = new ThemeIcon("folder");
   }
 }
 export class IntentTreeItem extends BranchTreeItem {
-  constructor(label: string, collapsibleState: TreeItemCollapsibleState, parent?: TreeItem) {
+  constructor(
+    label: string,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
+    parent?: TreeItem
+  ) {
     super(label, collapsibleState, "intent", parent);
   }
 }

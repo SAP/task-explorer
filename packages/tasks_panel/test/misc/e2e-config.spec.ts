@@ -13,7 +13,7 @@ import { expect } from "chai";
 import { MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 import * as utils from "../../src/utils/task-serializer";
 import { afterEach } from "mocha";
-import { concat, extend, last, split } from "lodash";
+import { concat, last, split } from "lodash";
 import * as cfTools from "@sap/cf-tools/out/src/cf-local";
 import * as path from "path";
 
@@ -374,12 +374,11 @@ describe("e2e-config scope", () => {
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     };
-
     it("generateMtaDeployTasks - no cf target defined", async () => {
       mockCfTools.expects("cfGetTargets").resolves([]);
       expect(await generateMtaDeployTasks(wsFolder, project)).be.deep.equal([
         taskBuild,
-        extend(taskDeploy, { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" }),
+        { ...taskDeploy, ...{ cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" } },
       ]);
     });
 
@@ -387,7 +386,7 @@ describe("e2e-config scope", () => {
       mockCfTools.expects("cfGetTargets").resolves([{ label: "target1" }]);
       expect(await generateMtaDeployTasks(wsFolder, project)).be.deep.equal([
         taskBuild,
-        extend(taskDeploy, { cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" }),
+        { ...taskDeploy, ...{ cfTarget: "", cfEndpoint: "", cfOrg: "", cfSpace: "" } },
       ]);
     });
 
@@ -396,7 +395,7 @@ describe("e2e-config scope", () => {
       mockCfTools.expects("cfGetTargets").resolves([{ label: targetName, isCurrent: true }]);
       expect(await generateMtaDeployTasks(wsFolder, project)).be.deep.equal([
         taskBuild,
-        extend(taskDeploy, { cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" }),
+        { ...taskDeploy, ...{ cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" } },
       ]);
     });
 
@@ -404,12 +403,12 @@ describe("e2e-config scope", () => {
       const targetName = "target3";
       mockCfTools.expects("cfGetTargets").resolves([{ label: targetName, isCurrent: true }]);
       expect(await generateMtaDeployTasks(wsFolder, "", "sequence")).be.deep.equal([
-        extend(taskBuild, { projectPath: `${wsFolder}` }),
-        extend(
-          taskDeploy,
-          { cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" },
-          { mtarPath: `${wsFolder}/mta_archives/project_0.0.1.mtar` }
-        ),
+        { ...taskBuild, ...{ projectPath: `${wsFolder}` } },
+        {
+          ...taskDeploy,
+          ...{ cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" },
+          ...{ mtarPath: `${wsFolder}/mta_archives/project_0.0.1.mtar` },
+        },
       ]);
     });
   });

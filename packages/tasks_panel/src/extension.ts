@@ -15,6 +15,9 @@ import { revealTask } from "./commands/reveal-task";
 import { duplicateTask } from "./commands/duplicate-task";
 import { terminateTaskFromTree } from "./commands/terminate-task";
 import { selectTreeItem } from "./commands/select-tree-item";
+import { actionDeploy } from "./commands/action-deploy";
+import { subscribeTaskRun } from "./commands/action";
+import { actionBuild } from "./commands/action-build";
 
 let extensionPath = "";
 
@@ -44,6 +47,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(
     commands.registerCommand("tasks-explorer.tree.select", partial(selectTreeItem, view, tasksTree, tasksProvider))
   );
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.action.build", partial(actionBuild, tasksTree, tasksProvider, context))
+  );
+  context.subscriptions.push(
+    commands.registerCommand("tasks-explorer.action.deploy", partial(actionDeploy, tasksTree, tasksProvider, context))
+  );
+  context.subscriptions.push(subscribeTaskRun(context));
 }
 
 function initializeLogger(context: ExtensionContext): void {
