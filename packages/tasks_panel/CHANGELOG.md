@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/SAP/task-explorer/compare/v4.6.0...v4.7.0) (2023-12-26)
+
+### Features
+
+- `deploy` readiness issues ([#339](https://github.com/SAP/task-explorer/issues/339)) ([d94dcfa](https://github.com/SAP/task-explorer/commit/d94dcfa8c44347dfe46fd620d37cad5331c5bb47))
+- deploy readiness issues ([#352](https://github.com/SAP/task-explorer/issues/352)) ([38baf39](https://github.com/SAP/task-explorer/commit/38baf3938d6fae8ae818d6dfbe6be3a5a7f5887a))
+
 # [4.6.0](https://github.com/SAP/task-explorer/compare/v4.5.0...v4.6.0) (2023-12-13)
 
 ### Features
