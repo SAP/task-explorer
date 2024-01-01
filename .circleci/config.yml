@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build-node18:
     docker:
-      - image: cimg/node:18.8
+      - image: cimg/node:18.14
     working_directory: ~/repo
     steps:
       - checkout
@@ -39,7 +39,7 @@ jobs:
 
   deploy-npm:
     docker:
-      - image: cimg/node:18.8
+      - image: cimg/node:18.14
     working_directory: ~/repo
     steps:
       - checkout
@@ -52,7 +52,7 @@ jobs:
 
   prepare-vsix:
     docker:
-      - image: cimg/node:18.8
+      - image: cimg/node:18.14
     working_directory: ~/repo
     steps:
       - checkout
