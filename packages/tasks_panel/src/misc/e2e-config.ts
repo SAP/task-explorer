@@ -27,7 +27,7 @@ export const ProjTypes = {
 } as const;
 
 // Convert object key in a type
-export type ProjectTypes = typeof ProjTypes[keyof typeof ProjTypes];
+export type ProjectTypes = (typeof ProjTypes)[keyof typeof ProjTypes];
 
 type CfDetails = {
   cfTarget: string;
@@ -50,14 +50,14 @@ export async function waitForFileResource(
   pattern: GlobPattern,
   ignoreCreateEvents?: boolean,
   ignoreChangeEvents?: boolean,
-  ignoreDeleteEvents?: boolean
+  ignoreDeleteEvents?: boolean,
 ): Promise<boolean> {
   return new Promise((resolve) => {
     const fileWatcher = workspace.createFileSystemWatcher(
       pattern,
       ignoreCreateEvents,
       ignoreChangeEvents,
-      ignoreDeleteEvents
+      ignoreDeleteEvents,
     );
     function endWatch() {
       fileWatcher.dispose();
@@ -122,7 +122,7 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
             }
           }
         }
-      })
+      }),
     );
   }
   return Promise.all(items).then((items) => compact(items));
@@ -131,7 +131,7 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
 export async function addTaskDefinition(wsFolder: string, tasks: TaskDefinition[]): Promise<any> {
   return updateTasksConfiguration(
     wsFolder,
-    concat(workspace.getConfiguration("tasks", Uri.file(wsFolder))?.get("tasks") ?? [], tasks)
+    concat(workspace.getConfiguration("tasks", Uri.file(wsFolder))?.get("tasks") ?? [], tasks),
   );
 }
 
@@ -148,7 +148,7 @@ export type LabelType = "uniq" | "sequence";
 export async function generateMtaDeployTasks(
   wsFolder: string,
   project: string,
-  labelType: LabelType = "uniq"
+  labelType: LabelType = "uniq",
 ): Promise<TaskDefinition[]> {
   async function populateCfDetails(): Promise<CfDetails> {
     try {
@@ -190,7 +190,7 @@ export async function generateMtaDeployTasks(
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     },
-    await populateCfDetails()
+    await populateCfDetails(),
   );
 
   return [taskBuild, taskDeploy];
@@ -206,6 +206,6 @@ export function isTasksSettled(wsFolder: string, targetTasks: TaskDefinition[]):
       });
       return acc;
     },
-    true
+    true,
   );
 }

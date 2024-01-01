@@ -128,7 +128,7 @@ describe("cap-e2e-config scope", () => {
           new testVscode.RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
           false,
           false,
-          true
+          true,
         )
         .resolves(true);
       sandbox

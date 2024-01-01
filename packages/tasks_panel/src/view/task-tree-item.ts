@@ -17,7 +17,7 @@ class BranchTreeItem extends TreeTooltiplessItem {
     label: string,
     collapsibleState: TreeItemCollapsibleState,
     context: string,
-    public readonly parent?: TreeItem
+    public readonly parent?: TreeItem,
   ) {
     super(label, collapsibleState);
     this.contextValue = context;
@@ -27,7 +27,7 @@ export class ProjectTreeItem extends BranchTreeItem {
   constructor(
     label: string,
     public fqn: string,
-    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
   ) {
     super(label, collapsibleState, "project");
     this.iconPath = new ThemeIcon("folder");
@@ -37,7 +37,7 @@ export class IntentTreeItem extends BranchTreeItem {
   constructor(
     label: string,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
-    parent?: TreeItem
+    parent?: TreeItem,
   ) {
     super(label, collapsibleState, "intent", parent);
   }
@@ -51,7 +51,7 @@ export class TaskTreeItem extends TreeTooltiplessItem {
     public wsFolder: string,
     collapsibleState: TreeItemCollapsibleState,
     public readonly parent: TreeItem,
-    command?: Command
+    command?: Command,
   ) {
     super(label, collapsibleState);
     this.command = command;

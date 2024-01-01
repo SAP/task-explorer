@@ -78,7 +78,7 @@ describe("the VscodeEvents class", () => {
       expect(MockVSCodeInfo.configTasks.get(folderPath)![1].label).eq("task 1");
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
-        testVscode.ConfigurationTarget.WorkspaceFolder
+        testVscode.ConfigurationTarget.WorkspaceFolder,
       );
       expect(spyGetConfiguration.calledTwice).to.be.true;
       expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
@@ -99,7 +99,7 @@ describe("the VscodeEvents class", () => {
       expect(MockVSCodeInfo.configTasks.get(folderPath)![1].label).eq("task 2");
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
-        testVscode.ConfigurationTarget.WorkspaceFolder
+        testVscode.ConfigurationTarget.WorkspaceFolder,
       );
       expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
       expect(spyGetConfiguration.calledTwice).to.be.true;
@@ -133,7 +133,7 @@ describe("the VscodeEvents class", () => {
       expect(await vscodeEvents.addTaskToConfiguration(folderPath, task)).eq(2);
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
-        testVscode.ConfigurationTarget.WorkspaceFolder
+        testVscode.ConfigurationTarget.WorkspaceFolder,
       );
       expect(spyGetConfiguration.calledTwice).to.be.true;
       expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;

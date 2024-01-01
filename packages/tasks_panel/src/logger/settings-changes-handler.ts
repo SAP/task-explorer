@@ -26,7 +26,7 @@ export function listenToLogSettingsChanges(context: ExtensionContext): void {
         getLogger().changeLevel(logLevel);
         logLoggerDetails(context, logLevel);
       }
-    })
+    }),
   );
 
   // Enable responding to changes in the sourceLocationTracking setting
@@ -36,6 +36,6 @@ export function listenToLogSettingsChanges(context: ExtensionContext): void {
         const newSourceLocationTracking: boolean = getSourceLocationTrackingSetting();
         getLogger().changeSourceLocationTracking(newSourceLocationTracking);
       }
-    })
+    }),
   );
 }

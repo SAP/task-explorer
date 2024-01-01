@@ -64,7 +64,7 @@ describe("common-e2e-config scope", () => {
           wsFolder: "ws-folder",
           project: "project",
           type: e2eConfig.FIORI_DEPLOYMENT_CONFIG,
-        })
+        }),
       ).to.be.undefined;
     });
 
@@ -75,7 +75,11 @@ describe("common-e2e-config scope", () => {
         .withExactArgs({ wsFolder: "ws-folder", project: "project" })
         .resolves();
       expect(
-        await completeDeployConfig({ wsFolder: "ws-folder", project: "project", type: e2eConfig.CAP_DEPLOYMENT_CONFIG })
+        await completeDeployConfig({
+          wsFolder: "ws-folder",
+          project: "project",
+          type: e2eConfig.CAP_DEPLOYMENT_CONFIG,
+        }),
       ).to.be.undefined;
     });
 
@@ -90,7 +94,7 @@ describe("common-e2e-config scope", () => {
           wsFolder: "ws-folder",
           project: "project",
           type: e2eConfig.HANA_DEPLOYMENT_CONFIG,
-        })
+        }),
       ).to.be.undefined;
     });
 

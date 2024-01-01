@@ -10,7 +10,7 @@ import { getLogger } from "../../src/logger/logger-wrapper";
 export async function editTreeItemTask(
   taskProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
-  task: ConfiguredTask
+  task: ConfiguredTask,
 ): Promise<void> {
   const matchingTask = find(await taskProvider.getConfiguredTasks(), (_) => {
     return isMatch(_, task);
@@ -38,7 +38,7 @@ async function editTask(task: ConfiguredTask, readResource: (file: string) => Pr
     const decision = await window.showInformationMessage(
       messages.SWITCH_UNSAVED_TASK(taskInProcess),
       { modal: true },
-      messages.DISCARD_CHANGES_BUTTON_TEXT()
+      messages.DISCARD_CHANGES_BUTTON_TEXT(),
     );
     if (decision !== messages.DISCARD_CHANGES_BUTTON_TEXT()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- confirmed by validating of taskInProcess, which is resolved by getTaskEditorPanel()

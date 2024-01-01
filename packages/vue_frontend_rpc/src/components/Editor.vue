@@ -49,6 +49,7 @@
 const FUNCTION = "__Function";
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names -- TODO: to fix this
   name: "Editor",
   props: ["editor", "rpc"],
   data() {

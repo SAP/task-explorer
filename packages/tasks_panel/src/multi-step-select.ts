@@ -32,7 +32,7 @@ function grabProjectItems(tasks: ConfiguredTask[], project?: string): QuickPickI
 async function grabTasksByGroup(
   tasks: ConfiguredTask[],
   project: string,
-  group?: string | undefined
+  group?: string | undefined,
 ): Promise<QuickPickItem[]> {
   function toConfigDeployE2ePickItems(items: ProjectConfigInfo[]): QuickPickItem[] {
     return map(items, (item) => {
@@ -69,8 +69,8 @@ async function grabTasksByGroup(
                 if (_.__intent === intent) {
                   return { ..._, ...{ description: _.type }, ...(_.description ? { detail: _.description } : {}) };
                 }
-              })
-            )
+              }),
+            ),
           );
         }
       }
@@ -92,7 +92,7 @@ function grabMiscTasksByProject(tasks: ConfiguredTask[], project: string): Quick
       if (!isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent)) {
         return { ..._, description: _.type };
       }
-    })
+    }),
   );
 }
 
@@ -267,7 +267,7 @@ class MultiStepSelection {
           ignoreFocusOut ? { ignoreFocusOut } : { ignoreFocusOut: true },
           { matchOnDescription: true },
           { placeholder, items },
-          activeItem ? { activeItems: [activeItem] } : {}
+          activeItem ? { activeItems: [activeItem] } : {},
         );
         input.buttons = [...(this.steps.length > 1 ? [QuickInputButtons.Back] : []), ...(buttons || [])];
         disposables.push(
@@ -283,7 +283,7 @@ class MultiStepSelection {
             (async () => {
               reject(shouldResume && (await shouldResume()) ? InputFlowAction.resume : InputFlowAction.cancel);
             })().catch(reject);
-          })
+          }),
         );
         if (this.current) {
           this.current.dispose();

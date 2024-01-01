@@ -11,7 +11,7 @@ export async function selectTreeItem(
   view: TreeView<TreeItem>,
   dataProvider: TasksTree,
   taskProvider: ITasksProvider,
-  task: ConfiguredTask
+  task: ConfiguredTask,
 ): Promise<void> {
   const _task = find(await taskProvider.getConfiguredTasks(), (_) => {
     return isMatch(_, task);

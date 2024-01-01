@@ -43,7 +43,7 @@ export async function getConfigDeployPickItems(project: string): Promise<Project
       }
       return acc;
     },
-    [] as Promise<ProjectConfigInfo | undefined>[]
+    [] as Promise<ProjectConfigInfo | undefined>[],
   );
   return Promise.all(items).then((items) => compact(items));
 }

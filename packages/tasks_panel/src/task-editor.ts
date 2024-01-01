@@ -56,7 +56,11 @@ export class TaskEditor {
     return this.wsFolder;
   }
 
-  constructor(private readonly rpc: IRpc, private readonly appEvents: AppEvents, task: ConfiguredTask) {
+  constructor(
+    private readonly rpc: IRpc,
+    private readonly appEvents: AppEvents,
+    task: ConfiguredTask,
+  ) {
     this.index = task.__index;
     this.intent = task.__intent;
     this.wsFolder = task.__wsFolder;
@@ -127,12 +131,12 @@ export class TaskEditor {
         }
 
         getClassLogger(LOGGER_CLASS_NAME).error(
-          messages.METHOD_NOT_FOUND(methodName, questionName, JSON.stringify(params))
+          messages.METHOD_NOT_FOUND(methodName, questionName, JSON.stringify(params)),
         );
       }
     } catch (error) {
       getClassLogger(LOGGER_CLASS_NAME).error(
-        messages.EVALUATED_METHOD_FAILURE(methodName, questionName, JSON.stringify(params), error as Error)
+        messages.EVALUATED_METHOD_FAILURE(methodName, questionName, JSON.stringify(params), error as Error),
       );
     }
 
@@ -172,7 +176,7 @@ export class TaskEditor {
     const notReadonlyProperties = filter(
       this.taskFrontendMirror,
       // readonly question must have guiOptions property with { type: "label"} }
-      (_) => _.guiOptions?.type !== "label"
+      (_) => _.guiOptions?.type !== "label",
     );
     const notReadonlyPropertiesNames = map(notReadonlyProperties, (_) => _.name);
     const answers = pick(state.answers, notReadonlyPropertiesNames);
@@ -211,7 +215,7 @@ export class TaskEditor {
   private convertTaskToFormInfo(): TaskQuestion[] {
     const taskFields = filter(
       Object.keys(this.task),
-      (_) => _ !== "type" && _ !== "taskType" && typeof this.task[_] === "string"
+      (_) => _ !== "type" && _ !== "taskType" && typeof this.task[_] === "string",
     );
     let formFields: any[] = [];
     for (const taskField of taskFields) {
@@ -236,7 +240,7 @@ export class TaskEditor {
     if (labelProperty !== undefined) {
       labelProperty["validate"] = combineValidationFunctions(
         labelProperty["validate"],
-        getIsLabelUniqueFunction(this.index)
+        getIsLabelUniqueFunction(this.index),
       );
     }
   }

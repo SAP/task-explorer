@@ -33,7 +33,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const view = window.createTreeView("tasksPanel", { treeDataProvider: tasksTree, showCollapseAll: true });
 
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource))
+    commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource)),
   );
   context.subscriptions.push(commands.registerCommand("tasks-explorer.deleteTask", deleteTask));
   context.subscriptions.push(commands.registerCommand("tasks-explorer.revealTask", revealTask));
@@ -41,17 +41,17 @@ export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(commands.registerCommand("tasks-explorer.executeTask", executeTaskFromTree));
   context.subscriptions.push(commands.registerCommand("tasks-explorer.stopTask", terminateTaskFromTree));
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource))
+    commands.registerCommand("tasks-explorer.createTask", partial(createTask, tasksProvider, readResource)),
   );
   context.subscriptions.push(commands.registerCommand("tasks-explorer.tree.refresh", () => tasksTree.onChange()));
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.tree.select", partial(selectTreeItem, view, tasksTree, tasksProvider))
+    commands.registerCommand("tasks-explorer.tree.select", partial(selectTreeItem, view, tasksTree, tasksProvider)),
   );
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.action.build", partial(actionBuild, tasksTree, tasksProvider, context))
+    commands.registerCommand("tasks-explorer.action.build", partial(actionBuild, tasksTree, tasksProvider, context)),
   );
   context.subscriptions.push(
-    commands.registerCommand("tasks-explorer.action.deploy", partial(actionDeploy, tasksTree, tasksProvider, context))
+    commands.registerCommand("tasks-explorer.action.deploy", partial(actionDeploy, tasksTree, tasksProvider, context)),
   );
   context.subscriptions.push(subscribeTaskRun(context));
 }

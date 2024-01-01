@@ -15,7 +15,7 @@ export class TasksSelection {
   constructor(
     private readonly appEvents: AppEvents,
     private readonly tasks: ConfiguredTask[],
-    private readonly readResource: (file: string) => Promise<string>
+    private readonly readResource: (file: string) => Promise<string>,
   ) {}
 
   public async select(treeItem?: ElementTreeItem): Promise<any> {

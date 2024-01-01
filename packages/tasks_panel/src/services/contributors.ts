@@ -96,7 +96,7 @@ export class Contributors implements IContributors {
             });
           }
         });
-      })
+      }),
     )
       .then(() => {
         setTimeout(() => {
@@ -114,7 +114,7 @@ export class Contributors implements IContributors {
   }
 
   private getTasksPropertyMessageMap(
-    packageJSON: any
+    packageJSON: any,
   ): Record<string, { properties: Dictionary<any>; requires: string[] }> {
     const tasksDefinitions = get(packageJSON.contributes, "taskDefinitions");
     const tasksTypes = map(tasksDefinitions, (_) => _.type);

@@ -65,7 +65,7 @@ module.exports = {
       parser: "vue-eslint-parser",
       // Using the smaller vue rule subset (essential) to avoid including formatting rules
       // as formatting as handled by prettier **directly**.
-      extends: ["plugin:vue/essential"],
+      extends: ["plugin:vue/vue3-essential"],
     },
   ],
 };

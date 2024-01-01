@@ -44,12 +44,12 @@ export class TaskEditorPanel extends AbstractWebviewPanel<TaskEditorPanelState> 
     this.taskEditor.registerCustomQuestionEventHandler(
       "file-browser",
       "getFilePath",
-      this.showOpenFileDialog.bind(this)
+      this.showOpenFileDialog.bind(this),
     );
     this.taskEditor.registerCustomQuestionEventHandler(
       "folder-browser",
       "getPath",
-      this.showOpenFolderDialog.bind(this)
+      this.showOpenFolderDialog.bind(this),
     );
   }
 

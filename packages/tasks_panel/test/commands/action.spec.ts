@@ -164,7 +164,7 @@ describe("action module", () => {
         task1.label,
         task1.__wsFolder,
         testVscode.TreeItemCollapsibleState.None,
-        parentItem
+        parentItem,
       );
       sandbox.stub(dataProvider, "findTreeItem").withArgs(task1).resolves(item);
       mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.select", task1).resolves();
@@ -195,7 +195,7 @@ describe("action module", () => {
         .expects("executeCommand")
         .withExactArgs(
           "tasks-explorer.createTask",
-          new IntentTreeItem("deploy", testVscode.TreeItemCollapsibleState.Collapsed, new ProjectTreeItem("", ""))
+          new IntentTreeItem("deploy", testVscode.TreeItemCollapsibleState.Collapsed, new ProjectTreeItem("", "")),
         )
         .resolves();
       action.runAction("deploy", dataProvider, new MockTasksProvider([task1]), testVscode.ExtensionContext);
@@ -218,7 +218,7 @@ describe("action module", () => {
             ignoreFocusOut: true,
             matchOnDescription: true,
             matchOnDetail: true,
-          }
+          },
         )
         .resolves();
       action.runAction("deploy", dataProvider, new MockTasksProvider([task3, task2]), testVscode.ExtensionContext);
@@ -241,7 +241,7 @@ describe("action module", () => {
         task2.label,
         task2.__wsFolder,
         testVscode.TreeItemCollapsibleState.None,
-        parentItem
+        parentItem,
       );
       sandbox.stub(dataProvider, "findTreeItem").withArgs(task2).resolves(treeItem);
       mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.select", task2).resolves();
@@ -263,7 +263,7 @@ describe("action module", () => {
         .expects("executeCommand")
         .withExactArgs(
           "tasks-explorer.createTask",
-          new IntentTreeItem("deploy", testVscode.TreeItemCollapsibleState.Collapsed, new ProjectTreeItem("", ""))
+          new IntentTreeItem("deploy", testVscode.TreeItemCollapsibleState.Collapsed, new ProjectTreeItem("", "")),
         )
         .resolves();
 
@@ -328,7 +328,7 @@ describe("action module", () => {
         task2.label,
         task2.__wsFolder,
         testVscode.TreeItemCollapsibleState.None,
-        parentItem
+        parentItem,
       );
       sandbox.stub(dataProvider, "findTreeItem").withArgs(task2).resolves(treeItem);
       mockCommands.expects("executeCommand").withExactArgs("tasks-explorer.tree.select", task2).resolves();

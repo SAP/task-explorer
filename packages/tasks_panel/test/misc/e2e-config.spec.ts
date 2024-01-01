@@ -77,7 +77,7 @@ describe("e2e-config scope", () => {
         await areResourcesReady([
           new Promise((resolve) => setTimeout(() => resolve(true), 100)),
           new Promise((resolve) => setTimeout(() => resolve(true), 200)),
-        ])
+        ]),
       ).be.true;
     });
 
@@ -88,8 +88,8 @@ describe("e2e-config scope", () => {
             new Promise((resolve) => setTimeout(() => resolve(true), 100)),
             new Promise((resolve) => setTimeout(() => resolve(false), 200)),
           ],
-          1
-        )
+          1,
+        ),
       ).be.false;
     });
 
@@ -100,8 +100,8 @@ describe("e2e-config scope", () => {
             new Promise((resolve) => setTimeout(() => resolve(true), 500)),
             new Promise((resolve) => setTimeout(() => resolve(true), 500)),
           ],
-          0.3
-        )
+          0.3,
+        ),
       ).be.false;
     });
   });

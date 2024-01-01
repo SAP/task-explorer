@@ -55,8 +55,8 @@ export async function getFioriE2ePickItems(info: ProjectInfo): Promise<FioriProj
     const resources: Promise<boolean>[] = [Promise.resolve(true)];
     resources.push(
       ...map(target === FE_DEPLOY_TRG.ABAP ? trg_files_abap : trg_files_cf, (file) =>
-        doesFileExist(Uri.joinPath(projectPath, file))
-      )
+        doesFileExist(Uri.joinPath(projectPath, file)),
+      ),
     );
     return Promise.all(resources).then((values) => !includes(values, false));
   }
@@ -111,7 +111,7 @@ export async function fioriE2eConfig(data: { wsFolder: string; project: string }
     new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}ui5-deploy.yaml`),
     false,
     false,
-    true
+    true,
   );
 
   await commands.executeCommand(cmd_launch_deploy_config, {
@@ -120,7 +120,7 @@ export async function fioriE2eConfig(data: { wsFolder: string; project: string }
 
   if (await areResourcesReady([ui5DeployYaml])) {
     return completeTasksDefinition(
-      await detectDeployTarget(Uri.joinPath(Uri.file(data.wsFolder), data.project, "ui5-deploy.yaml"))
+      await detectDeployTarget(Uri.joinPath(Uri.file(data.wsFolder), data.project, "ui5-deploy.yaml")),
     );
   }
 }

@@ -68,7 +68,7 @@ builder:
     const uriUi5DeployYaml = testVscode.Uri.joinPath(
       testVscode.Uri.file(info.wsFolder),
       info.project,
-      "ui5-deploy.yaml"
+      "ui5-deploy.yaml",
     );
 
     it("getFioriE2ePickItems - fiori tools generator command not registered", async () => {
@@ -186,7 +186,7 @@ builder:
         mockWorkspaceFs
           .expects("stat")
           .withExactArgs(
-            testVscode.Uri.joinPath(testVscode.Uri.joinPath(testVscode.Uri.file(info.wsFolder), info.project, v))
+            testVscode.Uri.joinPath(testVscode.Uri.joinPath(testVscode.Uri.file(info.wsFolder), info.project, v)),
           )
           .resolves(k % 2 !== 0);
       });
@@ -289,14 +289,14 @@ builder:
       expect((tasks[0] as any).type).to.be.equal("build.mta");
       expect((tasks[0] as any).taskType).to.be.equal("Build");
       expect((tasks[0] as any).projectPath).to.be.equal(
-        testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath
+        testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath,
       );
       expect((tasks[0] as any).extensions).to.be.deep.equal([]);
       expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("deploy.mta.cf");
       expect((tasks[1] as any).taskType).to.be.equal("Deploy");
       expect((tasks[1] as any).mtarPath).to.be.equal(
-        `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}/mta_archives/${project}_0.0.1.mtar`
+        `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}/mta_archives/${project}_0.0.1.mtar`,
       );
       expect((tasks[1] as any).extensions).to.be.deep.equal([]);
       expect((tasks[1] as any).cfTarget).to.be.empty;

@@ -16,7 +16,7 @@ export class NpmTaskProvider implements TaskProvider {
       task.scope ?? TaskScope.Workspace,
       task.name,
       NPM_TYPE,
-      new ShellExecution(`npm run ${task.definition.script}`, cwd ? { cwd } : undefined)
+      new ShellExecution(`npm run ${task.definition.script}`, cwd ? { cwd } : undefined),
     );
   }
 

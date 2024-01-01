@@ -66,7 +66,7 @@ describe("TasksTree class", () => {
           acc.push(task);
           return acc;
         },
-        [] as any[]
+        [] as any[],
       );
       const taskProvider = new MockTasksProvider(copyTasks);
       const tasksTree = new TasksTree(taskProvider);
@@ -115,7 +115,7 @@ describe("TasksTree class", () => {
     it("create roots items, when workspace structure broken", async () => {
       testVscode.workspace.workspaceFolders = [{ uri: { fsPath: "/other/root/folder" } }];
       const taskChildren = await new TasksTree(new MockTasksProvider(tasks)).getChildren(
-        new IntentTreeItem("some", testVscode.TreeItemCollapsibleState.Expanded)
+        new IntentTreeItem("some", testVscode.TreeItemCollapsibleState.Expanded),
       );
       expect(taskChildren).to.be.empty;
     });

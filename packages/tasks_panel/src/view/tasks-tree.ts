@@ -54,8 +54,8 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
           /* istanbul ignore next */
           workspace.getWorkspaceFolder(Uri.file(wsFolder))?.name ?? "",
           wsFolder,
-          TreeItemCollapsibleState.Expanded
-        )
+          TreeItemCollapsibleState.Expanded,
+        ),
     );
   }
 
@@ -72,11 +72,11 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
           command: "tasks-explorer.editTask",
           title: "Edit Task",
           arguments: [task],
-        })
+        }),
     );
     /* istanbul ignore next */
     getClassLogger(LOGGER_CLASS_NAME).debug(
-      messages.GET_TREE_CHILDREN_BY_INTENT(element.label?.toString() ?? "", children.length)
+      messages.GET_TREE_CHILDREN_BY_INTENT(element.label?.toString() ?? "", children.length),
     );
     return children;
   }
