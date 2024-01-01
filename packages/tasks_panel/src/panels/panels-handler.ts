@@ -14,14 +14,14 @@ let taskEditorPanel: TaskEditorPanel | undefined;
 export async function createTasksSelection(
   tasks: ConfiguredTask[],
   readResource: (file: string) => Promise<string>,
-  treeItem?: ElementTreeItem
+  treeItem?: ElementTreeItem,
 ): Promise<void> {
   return new TasksSelection(new VSCodeEvents(), tasks, readResource).select(treeItem);
 }
 
 export async function createTaskEditorPanel(
   task: ConfiguredTask,
-  readResource: (file: string) => Promise<string>
+  readResource: (file: string) => Promise<string>,
 ): Promise<void> {
   if (!isEqual(taskEditorPanel?.getLoadedTask(), task)) {
     disposeTaskEditorPanel();

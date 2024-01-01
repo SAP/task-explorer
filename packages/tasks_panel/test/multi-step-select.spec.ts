@@ -87,7 +87,7 @@ describe("multi-step-selection scope", () => {
     expect(__internal.grabProjectItems(tasks)).to.be.deep.equal(
       map(uniq(map(tasks, "__wsFolder")), (_) => {
         return { label: "$(folder)", description: _ };
-      })
+      }),
     );
   });
 
@@ -101,7 +101,7 @@ describe("multi-step-selection scope", () => {
     expect(__internal.grabProjectItems(tasks, "/user/unknown/path")).to.be.deep.equal(
       map(uniq(map(tasks, "__wsFolder")), (_) => {
         return { label: "$(folder)", description: _ };
-      })
+      }),
     );
   });
 

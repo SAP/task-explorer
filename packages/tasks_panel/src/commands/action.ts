@@ -44,7 +44,7 @@ export function subscribeTaskRun(context: ExtensionContext): Disposable {
   return tasks.onDidStartTask(async (e: TaskStartEvent) => {
     const { task } = e.execution;
     const lastRunTask: { build: TaskData | undefined; deploy: TaskData | undefined } = context.workspaceState.get(
-      LAST_TASK_STATE
+      LAST_TASK_STATE,
     ) ?? { build: undefined, deploy: undefined };
     const runTask = { ...lastRunTask };
     const taskData = { name: task.name, definition: task.definition, scope: task.scope };
@@ -70,7 +70,7 @@ export const runAction = debounce(
     kind: ActionKind,
     dataProvider: TasksTree,
     taskProvider: ITasksProvider,
-    context: ExtensionContext
+    context: ExtensionContext,
   ): Promise<void> => {
     function getLastRunTaskData(kind: ActionKind): TaskData | undefined {
       const lastRunTaskState: any = context.workspaceState.get(LAST_TASK_STATE);
@@ -79,7 +79,7 @@ export const runAction = debounce(
     async function executeCreateTaskCommand(): Promise<void> {
       return commands.executeCommand(
         "tasks-explorer.createTask",
-        new IntentTreeItem(kind, TreeItemCollapsibleState.Collapsed, new ProjectTreeItem("", ""))
+        new IntentTreeItem(kind, TreeItemCollapsibleState.Collapsed, new ProjectTreeItem("", "")),
       );
     }
 
@@ -96,7 +96,7 @@ export const runAction = debounce(
           }
           return result;
         },
-        []
+        [],
       );
       items.push({ kind: QuickPickItemKind.Separator, label: "configure" }, { label: CREATE_TASK });
 
@@ -105,7 +105,7 @@ export const runAction = debounce(
         items.unshift(
           { kind: QuickPickItemKind.Separator, label: "Last Run" },
           { ...lastRunItem, ...{ description: lastRunItem.type }, ...{ detail: lastRunItem.__wsFolder } },
-          { kind: QuickPickItemKind.Separator, label: "" }
+          { kind: QuickPickItemKind.Separator, label: "" },
         );
       }
       return items;
@@ -185,5 +185,5 @@ export const runAction = debounce(
       return showQuickPick(tasks);
     }
   },
-  500
+  500,
 );

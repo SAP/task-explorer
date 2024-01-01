@@ -37,7 +37,7 @@ export function getClassLogger(className: string): IChildLogger {
 
 export function createExtensionLoggerAndSubscribeToLogSettingsChanges(
   context: ExtensionContext,
-  outputChannel: OutputChannel
+  outputChannel: OutputChannel,
 ): void {
   createExtensionLogger(context, outputChannel);
   // Subscribe to Logger settings changes.

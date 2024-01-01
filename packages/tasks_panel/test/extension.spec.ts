@@ -72,9 +72,9 @@ describe("extension", () => {
       expect(
         find(contents, (line) =>
           /\[.*\]\(https:\/\/help.sap.com\/docs\/bas\/sap-business-application-studio\/task-explorer\?version=Cloud\)/.test(
-            line
-          )
-        )
+            line,
+          ),
+        ),
       ).to.be.ok;
       expect(find(contents, (line) => /\[.*\]\(command:tasks-explorer.createTask\)/.test(line))).to.be.ok;
     });

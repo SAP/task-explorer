@@ -21,7 +21,7 @@ export interface CapProjectConfigInfo extends ProjectInfo {
 function invokeCommand(config: { cmd: string; args: string[]; cwd: string }, additionalArgs: string[]): Promise<void> {
   function executeSpawn(
     config: { cmd: string; args: string[]; cwd: string },
-    additionalArgs: string[]
+    additionalArgs: string[],
   ): ChildProcessWithoutNullStreams {
     const { args, cmd, cwd } = config;
     return spawn(cmd, [...args, ...additionalArgs], { cwd });
@@ -77,12 +77,12 @@ export async function capE2eConfig(data: { wsFolder: string; project: string }):
         new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}mta.yaml`),
         false,
         false,
-        true
-      )
+        true,
+      ),
     );
     await invokeCommand(
       { cwd: Uri.joinPath(Uri.file(data.wsFolder), data.project).fsPath, cmd: "cds", args: ["add", "mta"] },
-      []
+      [],
     );
   }
   if (await areResourcesReady(resourcesPromises)) {

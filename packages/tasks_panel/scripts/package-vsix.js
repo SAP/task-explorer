@@ -2,7 +2,7 @@ const { resolve } = require("path");
 const { readFileSync, writeFileSync, copyFileSync } = require("fs");
 const { copySync, emptyDirSync } = require("fs-extra");
 const { expect } = require("chai");
-const { packageCommand } = require("vsce/out/package");
+const { packageCommand } = require("@vscode/vsce/out/package");
 
 const rootExtDir = resolve(__dirname, "..");
 const pkgJsonPath = resolve(rootExtDir, "package.json");

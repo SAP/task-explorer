@@ -102,7 +102,7 @@ describe("task-serializer scope", () => {
       expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.deep.equal([task]);
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
-        testVscode.ConfigurationTarget.WorkspaceFolder
+        testVscode.ConfigurationTarget.WorkspaceFolder,
       );
     });
 

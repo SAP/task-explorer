@@ -34,7 +34,7 @@ export function getUniqueTaskLabel(label: string): string {
 
 export async function updateTasksConfiguration(
   folder: string,
-  tasks: (ConfiguredTask | TaskDefinition)[]
+  tasks: (ConfiguredTask | TaskDefinition)[],
 ): Promise<void> {
   const url = Uri.file(folder);
   // register on diagnostic notifications for this flow only
