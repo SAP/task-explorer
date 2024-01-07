@@ -1,5 +1,6 @@
 import { forEach } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
+import { join, sep, normalize } from "path";
 
 // this function removes "index" field that Theia adds to the task definition
 export function cleanTasks(tasks: ConfiguredTask[]): void {
@@ -18,4 +19,8 @@ export function isMatchDeploy(intent: string): boolean {
 
 export function isMatchBuild(intent: string): boolean {
   return /^build.*$/gi.test(intent);
+}
+
+export function isPathRelatedToFolder(path: string, folder: string): boolean {
+  return normalize(join(path, sep)).startsWith(normalize(join(folder, sep)));
 }

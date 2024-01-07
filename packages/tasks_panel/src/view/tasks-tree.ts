@@ -1,5 +1,5 @@
 import { filter, map, uniq, sortBy, isMatch, isEmpty } from "lodash";
-import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "./task-tree-item";
+import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, RootTreeItem, TaskTreeItem } from "./task-tree-item";
 import {
   Event,
   EventEmitter,
@@ -14,6 +14,9 @@ import { ITasksProvider } from "../services/definitions";
 import { getClassLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
+import { collectProjects, calculateTaskWsFolder } from "../misc/e2e-config";
+import { join } from "path";
+import { isPathRelatedToFolder } from "../utils/ws-folder";
 
 const LOGGER_CLASS_NAME = "Tasks Tree";
 
@@ -34,7 +37,11 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
   }
 
   private filterByFolder(tasks: ConfiguredTask[], parent?: ProjectTreeItem): ConfiguredTask[] {
-    return parent ? filter(tasks, ["__wsFolder", parent.fqn]) : tasks;
+    return parent
+      ? filter(tasks, (task) => {
+          return isPathRelatedToFolder(calculateTaskWsFolder(task), parent.fqn ?? "undefined");
+        })
+      : tasks;
   }
 
   private getIntents(tasks: ConfiguredTask[], parent: ProjectTreeItem): IntentTreeItem[] {
@@ -45,22 +52,27 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
       : [new EmptyTaskTreeItem(parent)];
   }
 
-  private getWorkspaces(wsFolders: string[]): IntentTreeItem[] {
+  private async getProjects(root: RootTreeItem): Promise<ProjectTreeItem[]> {
+    const projects = filter(await collectProjects(root.fqn), (_) => !!_.project);
+    getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_BRANCHES("project", projects.length));
+    return map(projects, (_) => new ProjectTreeItem(_.project, join(_.wsFolder, _.project), root));
+  }
+
+  private getWorkspaces(wsFolders: string[]): RootTreeItem[] {
     getClassLogger(LOGGER_CLASS_NAME).debug(messages.GET_TREE_BRANCHES("workspace", wsFolders.length));
     return map(
       wsFolders,
       (wsFolder) =>
-        new ProjectTreeItem(
+        new RootTreeItem(
           /* istanbul ignore next */
           workspace.getWorkspaceFolder(Uri.file(wsFolder))?.name ?? "",
           wsFolder,
-          TreeItemCollapsibleState.Expanded,
         ),
     );
   }
 
-  private getRoots(): TreeItem[] {
-    return this.getWorkspaces(map(workspace.workspaceFolders, (_) => _.uri.fsPath));
+  private getRoots(): RootTreeItem[] {
+    return this.getWorkspaces(map(workspace.workspaceFolders, "uri.fsPath"));
   }
 
   private async getIntentChildren(tasks: ConfiguredTask[], element: TreeItem) {
@@ -82,13 +94,16 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
   }
 
   public async getChildren(element?: TreeItem): Promise<TreeItem[]> {
-    const tasks = await this.tasksProvider.getConfiguredTasks();
     if (element === undefined) {
       return this.getRoots();
+    } else if (element instanceof RootTreeItem) {
+      // try find a projects in the workspace or drop these tree leaves
+      const projects = await this.getProjects(element);
+      return isEmpty(projects) ? this.getIntents(await this.tasksProvider.getConfiguredTasks(), element) : projects;
     } else if (element instanceof ProjectTreeItem) {
-      return this.getIntents(tasks, element);
+      return this.getIntents(await this.tasksProvider.getConfiguredTasks(), element);
     } else {
-      return this.getIntentChildren(tasks, element);
+      return this.getIntentChildren(await this.tasksProvider.getConfiguredTasks(), element);
     }
   }
 

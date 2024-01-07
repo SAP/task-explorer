@@ -13,6 +13,7 @@ import {
   waitForFileResource,
 } from "./e2e-config";
 import { exceptionToString, getUniqueTaskLabel } from "../../src/utils/task-serializer";
+import * as path from "path";
 
 enum FE_DEPLOY_TRG {
   ABAP = "abap",
@@ -108,7 +109,7 @@ export async function fioriE2eConfig(data: { wsFolder: string; project: string }
   }
 
   const ui5DeployYaml = waitForFileResource(
-    new RelativePattern(data.wsFolder, `${data.project ? `${data.project}/` : ``}ui5-deploy.yaml`),
+    new RelativePattern(data.wsFolder, path.join(`${data.project ? `${data.project}` : ``}`, `ui5-deploy.yaml`)),
     false,
     false,
     true,

@@ -107,7 +107,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("collectProjects", () => {
-    const wsFolder = "/home/user/test/";
+    const wsFolder = path.join(path.sep, "home", "user", "test");
     const projectInfo = {
       path: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), "project").path,
       type: "com.sap.fe",
@@ -140,19 +140,19 @@ describe("e2e-config scope", () => {
 
     it("collectProjects - toolkit extension is not configured well (cont.)", async () => {
       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(undefined);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - no project found", async () => {
       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, projectInfo undefined", async () => {
       sandbox.stub(infoProject, "getProjectInfo").resolves();
       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, but the project doesn't match the requested path", async () => {
@@ -161,8 +161,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test1/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test1")) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, related workspace folder doesn't exist", async () => {
@@ -172,12 +172,12 @@ describe("e2e-config scope", () => {
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
         .returns(undefined);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, but the project type does not match the 'com.sap.fe' type", async () => {
       sandbox.stub(infoProject, "getProjectInfo").resolves({
-        path: "/home/user/test/project",
+        path: path.join(path.sep, "home", "user", "test", "project"),
         type: "com.sap.cap.js",
       });
       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
@@ -185,13 +185,13 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test")) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, project type is 'com.sap.fe' type", async () => {
       sandbox.stub(infoProject, "getProjectInfo").resolves({
-        path: "/home/user/test/project",
+        path: path.join(path.sep, "home", "user", "test", "project"),
         type: "com.sap.fe",
       });
       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
@@ -199,8 +199,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test", path.sep)) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
           project: "project",
@@ -220,8 +220,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test", path.sep)) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
           project: "my",
@@ -241,8 +241,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test", path.sep)) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
           project: "my",
@@ -252,9 +252,9 @@ describe("e2e-config scope", () => {
     });
 
     it("collectProjects - project found, project type is 'com.sap.hana' type", async () => {
-      const wsFolder = "/home/user/test/project/my/";
+      const wsFolder = path.join(path.sep, "home", "user", "test", "project", "my");
       const projectInfo = {
-        path: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder)).path,
+        path: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), "proj").path,
         type: "com.sap.hana",
       };
       sandbox.stub(infoProject, "getProjectInfo").resolves(projectInfo);
@@ -263,12 +263,12 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: wsFolder } });
-      mockWorkspace.expects("asRelativePath").withExactArgs(wsFolder, false).returns(wsFolder);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(`${wsFolder}/`) });
+      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns("proj");
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
-          project: "",
+          project: "proj",
           style: ProjTypes.HANA,
         },
       ]);
@@ -276,7 +276,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("addTaskDefinition scope", () => {
-    const wsFolder = "/home/user/test/project/my/";
+    const wsFolder = path.join(path.sep, "home", "user", "test", "project", "my", path.sep);
 
     let mockUpdateConfiguration: SinonMock;
     beforeEach(() => {
@@ -323,7 +323,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("isFileExist scope", () => {
-    const url = testVscode.Uri.file("/home/user/test/project/my/file.txt");
+    const url = testVscode.Uri.file(path.join(path.sep, "home", "user", "test", "project", "my", "file.txt"));
 
     let mockWorkspaceFs: SinonMock;
     beforeEach(() => {
@@ -346,7 +346,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("generateMtaDeployTasks scope", () => {
-    const wsFolder = "/home/user/test/project/";
+    const wsFolder = path.join(path.sep, "home", "user", "test", "project", path.sep);
     const project = "my";
 
     let mockCfTools: SinonMock;
@@ -370,7 +370,11 @@ describe("e2e-config scope", () => {
       type: "deploy.mta.cf",
       label: `Deploy MTA to Cloud Foundry`,
       taskType: "Deploy",
-      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+      mtarPath: path.join(
+        projectUri.fsPath,
+        "mta_archives",
+        `${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+      ),
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     };
@@ -407,14 +411,14 @@ describe("e2e-config scope", () => {
         {
           ...taskDeploy,
           ...{ cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" },
-          ...{ mtarPath: `${wsFolder}/mta_archives/project_0.0.1.mtar` },
+          ...{ mtarPath: path.normalize(path.join(wsFolder, "mta_archives", "project_0.0.1.mtar")) },
         },
       ]);
     });
   });
 
   describe("isTasksSettled scope", () => {
-    const wsFolder = "/home/user/test/project/my";
+    const wsFolder = path.join(path.sep, "home", "user", "test", "project", "my");
     const wsFolderPath = testVscode.Uri.file(wsFolder);
 
     it("isTasksSettled - exists", async () => {

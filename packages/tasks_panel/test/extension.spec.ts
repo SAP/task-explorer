@@ -93,7 +93,7 @@ describe("extension", () => {
       expect(map(split(statements[0], "=="), trim).includes("view")).to.be.true;
       expect(map(split(statements[0], "=="), trim).includes("tasksPanel")).to.be.true;
       expect(map(split(statements[1], "=~"), trim).includes("viewItem")).to.be.true;
-      expect(map(split(statements[1], "=~"), trim).includes("/^(project|intent)$/")).to.be.true;
+      expect(map(split(statements[1], "=~"), trim).includes("/^(root|project|intent)$/")).to.be.true;
     });
 
     it("extension pack contributes menus->view/title createTask command", () => {

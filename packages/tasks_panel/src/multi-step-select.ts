@@ -10,10 +10,12 @@ import {
   QuickPickItemKind,
   QuickPick,
 } from "vscode";
-import { MISC, isMatchBuild, isMatchDeploy } from "./utils/ws-folder";
+import { MISC, isMatchBuild, isMatchDeploy, isPathRelatedToFolder } from "./utils/ws-folder";
 import { messages } from "./i18n/messages";
-import { ElementTreeItem, IntentTreeItem, ProjectTreeItem } from "./view/task-tree-item";
+import { ElementTreeItem, IntentTreeItem, ProjectTreeItem, RootTreeItem } from "./view/task-tree-item";
 import { ProjectConfigInfo, composeDeploymentConfigLabel, getConfigDeployPickItems } from "./misc/common-e2e-config";
+import { collectProjects, calculateTaskWsFolder } from "./misc/e2e-config";
+import { join } from "path";
 
 const miscItem = { label: "$(list-unordered)", description: MISC, type: "intent" };
 
@@ -21,8 +23,20 @@ function isMatchBuildOrDeploy(intent: string): boolean {
   return isMatchBuild(intent) || isMatchDeploy(intent);
 }
 
-function grabProjectItems(tasks: ConfiguredTask[], project?: string): QuickPickItem[] {
-  const projects = keys(groupBy(tasks, "__wsFolder"));
+function filterTasksByFolder(tasks: ConfiguredTask[], parent: string): ConfiguredTask[] {
+  return filter(tasks, (task) => {
+    return isPathRelatedToFolder(calculateTaskWsFolder(task), parent);
+  });
+}
+
+async function grabProjectItems(tasks: ConfiguredTask[], project?: string): Promise<QuickPickItem[]> {
+  const folders: string[] = keys(groupBy(tasks, "__wsFolder"));
+  let projects = [...folders];
+  for (const folder of folders) {
+    const projs = map(await collectProjects(folder), (_) => join(_.wsFolder, _.project));
+    projects.push(...projs);
+  }
+  projects = uniq(projects);
   const items = project && projects.includes(project) ? [project] : projects;
   return map(items, (_) => {
     return { label: "$(folder)", description: _ };
@@ -55,7 +69,7 @@ async function grabTasksByGroup(
     });
   }
 
-  const tasksByProject = filter(tasks, ["__wsFolder", project]);
+  const tasksByProject = filterTasksByFolder(tasks, project);
   each(sortBy(uniq(map(tasksByProject, "__intent"))), (intent: string) => {
     // add a group separator
     if (isMatchBuildOrDeploy(intent)) {
@@ -86,7 +100,7 @@ async function grabTasksByGroup(
 }
 
 function grabMiscTasksByProject(tasks: ConfiguredTask[], project: string): QuickPickItem[] {
-  const tasksByProject = filter(tasks, ["__wsFolder", project]);
+  const tasksByProject = filterTasksByFolder(tasks, project);
   return compact(
     map(tasksByProject, (_) => {
       if (!isMatchDeploy(_.__intent) && !isMatchBuild(_.__intent)) {
@@ -109,7 +123,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
 
   function getContextProject(): string | undefined {
     let project;
-    if (treeItem instanceof ProjectTreeItem) {
+    if (treeItem instanceof ProjectTreeItem || treeItem instanceof RootTreeItem) {
       project = treeItem.fqn;
     } else if (treeItem instanceof IntentTreeItem) {
       project = (treeItem.parent as ProjectTreeItem)?.fqn;
@@ -125,7 +139,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
 
   async function collectInputs(): Promise<State> {
     const state = {} as Partial<State>;
-    const projects = grabProjectItems(tasks, getContextProject());
+    const projects = await grabProjectItems(tasks, getContextProject());
     let step: InputStep;
 
     if (getContextIntent() === MISC) {
@@ -143,7 +157,7 @@ export async function multiStepTaskSelect(tasks: ConfiguredTask[], treeItem?: El
   }
 
   async function pickProjects(input: MultiStepSelection, state: Partial<State>) {
-    const pickItems = grabProjectItems(tasks, getContextProject());
+    const pickItems = await grabProjectItems(tasks, getContextProject());
     state.project = await input.showQuickPick({
       placeholder: messages.create_task_pick_project_placeholder,
       items: pickItems,

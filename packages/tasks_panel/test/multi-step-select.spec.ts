@@ -8,9 +8,14 @@ import { MISC } from "../src/utils/ws-folder";
 import * as e2eConfig from "../src/misc/common-e2e-config";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
 import { FIORI_DEPLOYMENT_CONFIG } from "../src/misc/e2e-config";
+import * as path from "path";
 
 describe("multi-step-selection scope", () => {
-  const roots = ["/user/projects/project1", "/user/projects/project2", "/user/projects/project3"];
+  const roots = [
+    path.join(path.sep, "user", "projects", "project1"),
+    path.join(path.sep, "user", "projects", "project2"),
+    path.join(path.sep, "user", "projects", "project3"),
+  ];
   const taskContributed1 = {
     label: "Template: task1",
     type: "testType",
@@ -84,7 +89,7 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabProjectItems", async () => {
-    expect(__internal.grabProjectItems(tasks)).to.be.deep.equal(
+    expect(await __internal.grabProjectItems(tasks)).to.be.deep.equal(
       map(uniq(map(tasks, "__wsFolder")), (_) => {
         return { label: "$(folder)", description: _ };
       }),
@@ -92,13 +97,13 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabProjectItems - project filter received", async () => {
-    expect(__internal.grabProjectItems(tasks, roots[0])).to.be.deep.equal([
+    expect(await __internal.grabProjectItems(tasks, roots[0])).to.be.deep.equal([
       { label: "$(folder)", description: roots[0] },
     ]);
   });
 
   it("grabProjectItems - project filter received but not matched", async () => {
-    expect(__internal.grabProjectItems(tasks, "/user/unknown/path")).to.be.deep.equal(
+    expect(await __internal.grabProjectItems(tasks, path.join(path.sep, "user", "unknown", "path"))).to.be.deep.equal(
       map(uniq(map(tasks, "__wsFolder")), (_) => {
         return { label: "$(folder)", description: _ };
       }),

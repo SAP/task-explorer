@@ -5,14 +5,16 @@ mockVscode("src/view/tasks-tree");
 import { TasksTree } from "../../src/view/tasks-tree";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 import { cloneDeep, find, reduce } from "lodash";
-import { createSandbox, SinonSandbox } from "sinon";
-import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem } from "../../src/view/task-tree-item";
+import { createSandbox, SinonMock, SinonSandbox } from "sinon";
+import { EmptyTaskTreeItem, IntentTreeItem, RootTreeItem } from "../../src/view/task-tree-item";
+import * as e2EConfig from "../../src/misc/e2e-config";
+import * as path from "path";
 
 const tasks = [
-  { type: "type1", label: "task1", __intent: "deploy", __wsFolder: "/my/project1" },
-  { type: "type2", label: "task2", __intent: "deploy", __wsFolder: "/my/project2" },
-  { type: "type3", label: "task3", __intent: "build", __wsFolder: "/my/project2" },
-  { type: "type3", label: "task4", __intent: "build", __wsFolder: "/my/project1" },
+  { type: "type1", label: "task1", __intent: "deploy", __wsFolder: path.join(path.sep, "my", "project1") },
+  { type: "type2", label: "task2", __intent: "deploy", __wsFolder: path.join(path.sep, "my", "project2") },
+  { type: "type3", label: "task3", __intent: "build", __wsFolder: path.join(path.sep, "my", "project2") },
+  { type: "type3", label: "task4", __intent: "build", __wsFolder: path.join(path.sep, "my", "project1") },
 ];
 
 describe("TasksTree class", () => {
@@ -42,10 +44,18 @@ describe("TasksTree class", () => {
   });
 
   describe("getChildren method", () => {
+    let mockE2eConfig: SinonMock;
+    beforeEach(() => {
+      mockE2eConfig = sandbox.mock(e2EConfig);
+    });
+    afterEach(() => {
+      mockE2eConfig.verify();
+    });
+
     it("Returns intents items when called with no arguments", async () => {
       testVscode.workspace.workspaceFolders = [
-        { uri: { fsPath: tasks[0].__wsFolder } },
-        { uri: { fsPath: tasks[1].__wsFolder } },
+        { uri: testVscode.Uri.file(tasks[0].__wsFolder) },
+        { uri: testVscode.Uri.file(tasks[1].__wsFolder) },
       ];
       const taskProvider = new MockTasksProvider(tasks);
       const tasksTree = new TasksTree(taskProvider);
@@ -56,8 +66,8 @@ describe("TasksTree class", () => {
     });
 
     it("Returns a root project item when called with no arguments (single root)", async () => {
-      const wsFolder = "/root/test/proj";
-      testVscode.workspace.workspaceFolders = [{ uri: { fsPath: wsFolder } }];
+      const wsFolder = path.join(path.sep, "root", "test", "proj");
+      testVscode.workspace.workspaceFolders = [{ uri: testVscode.Uri.file(wsFolder) }];
       const copyTasks = reduce(
         tasks,
         (acc, _) => {
@@ -72,14 +82,14 @@ describe("TasksTree class", () => {
       const tasksTree = new TasksTree(taskProvider);
       const items = await tasksTree.getChildren();
       expect(items).to.be.lengthOf(1);
-      expect(items[0]).to.be.an.instanceof(ProjectTreeItem);
+      expect(items[0]).to.be.an.instanceof(RootTreeItem);
       expect(items[0].label).to.equal(wsFolder);
     });
 
     it("Returns tasks of specific intent when called with the intent item", async () => {
       testVscode.workspace.workspaceFolders = [
-        { uri: { fsPath: tasks[0].__wsFolder } },
-        { uri: { fsPath: tasks[1].__wsFolder } },
+        { uri: testVscode.Uri.file(tasks[0].__wsFolder) },
+        { uri: testVscode.Uri.file(tasks[1].__wsFolder) },
       ];
       const taskProvider = new MockTasksProvider(tasks);
       const tasksTree = new TasksTree(taskProvider);
@@ -95,10 +105,11 @@ describe("TasksTree class", () => {
     });
 
     it("Broken tree structure - intent label missing", async () => {
-      testVscode.workspace.workspaceFolders = [{ uri: { fsPath: tasks[0].__wsFolder } }];
+      testVscode.workspace.workspaceFolders = [{ uri: testVscode.Uri.file(tasks[0].__wsFolder) }];
       const tasksTree = new TasksTree(new MockTasksProvider(tasks));
       const rootItems = await tasksTree.getChildren();
-      const item = rootItems[0];
+      const item = rootItems[0] as RootTreeItem;
+      mockE2eConfig.expects("collectProjects").once().withExactArgs(undefined).resolves([]);
       delete (item as any).fqn;
       const children = await tasksTree.getChildren(item);
       expect(children).to.be.lengthOf(1);
@@ -113,7 +124,9 @@ describe("TasksTree class", () => {
     });
 
     it("create roots items, when workspace structure broken", async () => {
-      testVscode.workspace.workspaceFolders = [{ uri: { fsPath: "/other/root/folder" } }];
+      testVscode.workspace.workspaceFolders = [
+        { uri: testVscode.Uri.file(path.join(path.sep, "other", "root", "folder")) },
+      ];
       const taskChildren = await new TasksTree(new MockTasksProvider(tasks)).getChildren(
         new IntentTreeItem("some", testVscode.TreeItemCollapsibleState.Expanded),
       );
@@ -133,8 +146,8 @@ describe("TasksTree class", () => {
   describe("findTreeItem", () => {
     it("findTreeItem - element found", async () => {
       testVscode.workspace.workspaceFolders = [
-        { uri: { fsPath: tasks[0].__wsFolder } },
-        { uri: { fsPath: tasks[1].__wsFolder } },
+        { uri: testVscode.Uri.file(tasks[0].__wsFolder) },
+        { uri: testVscode.Uri.file(tasks[1].__wsFolder) },
       ];
       const tasksTree = new TasksTree(new MockTasksProvider(tasks));
       const i = await tasksTree.findTreeItem(tasks[3]);
@@ -143,8 +156,8 @@ describe("TasksTree class", () => {
 
     it("findTreeItem - element not exists", async () => {
       testVscode.workspace.workspaceFolders = [
-        { uri: { fsPath: tasks[0].__wsFolder } },
-        { uri: { fsPath: tasks[1].__wsFolder } },
+        { uri: testVscode.Uri.file(tasks[0].__wsFolder) },
+        { uri: testVscode.Uri.file(tasks[1].__wsFolder) },
       ];
       const tasksTree = new TasksTree(new MockTasksProvider(tasks));
       expect(await tasksTree.findTreeItem({ type: "type3", label: "unknown" })).to.be.undefined;

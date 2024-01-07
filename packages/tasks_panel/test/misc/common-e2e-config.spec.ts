@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
-import { resetTestVSCode } from "../utils/mockVSCode";
+import { resetTestVSCode, testVscode } from "../utils/mockVSCode";
 import * as e2eConfig from "../../src/misc/e2e-config";
 import {
   completeDeployConfig,
@@ -105,28 +105,48 @@ describe("common-e2e-config scope", () => {
 
   describe("getConfigDeployPickItems function", () => {
     const project = "project";
+    const requestedFolder = { uri: testVscode.Uri.file(project) };
 
     let mockE2eConfig: SinonMock;
+    let mockWorkspace: SinonMock;
 
     beforeEach(() => {
       mockE2eConfig = sandbox.mock(e2eConfig);
+      mockWorkspace = sandbox.mock(testVscode.workspace);
     });
 
     afterEach(() => {
       mockE2eConfig.verify();
+      mockWorkspace.verify();
+    });
+
+    it("getConfigDeployPickItems - wrong project path", async () => {
+      mockWorkspace.expects("getWorkspaceFolder").once().withExactArgs(testVscode.Uri.file(project)).returns(undefined);
+      mockE2eConfig.expects("collectProjects").never();
+      expect(await getConfigDeployPickItems(project)).to.be.empty;
     });
 
     it("getConfigDeployPickItems - no projects found", async () => {
+      mockWorkspace
+        .expects("getWorkspaceFolder")
+        .once()
+        .withExactArgs(testVscode.Uri.file(project))
+        .returns(requestedFolder);
       mockE2eConfig.expects("collectProjects").once().withExactArgs(project).resolves([]);
       expect(await getConfigDeployPickItems(project)).to.be.empty;
     });
 
     it("getConfigDeployPickItems - projects found", async () => {
       const info = { wsFolder: "ws-folder" };
+      mockWorkspace
+        .expects("getWorkspaceFolder")
+        .once()
+        .withExactArgs(testVscode.Uri.file(info.wsFolder))
+        .returns(requestedFolder);
       mockE2eConfig
         .expects("collectProjects")
         .once()
-        .withExactArgs(project)
+        .withExactArgs(requestedFolder.uri.path)
         .resolves([
           { ...info, ...{ style: e2eConfig.ProjTypes.FIORI_FE }, ...{ project: "project1" } },
           { ...info, ...{ style: e2eConfig.ProjTypes.CAP }, ...{ project: "project2" } },
@@ -152,7 +172,7 @@ describe("common-e2e-config scope", () => {
         .withExactArgs({ ...info, ...{ style: e2eConfig.ProjTypes.CAP }, ...{ project: "project2" } })
         .resolves({ ...info, ...{ type: e2eConfig.CAP_DEPLOYMENT_CONFIG }, ...{ project: "project2" } });
 
-      expect(await getConfigDeployPickItems(project)).to.be.deep.equal([
+      expect(await getConfigDeployPickItems(info.wsFolder)).to.be.deep.equal([
         { ...info, ...{ type: e2eConfig.FIORI_DEPLOYMENT_CONFIG }, ...{ project: "project1" } },
         { ...info, ...{ type: e2eConfig.CAP_DEPLOYMENT_CONFIG }, ...{ project: "project2" } },
         { ...info, ...{ type: e2eConfig.HANA_DEPLOYMENT_CONFIG }, ...{ project: "project3" } },
