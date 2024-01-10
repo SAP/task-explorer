@@ -113,9 +113,8 @@ export const runAction = debounce(
 
     async function showQuickPick(tasks: ConfiguredTask[]): Promise<void> {
       const identifyConfiguredTaskByPickedItem = (item: QuickPickItem): ConfiguredTask | undefined => {
-        const task = { ...item };
-        delete task.description;
-        delete task.detail;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- object destructuring is used to exclude the specified properties
+        const { ["description"]: excludedDescription, ["detail"]: excludedDetails, ...task } = item;
         return find(tasks, matches(task));
       };
 

@@ -265,7 +265,7 @@ builder:
       expect((mockCommands as any).expectations["executeCommand"][1].args[0][1]).be.deep.equal(tasks[0]);
       // verify arg of `tasks-explorer.tree.select` command
       expect((mockCommands as any).expectations["executeCommand"][2].args[0][1]).be.deep.equal(tasks[0]);
-      expect(/^Deploy to ABAP$/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Deploy to ABAP/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("npm");
       expect((tasks[0] as any).options).to.be.deep.equal({
         cwd: `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}`,
@@ -291,14 +291,14 @@ builder:
       expect((mockCommands as any).expectations["executeCommand"][1].args[0][1]).be.deep.equal(last(tasks));
       // verify arg of `tasks-explorer.tree.select` command
       expect((mockCommands as any).expectations["executeCommand"][2].args[0][1]).be.deep.equal(last(tasks));
-      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Build/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("build.mta");
       expect((tasks[0] as any).taskType).to.be.equal("Build");
       expect((tasks[0] as any).projectPath).to.be.equal(
         testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath,
       );
       expect((tasks[0] as any).extensions).to.be.deep.equal([]);
-      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("deploy.mta.cf");
       expect((tasks[1] as any).taskType).to.be.equal("Deploy");
       expect((tasks[1] as any).mtarPath).to.be.equal(
@@ -395,8 +395,8 @@ builder:
       expect((mockCommands as any).expectations["executeCommand"][1].args[0][1]).be.deep.equal(last(tasks));
       // verify arg of `tasks-explorer.tree.select` command
       expect((mockCommands as any).expectations["executeCommand"][2].args[0][1]).be.deep.equal(last(tasks));
-      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
-      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Build/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Deploy to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
     });
 
     it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, CF details obtained", async () => {

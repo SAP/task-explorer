@@ -6,7 +6,7 @@ import { TasksTree } from "../../src/view/tasks-tree";
 import { MockTasksProvider } from "../utils/mockTasksProvider";
 import { cloneDeep, find, reduce } from "lodash";
 import { createSandbox, SinonMock, SinonSandbox } from "sinon";
-import { EmptyTaskTreeItem, IntentTreeItem, RootTreeItem } from "../../src/view/task-tree-item";
+import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, RootTreeItem } from "../../src/view/task-tree-item";
 import * as e2EConfig from "../../src/misc/e2e-config";
 import * as path from "path";
 
@@ -102,6 +102,48 @@ describe("TasksTree class", () => {
       taskByIntent = await tasksTree.getChildren(intents[1]);
       expect(taskByIntent).to.be.lengthOf(1);
       expect(taskByIntent[0].label).eq("task2");
+    });
+
+    it("Single root - several known projects found", async () => {
+      testVscode.workspace.workspaceFolders = [{ uri: testVscode.Uri.file(tasks[0].__wsFolder) }];
+      const tasksTree = new TasksTree(new MockTasksProvider(tasks));
+      const rootItems = await tasksTree.getChildren();
+      const item = rootItems[0] as RootTreeItem;
+      mockE2eConfig
+        .expects("collectProjects")
+        .once()
+        .withExactArgs(item.fqn)
+        .resolves([
+          { project: "proj1", wsFolder: item.fqn },
+          { project: "proj2", wsFolder: item.fqn },
+        ]);
+      const childreen = await tasksTree.getChildren(item);
+      expect(childreen).to.be.lengthOf(2);
+      expect(childreen[0]).to.be.instanceOf(ProjectTreeItem);
+    });
+
+    it("Collect the intent items when called with the project item", async () => {
+      testVscode.workspace.workspaceFolders = [
+        { uri: testVscode.Uri.file(tasks[0].__wsFolder) },
+        { uri: testVscode.Uri.file(tasks[1].__wsFolder) },
+      ];
+      const taskProvider = new MockTasksProvider(tasks);
+      const tasksTree = new TasksTree(taskProvider);
+      const rootItems = await tasksTree.getChildren();
+      const item = rootItems[0] as RootTreeItem;
+      mockE2eConfig
+        .expects("collectProjects")
+        .once()
+        .withExactArgs(item.fqn)
+        .resolves([
+          { project: "proj1", wsFolder: item.fqn },
+          { project: "proj2", wsFolder: item.fqn },
+        ]);
+      const projects = await tasksTree.getChildren(item);
+      expect(projects).to.be.lengthOf(2);
+      const intents = await tasksTree.getChildren(projects[0]);
+      expect(intents).to.be.lengthOf(1);
+      expect(intents[0]).to.be.instanceOf(EmptyTaskTreeItem);
     });
 
     it("Broken tree structure - intent label missing", async () => {

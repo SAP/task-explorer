@@ -118,6 +118,7 @@ describe("task-serializer scope", () => {
       await callback({ uris: [{ path: docPath }] });
     });
 
+    // open this test when support to the 'onDidChangeDiagnostics' of problem view will be implemented
     it.skip("updateTasksConfiguration called, onDidChangeDiagnostics triggered, open problem view", async () => {
       mockWindow
         .expects("showWarningMessage")

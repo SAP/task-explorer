@@ -17,7 +17,7 @@ import {
 import { exceptionToString, getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
 import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tools";
 import { getLogger } from "../../src/logger/logger-wrapper";
-import { sep, join } from "path";
+import { sep, join, relative } from "path";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { isPathRelatedToFolder } from "../utils/ws-folder";
 
@@ -110,11 +110,8 @@ export async function collectProjects(wsFolder: string, disableCache = false): P
     return cached;
   }
   function asWsRelativePath(absPath: string): string {
-    let project = workspace.asRelativePath(absPath, false);
-    if (project === absPath) {
-      project = ""; // single root
-    }
-    return project;
+    const project = workspace.asRelativePath(absPath, false);
+    return project === absPath ? "" /*single root*/ : project;
   }
   const items: Promise<ProjectInfo | undefined>[] = [];
   const requestedFolder = Uri.file(wsFolder);
@@ -197,7 +194,7 @@ export async function generateMtaDeployTasks(
     }
   }
   const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
-  const buildTaskLabel = `Build MTA`;
+  const buildTaskLabel = `Build ${project}`;
   const taskBuild = {
     type: "build.mta",
     label: labelType === "uniq" ? getUniqueTaskLabel(buildTaskLabel) : buildTaskLabel,
@@ -205,7 +202,7 @@ export async function generateMtaDeployTasks(
     projectPath: `${projectUri.fsPath}`,
     extensions: [],
   };
-  const deployTaskLabel = `Deploy MTA to Cloud Foundry`;
+  const deployTaskLabel = `Deploy to Cloud Foundry ${project}`;
   const taskDeploy = extend(
     {
       type: "deploy.mta.cf",
@@ -255,5 +252,14 @@ export function calculateTaskWsFolder(task: ConfiguredTask): string {
       key = "packageJSONPath";
     }
   }
-  return join(task["__wsFolder"], key ? task[key] : "");
+  // get the task nested property value
+  let projectPath: any = key.split(".").reduce((object, property) => object[property], task) ?? "";
+  // if the path includes the workspace folder, use the relative path
+  // example:  task { type: "npm", path: "/home/user/ws1/project1" } and wsFolder: /home/user/ws1
+  // expected projectFolder result: "project1"
+  if (isPathRelatedToFolder(projectPath, task.__wsFolder)) {
+    projectPath = relative(task.__wsFolder, projectPath);
+  }
+
+  return join(task["__wsFolder"], projectPath);
 }

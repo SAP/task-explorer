@@ -7,7 +7,7 @@ import { map, uniq } from "lodash";
 import { MISC } from "../src/utils/ws-folder";
 import * as e2eConfig from "../src/misc/common-e2e-config";
 import { SinonMock, SinonSandbox, createSandbox } from "sinon";
-import { FIORI_DEPLOYMENT_CONFIG } from "../src/misc/e2e-config";
+import * as e2EConfig from "../src/misc/e2e-config";
 import * as path from "path";
 
 describe("multi-step-selection scope", () => {
@@ -70,6 +70,7 @@ describe("multi-step-selection scope", () => {
 
   let sandbox: SinonSandbox;
   let mockFioriE2eCinfig: SinonMock;
+  let mockE2eConfig: SinonMock;
 
   before(() => {
     sandbox = createSandbox();
@@ -77,10 +78,12 @@ describe("multi-step-selection scope", () => {
 
   beforeEach(() => {
     mockFioriE2eCinfig = sandbox.mock(e2eConfig);
+    mockE2eConfig = sandbox.mock(e2EConfig);
   });
 
   afterEach(() => {
     mockFioriE2eCinfig.verify();
+    mockE2eConfig.verify();
     sandbox.restore();
   });
 
@@ -89,8 +92,23 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabProjectItems", async () => {
+    let folders = uniq(map(tasks, "__wsFolder"));
+    const projectsInfo = [
+      { project: "proj1", wsFolder: folders[0] },
+      { project: "proj2", wsFolder: folders[0] },
+    ];
+    folders.every((_, index) =>
+      mockE2eConfig
+        .expects("collectProjects")
+        .withExactArgs(_)
+        .resolves(!index ? projectsInfo : []),
+    );
+    folders = folders.concat([
+      path.join(projectsInfo[0].wsFolder, projectsInfo[0].project),
+      path.join(projectsInfo[1].wsFolder, projectsInfo[1].project),
+    ]);
     expect(await __internal.grabProjectItems(tasks)).to.be.deep.equal(
-      map(uniq(map(tasks, "__wsFolder")), (_) => {
+      map(folders, (_) => {
         return { label: "$(folder)", description: _ };
       }),
     );
@@ -158,8 +176,8 @@ describe("multi-step-selection scope", () => {
   });
 
   it("grabTasksByGroup - fioriE2ePickItems found, [build/deploy] tasks hidden", async () => {
-    const e2eItem1 = { wsFolder: "folder-1", project: "project-1", type: FIORI_DEPLOYMENT_CONFIG };
-    const e2eItem2 = { wsFolder: "folder-2", project: "", type: FIORI_DEPLOYMENT_CONFIG };
+    const e2eItem1 = { wsFolder: "folder-1", project: "project-1", type: e2EConfig.FIORI_DEPLOYMENT_CONFIG };
+    const e2eItem2 = { wsFolder: "folder-2", project: "", type: e2EConfig.FIORI_DEPLOYMENT_CONFIG };
     mockFioriE2eCinfig.expects("getConfigDeployPickItems").resolves([e2eItem1, e2eItem2]);
     expect(await __internal.grabTasksByGroup(tasks, roots[0])).to.be.deep.equal([
       { label: "Fiori Configuration", kind: testVscode.QuickPickItemKind.Separator },
