@@ -105,6 +105,8 @@ function setProjectsInfoToCache(wsFolder: string, projects: ProjectInfo[]): void
 }
 
 export async function collectProjects(wsFolder: string, disableCache = false): Promise<ProjectInfo[]> {
+  // discovering projects in a workspace is a costly operation, so we cache the result for 5 seconds (assuming projects
+  // don't change during this time) useful in cases where this method is called multiple times on the same flow
   const cached = getProjectsInfoFromCache(wsFolder);
   if (!disableCache && cached) {
     return cached;

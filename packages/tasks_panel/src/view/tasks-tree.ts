@@ -93,11 +93,29 @@ export class TasksTree implements TreeDataProvider<TreeItem> {
     return children;
   }
 
+  /* 
+  expects a following structure:
+  single root:
+      workspace [RootTreeItem]
+        - project-1 [ProjectTreeItem]
+          - intent ( build, deploy, etc.) [IntentTreeItem]
+            - task [TaskTreeItem]
+        - project-2
+          - intent ( build, deploy, etc.)
+            - task
+
+  or multiple roots:
+      root-project-1 [RootTreeItem]
+        - intent ( build, deploy, etc.)
+          - task
+      root-project-2
+        - intent ( build, deploy, etc.)
+          - task
+  */
   public async getChildren(element?: TreeItem): Promise<TreeItem[]> {
     if (element === undefined) {
       return this.getRoots();
     } else if (element instanceof RootTreeItem) {
-      // try find a projects in the workspace or drop these tree leaves
       const projects = await this.getProjects(element);
       return isEmpty(projects) ? this.getIntents(await this.tasksProvider.getConfiguredTasks(), element) : projects;
     } else if (element instanceof ProjectTreeItem) {
