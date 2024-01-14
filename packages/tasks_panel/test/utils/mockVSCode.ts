@@ -1,4 +1,4 @@
-import { resolve, join } from "path";
+import { resolve, join, sep } from "path";
 import { ConfiguredTask, FormProperty, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
 import * as _ from "lodash";
 
@@ -102,7 +102,7 @@ export const testVscode: any = {
     getWorkspaceFolder: (v) => {
       return { name: v.path, uri: { fsPath: v.path } };
     },
-    asRelativePath: (p) => _.last(_.split(p, "/")),
+    asRelativePath: (p) => _.last(_.split(p, sep)),
     fs: {
       stat: () => Promise.resolve(),
       readFile: () => Promise.resolve(),

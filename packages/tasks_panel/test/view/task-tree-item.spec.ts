@@ -3,6 +3,7 @@ import { mockVscode, resetTestVSCode, testVscode } from "../utils/mockVSCode";
 import { EmptyTaskTreeItem, IntentTreeItem, ProjectTreeItem, TaskTreeItem } from "../../src/view/task-tree-item";
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { stub } from "sinon";
+import * as path from "path";
 
 mockVscode("src/view/tasks-tree-item");
 
@@ -14,7 +15,7 @@ describe("IntentTreeItem class", () => {
   it("IntentTreeItem instance verifying", () => {
     const label = "my-label";
     const item = new IntentTreeItem(label);
-    expect(item.collapsibleState).to.equal(TreeItemCollapsibleState.Collapsed);
+    expect(item.collapsibleState).to.equal(TreeItemCollapsibleState.Expanded);
     expect(item.label).to.equal(label);
     expect(item.contextValue).to.equal("intent");
     expect(item.tooltip).to.equal("");
@@ -22,8 +23,8 @@ describe("IntentTreeItem class", () => {
 
   it("IntentTreeItem - misc", () => {
     const label = "my-label";
-    const item = new IntentTreeItem(label, TreeItemCollapsibleState.Expanded);
-    expect(item.collapsibleState).to.equal(TreeItemCollapsibleState.Expanded);
+    const item = new IntentTreeItem(label, TreeItemCollapsibleState.Collapsed);
+    expect(item.collapsibleState).to.equal(TreeItemCollapsibleState.Collapsed);
     expect(item.label).to.equal(label);
     expect(item.contextValue).to.equal("intent");
     expect(item.tooltip).to.equal("");
@@ -37,7 +38,7 @@ describe("TaskTreeItem class", () => {
   const label = "my-label";
   const index = 3;
   const type = "myType";
-  const wsFolder = "/my/path";
+  const wsFolder = path.join(path.sep, "my", "path");
   const state = TreeItemCollapsibleState.Expanded;
   const parentItem = new IntentTreeItem("dummy", testVscode.TreeItemCollapsibleState.None);
 
@@ -80,7 +81,12 @@ describe("TaskTreeItem class", () => {
   });
 
   it("EmptyTreeItem instance - inpect", () => {
-    const parentItem = new ProjectTreeItem("dummy", "/home/dummy/project", TreeItemCollapsibleState.Expanded);
+    const parentItem = new ProjectTreeItem(
+      "dummy",
+      path.join(path.sep, "home", "dummy", "project"),
+      undefined,
+      TreeItemCollapsibleState.Expanded,
+    );
     const item = new EmptyTaskTreeItem(parentItem);
     expect(item.contextValue).to.be.undefined;
     expect(item.label).to.equal("Create a task");
@@ -94,7 +100,7 @@ describe("TaskTreeItem class", () => {
   });
 
   it("EmptyTreeItem instance - inpect", () => {
-    const parentItem = new ProjectTreeItem("dummy", "/home/dummy/project");
+    const parentItem = new ProjectTreeItem("dummy", path.join(path.sep, "home", "dummy", "project"));
     const item = new EmptyTaskTreeItem(parentItem);
     expect(item.contextValue).to.be.undefined;
     expect(item.label).to.be.equal("Create a task");

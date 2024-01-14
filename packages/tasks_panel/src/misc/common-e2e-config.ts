@@ -1,4 +1,4 @@
-import { TaskDefinition } from "vscode";
+import { TaskDefinition, Uri, workspace } from "vscode";
 import {
   CAP_DEPLOYMENT_CONFIG,
   FIORI_DEPLOYMENT_CONFIG,
@@ -11,7 +11,9 @@ import { FioriProjectConfigInfo, fioriE2eConfig, getFioriE2ePickItems } from "./
 import { CapProjectConfigInfo, capE2eConfig, getCapE2ePickItems } from "./cap-e2e-config";
 import { HanaProjectConfigInfo, getHanaE2ePickItems, hanaE2eConfig } from "./hana-e2e-config";
 import { getLogger } from "../../src/logger/logger-wrapper";
-import { compact, reduce } from "lodash";
+import { compact, filter, reduce } from "lodash";
+import { join } from "path";
+import { isPathRelatedToFolder } from "../utils/ws-folder";
 
 export type ProjectConfigInfo = FioriProjectConfigInfo | CapProjectConfigInfo | HanaProjectConfigInfo;
 
@@ -31,20 +33,27 @@ export async function completeDeployConfig(task: any): Promise<void> {
 }
 
 export async function getConfigDeployPickItems(project: string): Promise<ProjectConfigInfo[]> {
-  const items = reduce(
-    await collectProjects(project),
-    (acc, info: ProjectInfo) => {
-      if (info.style === ProjTypes.FIORI_FE) {
-        acc.push(getFioriE2ePickItems(info));
-      } else if (info.style === ProjTypes.CAP) {
-        acc.push(getCapE2ePickItems(info));
-      } else if (info.style === ProjTypes.HANA) {
-        acc.push(getHanaE2ePickItems(info));
-      }
-      return acc;
-    },
-    [] as Promise<ProjectConfigInfo | undefined>[],
-  );
+  let items = [] as Promise<ProjectConfigInfo | undefined>[];
+  const requestedFolder = workspace.getWorkspaceFolder(Uri.file(project));
+  if (requestedFolder) {
+    const projects = filter(await collectProjects(requestedFolder.uri.path), (_) =>
+      isPathRelatedToFolder(join(_.wsFolder, _.project), project),
+    );
+    items = reduce(
+      projects,
+      (acc, info: ProjectInfo) => {
+        if (info.style === ProjTypes.FIORI_FE) {
+          acc.push(getFioriE2ePickItems(info));
+        } else if (info.style === ProjTypes.CAP) {
+          acc.push(getCapE2ePickItems(info));
+        } else if (info.style === ProjTypes.HANA) {
+          acc.push(getHanaE2ePickItems(info));
+        }
+        return acc;
+      },
+      items,
+    );
+  }
   return Promise.all(items).then((items) => compact(items));
 }
 

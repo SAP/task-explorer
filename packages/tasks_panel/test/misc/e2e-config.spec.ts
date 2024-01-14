@@ -8,6 +8,7 @@ import {
   doesFileExist,
   isTasksSettled,
   waitForFileResource,
+  calculateTaskWsFolder,
 } from "../../src/misc/e2e-config";
 import { expect } from "chai";
 import { MockVSCodeInfo, resetTestVSCode, testVscode } from "../utils/mockVSCode";
@@ -16,6 +17,7 @@ import { afterEach } from "mocha";
 import { concat, last, split } from "lodash";
 import * as cfTools from "@sap/cf-tools/out/src/cf-local";
 import * as path from "path";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 
 describe("e2e-config scope", () => {
   let sandbox: SinonSandbox;
@@ -107,7 +109,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("collectProjects", () => {
-    const wsFolder = "/home/user/test/";
+    const wsFolder = path.join(path.sep, "home", "user", "test");
     const projectInfo = {
       path: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), "project").path,
       type: "com.sap.fe",
@@ -140,19 +142,19 @@ describe("e2e-config scope", () => {
 
     it("collectProjects - toolkit extension is not configured well (cont.)", async () => {
       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(undefined);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - no project found", async () => {
       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, projectInfo undefined", async () => {
       sandbox.stub(infoProject, "getProjectInfo").resolves();
       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
       mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, but the project doesn't match the requested path", async () => {
@@ -161,8 +163,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test1/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test1")) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, related workspace folder doesn't exist", async () => {
@@ -172,12 +174,12 @@ describe("e2e-config scope", () => {
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
         .returns(undefined);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, but the project type does not match the 'com.sap.fe' type", async () => {
       sandbox.stub(infoProject, "getProjectInfo").resolves({
-        path: "/home/user/test/project",
+        path: path.join(path.sep, "home", "user", "test", "project"),
         type: "com.sap.cap.js",
       });
       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
@@ -185,13 +187,13 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([]);
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test")) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([]);
     });
 
     it("collectProjects - project found, project type is 'com.sap.fe' type", async () => {
       sandbox.stub(infoProject, "getProjectInfo").resolves({
-        path: "/home/user/test/project",
+        path: path.join(path.sep, "home", "user", "test", "project"),
         type: "com.sap.fe",
       });
       sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
@@ -199,11 +201,33 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test", path.sep)) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
           project: "project",
+          style: ProjTypes.FIORI_FE,
+        },
+      ]);
+    });
+
+    it("collectProjects - project opened as a root, project type is 'com.sap.fe' type", async () => {
+      const folder = path.join(path.sep, "home", "user", "test");
+      sandbox.stub(infoProject, "getProjectInfo").resolves({
+        path: folder,
+        type: "com.sap.fe",
+      });
+      sandbox.stub(btaExtension.exports.workspaceAPI, "getProjects").resolves([infoProject]);
+      mockExtensions.expects("getExtension").withExactArgs("SAPOSS.app-studio-toolkit").returns(btaExtension);
+      mockWorkspace.expects("asRelativePath").withExactArgs(folder, false).returns(folder);
+      mockWorkspace
+        .expects("getWorkspaceFolder")
+        .withExactArgs(testVscode.Uri.file(folder))
+        .returns({ uri: testVscode.Uri.file(folder, path.sep) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
+        {
+          wsFolder,
+          project: "",
           style: ProjTypes.FIORI_FE,
         },
       ]);
@@ -220,8 +244,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test", path.sep)) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
           project: "my",
@@ -241,8 +265,8 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: "/home/user/test/" } });
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(path.join(path.sep, "home", "user", "test", path.sep)) });
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
           project: "my",
@@ -252,9 +276,9 @@ describe("e2e-config scope", () => {
     });
 
     it("collectProjects - project found, project type is 'com.sap.hana' type", async () => {
-      const wsFolder = "/home/user/test/project/my/";
+      const wsFolder = path.join(path.sep, "home", "user", "test", "project", "my");
       const projectInfo = {
-        path: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder)).path,
+        path: testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), "proj").path,
         type: "com.sap.hana",
       };
       sandbox.stub(infoProject, "getProjectInfo").resolves(projectInfo);
@@ -263,12 +287,12 @@ describe("e2e-config scope", () => {
       mockWorkspace
         .expects("getWorkspaceFolder")
         .withExactArgs(testVscode.Uri.file(projectInfo.path))
-        .returns({ uri: { fsPath: wsFolder } });
-      mockWorkspace.expects("asRelativePath").withExactArgs(wsFolder, false).returns(wsFolder);
-      expect(await collectProjects(wsFolder)).to.be.deep.equal([
+        .returns({ uri: testVscode.Uri.file(`${wsFolder}/`) });
+      mockWorkspace.expects("asRelativePath").withExactArgs(projectInfo.path, false).returns("proj");
+      expect(await collectProjects(wsFolder, true)).to.be.deep.equal([
         {
           wsFolder,
-          project: "",
+          project: "proj",
           style: ProjTypes.HANA,
         },
       ]);
@@ -276,7 +300,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("addTaskDefinition scope", () => {
-    const wsFolder = "/home/user/test/project/my/";
+    const wsFolder = path.join(path.sep, "home", "user", "test", "project", "my", path.sep);
 
     let mockUpdateConfiguration: SinonMock;
     beforeEach(() => {
@@ -323,7 +347,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("isFileExist scope", () => {
-    const url = testVscode.Uri.file("/home/user/test/project/my/file.txt");
+    const url = testVscode.Uri.file(path.join(path.sep, "home", "user", "test", "project", "my", "file.txt"));
 
     let mockWorkspaceFs: SinonMock;
     beforeEach(() => {
@@ -346,7 +370,7 @@ describe("e2e-config scope", () => {
   });
 
   describe("generateMtaDeployTasks scope", () => {
-    const wsFolder = "/home/user/test/project/";
+    const wsFolder = path.join(path.sep, "home", "user", "test", "project", path.sep);
     const project = "my";
 
     let mockCfTools: SinonMock;
@@ -360,7 +384,7 @@ describe("e2e-config scope", () => {
 
     const projectUri = testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project);
     const taskBuild = {
-      label: "Build MTA",
+      label: `Build ${project}`,
       type: "build.mta",
       taskType: "Build",
       projectPath: `${projectUri.fsPath}`,
@@ -368,9 +392,13 @@ describe("e2e-config scope", () => {
     };
     const taskDeploy = {
       type: "deploy.mta.cf",
-      label: `Deploy MTA to Cloud Foundry`,
+      label: `Deploy to Cloud Foundry ${project}`,
       taskType: "Deploy",
-      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+      mtarPath: path.join(
+        projectUri.fsPath,
+        "mta_archives",
+        `${project || last(split(wsFolder, path.sep))}_0.0.1.mtar`,
+      ),
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     };
@@ -402,19 +430,24 @@ describe("e2e-config scope", () => {
     it("generateMtaDeployTasks - sequence label type, cf target found", async () => {
       const targetName = "target3";
       mockCfTools.expects("cfGetTargets").resolves([{ label: targetName, isCurrent: true }]);
+      const copyTaskBuild = { ...taskBuild };
+      copyTaskBuild.label = `Build `;
+      const copyTaskDeploy = { ...taskDeploy };
+      copyTaskDeploy.label = `Deploy to Cloud Foundry `;
+      copyTaskDeploy.dependsOn = [copyTaskBuild.label];
       expect(await generateMtaDeployTasks(wsFolder, "", "sequence")).be.deep.equal([
-        { ...taskBuild, ...{ projectPath: `${wsFolder}` } },
+        { ...copyTaskBuild, ...{ projectPath: `${wsFolder}` } },
         {
-          ...taskDeploy,
+          ...copyTaskDeploy,
           ...{ cfTarget: targetName, cfEndpoint: "", cfOrg: "", cfSpace: "" },
-          ...{ mtarPath: `${wsFolder}/mta_archives/project_0.0.1.mtar` },
+          ...{ mtarPath: path.normalize(path.join(wsFolder, "mta_archives", "project_0.0.1.mtar")) },
         },
       ]);
     });
   });
 
   describe("isTasksSettled scope", () => {
-    const wsFolder = "/home/user/test/project/my";
+    const wsFolder = path.join(path.sep, "home", "user", "test", "project", "my");
     const wsFolderPath = testVscode.Uri.file(wsFolder);
 
     it("isTasksSettled - exists", async () => {
@@ -466,6 +499,147 @@ describe("e2e-config scope", () => {
       ];
       MockVSCodeInfo.configTasks = undefined;
       expect(isTasksSettled(wsFolder, tasks)).be.false;
+    });
+  });
+
+  describe("calculateTaskWsFolder scope", () => {
+    const baseTask: ConfiguredTask = {
+      label: "task",
+      type: "npm",
+      __wsFolder: path.join(path.sep, "root", "project"),
+    };
+
+    it("task type - 'npm', 'path' property found", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "npm",
+          path: path.join(path.sep, "root", "project", "test-path"),
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, "test-path"));
+    });
+
+    it("task type - 'npm', 'options.cwd' property found", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "npm",
+          options: {
+            cwd: path.join(path.sep, "root", "project", "test-path"),
+          },
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, "test-path"));
+    });
+
+    it("task type - 'npm', 'options.cwd' property not found", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "npm",
+          opt: {
+            pwd: path.join(path.sep, "root", "project", "test-path"),
+          },
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, ""));
+    });
+
+    it("task type - 'npm', 'options.cwd' property undefined", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "npm",
+          options: {
+            cwd: undefined,
+          },
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, ""));
+    });
+
+    it("task type - 'build.mta'", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "build.mta",
+          projectPath: path.join(path.sep, "root", "project", "test-path"),
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, "test-path"));
+    });
+
+    it("task type - 'deploy.mta.cf'", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "build.mta.cf",
+          mtarPath: path.join(path.sep, "root", "project", "test-path", "mta_archives", "test.mtar"),
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(
+        path.join(task.__wsFolder, "test-path", "mta_archives", "test.mtar"),
+      );
+    });
+
+    it("task type - 'deploy.mta.cf', path value is relative", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "build.mta.cf",
+          mtarPath: path.join("test-path", "mta_archives", "test.mtar"),
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(
+        path.join(task.__wsFolder, "test-path", "mta_archives", "test.mtar"),
+      );
+    });
+
+    it("task type - 'deploy.mta.cf', expected property not exists", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{ type: "build.mta.cf" },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder));
+    });
+
+    it("task type - 'deploy'", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "deploy",
+          projectPath: path.join(path.sep, "root", "project", "test-path"),
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, "test-path"));
+    });
+
+    it("task type - 'npm-script'", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{
+          type: "npm-script",
+          packageJSONPath: path.join(path.sep, "root", "project", "test-path"),
+        },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, "test-path"));
+    });
+
+    it("task type - 'npm-script', expected property not exists", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{ type: "npm-script" },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, ""));
+    });
+
+    it("task type - 'unknown'", async () => {
+      const task: ConfiguredTask = {
+        ...baseTask,
+        ...{ type: "unknown" },
+      };
+      expect(calculateTaskWsFolder(task)).be.equal(path.join(task.__wsFolder, ""));
     });
   });
 });

@@ -11,6 +11,7 @@ import { DEFAULT_TARGET } from "@sap/cf-tools";
 import * as cfUtils from "@sap/cf-tools/out/src/utils";
 import * as cfTools from "@sap/cf-tools/out/src/cf-local";
 import * as e2eConfig from "../../src/misc/e2e-config";
+import * as path from "path";
 
 describe("fiori-e2e-config scope", () => {
   let sandbox: SinonSandbox;
@@ -61,7 +62,7 @@ builder:
     });
 
     const info: e2eConfig.ProjectInfo = {
-      wsFolder: "/test/projects",
+      wsFolder: path.join(path.sep, "test", "projects"),
       project: "unit-test",
       style: e2eConfig.ProjTypes.FIORI_FE,
     };
@@ -198,8 +199,8 @@ builder:
   });
 
   describe("fioriE2eConfig scope", () => {
-    const wsFolder = "/home/test/";
-    const project = "/project";
+    const wsFolder = path.join(path.sep, "home", "test");
+    const project = path.join(path.sep, "project");
     const uriUi5DeployYaml = testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project, "ui5-deploy.yaml");
 
     const callbacks = {};
@@ -227,7 +228,12 @@ builder:
         .resolves();
       mockWorkspace
         .expects("createFileSystemWatcher")
-        .withExactArgs(new testVscode.RelativePattern(wsFolder, "/project/ui5-deploy.yaml"), false, false, true)
+        .withExactArgs(
+          new testVscode.RelativePattern(wsFolder, path.join(path.sep, "project", "ui5-deploy.yaml")),
+          false,
+          false,
+          true,
+        )
         .returns(watcher);
       mockE2eConfig = sandbox.mock(e2eConfig);
     });
@@ -259,7 +265,7 @@ builder:
       expect((mockCommands as any).expectations["executeCommand"][1].args[0][1]).be.deep.equal(tasks[0]);
       // verify arg of `tasks-explorer.tree.select` command
       expect((mockCommands as any).expectations["executeCommand"][2].args[0][1]).be.deep.equal(tasks[0]);
-      expect(/^Deploy to ABAP$/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Deploy to ABAP/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("npm");
       expect((tasks[0] as any).options).to.be.deep.equal({
         cwd: `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}`,
@@ -285,18 +291,18 @@ builder:
       expect((mockCommands as any).expectations["executeCommand"][1].args[0][1]).be.deep.equal(last(tasks));
       // verify arg of `tasks-explorer.tree.select` command
       expect((mockCommands as any).expectations["executeCommand"][2].args[0][1]).be.deep.equal(last(tasks));
-      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Build/.test((tasks[0] as any).label)).to.be.true;
       expect((tasks[0] as any).type).to.be.equal("build.mta");
       expect((tasks[0] as any).taskType).to.be.equal("Build");
       expect((tasks[0] as any).projectPath).to.be.equal(
         testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath,
       );
       expect((tasks[0] as any).extensions).to.be.deep.equal([]);
-      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Deploy to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
       expect((tasks[1] as any).type).to.be.equal("deploy.mta.cf");
       expect((tasks[1] as any).taskType).to.be.equal("Deploy");
       expect((tasks[1] as any).mtarPath).to.be.equal(
-        `${testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), project).fsPath}/mta_archives/${project}_0.0.1.mtar`,
+        path.join(wsFolder, project, "mta_archives", `${project}_0.0.1.mtar`),
       );
       expect((tasks[1] as any).extensions).to.be.deep.equal([]);
       expect((tasks[1] as any).cfTarget).to.be.empty;
@@ -321,7 +327,7 @@ builder:
   });
 
   describe("fioriE2eConfig scope - single root", () => {
-    const wsFolder = "/home/test/my-project";
+    const wsFolder = path.join(path.sep, "home", "test", "my-project");
     const project = "";
     const uriUi5DeployYaml = testVscode.Uri.joinPath(testVscode.Uri.file(wsFolder), "ui5-deploy.yaml");
     const data = { wsFolder, project };
@@ -389,8 +395,8 @@ builder:
       expect((mockCommands as any).expectations["executeCommand"][1].args[0][1]).be.deep.equal(last(tasks));
       // verify arg of `tasks-explorer.tree.select` command
       expect((mockCommands as any).expectations["executeCommand"][2].args[0][1]).be.deep.equal(last(tasks));
-      expect(/^Build MTA$/.test((tasks[0] as any).label)).to.be.true;
-      expect(/^Deploy MTA to Cloud Foundry$/.test((tasks[1] as any).label)).to.be.true;
+      expect(/^Build/.test((tasks[0] as any).label)).to.be.true;
+      expect(/^Deploy to Cloud Foundry/.test((tasks[1] as any).label)).to.be.true;
     });
 
     it("fioriE2eConfig, deploy.yaml is updated, target CF, tasks defined, CF details obtained", async () => {

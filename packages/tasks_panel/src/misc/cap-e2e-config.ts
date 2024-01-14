@@ -12,7 +12,7 @@ import {
   isTasksSettled,
   waitForFileResource,
 } from "./e2e-config";
-import { last } from "lodash";
+import { last, map } from "lodash";
 
 export interface CapProjectConfigInfo extends ProjectInfo {
   type: string;
@@ -51,20 +51,26 @@ function invokeCommand(config: { cmd: string; args: string[]; cwd: string }, add
 }
 
 export async function getCapE2ePickItems(info: ProjectInfo): Promise<CapProjectConfigInfo | undefined> {
-  async function isCdsAvailable(): Promise<boolean> {
+  async function isCdsEnabled(): Promise<boolean> {
     return invokeCommand({ cmd: "cds", args: ["help"], cwd: info.wsFolder }, [])
       .then(() => true)
       .catch(() => false);
   }
 
   async function isConfigured(): Promise<boolean> {
-    return (
-      (await doesFileExist(Uri.joinPath(Uri.file(info.wsFolder), info.project, "mta.yaml"))) &&
-      isTasksSettled(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, "sequence"))
-    );
+    if (await doesFileExist(Uri.joinPath(Uri.file(info.wsFolder), info.project, "mta.yaml"))) {
+      const tasksPattern = map(await generateMtaDeployTasks(info.wsFolder, info.project, "sequence"), (task) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- object destructuring is used to exclude the specified properties
+        const { ["label"]: excludedLabel, ["dependsOn"]: excludedDependsOn, ...copyTask } = task;
+        return copyTask;
+      });
+      // attempt to find a match for the generated tasks (without 'label' and 'dependsOn' properties) in the tasks configuration
+      return isTasksSettled(info.wsFolder, tasksPattern);
+    }
+    return false;
   }
 
-  if (info.style === ProjTypes.CAP && (await isCdsAvailable()) && !(await isConfigured())) {
+  if (info.style === ProjTypes.CAP && (await isCdsEnabled()) && !(await isConfigured())) {
     return { ...info, ...{ type: CAP_DEPLOYMENT_CONFIG } };
   }
 }

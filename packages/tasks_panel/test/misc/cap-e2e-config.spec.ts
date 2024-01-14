@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { extend, find } from "lodash";
+import { extend, find, map } from "lodash";
 import { mockVscode, resetTestVSCode, testVscode, MockVSCodeInfo } from "../utils/mockVSCode";
 
 mockVscode("/src/cap-e2e-config");
@@ -71,7 +71,7 @@ describe("cap-e2e-config scope", () => {
       expect(await getCapE2ePickItems(info)).to.be.undefined;
     });
 
-    it("getCapE2ePickItems - cds not enabled, project not configured", async () => {
+    it("getCapE2ePickItems - cds enabled, project not configured", async () => {
       sandbox
         .stub(childProcess, "spawn")
         .withArgs("cds", ["help"], { cwd: info.wsFolder })
@@ -83,7 +83,7 @@ describe("cap-e2e-config scope", () => {
       });
     });
 
-    it("getCapE2ePickItems - cds not enabled, project configured", async () => {
+    it("getCapE2ePickItems - cds enabled, project configured", async () => {
       sandbox
         .stub(childProcess, "spawn")
         .withArgs("cds", ["help"], { cwd: info.wsFolder })
@@ -91,12 +91,16 @@ describe("cap-e2e-config scope", () => {
       setTimeout(() => fakeSpawnEventEmitter.emit("exit", 0));
       const mtaFile = testVscode.Uri.joinPath(testVscode.Uri.file(info.wsFolder), info.project, "mta.yaml");
       sandbox.stub(e2eConfig, "doesFileExist").withArgs(mtaFile).resolves(true);
-      const tasks = await e2eConfig.generateMtaDeployTasks(info.wsFolder, info.project, "sequence");
+      const tasks = map(await e2eConfig.generateMtaDeployTasks(info.wsFolder, info.project, "sequence"), (task) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- object destructuring is used to exclude the specified properties
+        const { ["label"]: excludedLabel, ["dependsOn"]: excludedDependsOn, ...copyTask } = task;
+        return copyTask;
+      });
       sandbox.stub(e2eConfig, "isTasksSettled").withArgs(info.wsFolder, tasks).returns(true);
       expect(await getCapE2ePickItems(info)).to.be.undefined;
     });
 
-    it("getCapE2ePickItems - cds not enabled, project not configured (tasks not exist)", async () => {
+    it("getCapE2ePickItems - cds enabled, project not configured (tasks not exist)", async () => {
       sandbox
         .stub(childProcess, "spawn")
         .withArgs("cds", ["help"], { cwd: info.wsFolder })

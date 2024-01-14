@@ -24,7 +24,7 @@
     "bundle": "webpack --mode production",
     "ci": "npm-run-all clean compile coverage bundle frontend:copy package",
     "ci:artifacts_only": "npm-run-all clean compile bundle frontend:copy package",
-    "clean": "rimraf ./dist *.vsix LICENSE",
+    "clean": "rimraf dist coverage *.vsix LICENSE",
     "compile": "tsc",
     "coverage": "nyc mocha",
     "frontend:copy": "webpack --mode none --config ./copy.frontend.webpack.config.js",
@@ -206,7 +206,7 @@
         },
         {
           "command": "tasks-explorer.createTask",
-          "when": "view == tasksPanel && viewItem =~ /^(project|intent)$/",
+          "when": "view == tasksPanel && viewItem =~ /^(root|project|intent)$/",
           "group": "inline"
         }
       ]

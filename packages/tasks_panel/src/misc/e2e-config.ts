@@ -17,7 +17,9 @@ import {
 import { exceptionToString, getUniqueTaskLabel, updateTasksConfiguration } from "../../src/utils/task-serializer";
 import { DEFAULT_TARGET, cfGetConfigFileField, cfGetTargets } from "@sap/cf-tools";
 import { getLogger } from "../../src/logger/logger-wrapper";
-import { sep } from "path";
+import { sep, join, relative } from "path";
+import { ConfiguredTask } from "@sap_oss/task_contrib_types";
+import { isPathRelatedToFolder } from "../utils/ws-folder";
 
 export const ProjTypes = {
   FIORI_FE: "fiori_fe",
@@ -84,15 +86,35 @@ export async function areResourcesReady(promises: Promise<boolean>[], timeout = 
   });
 }
 
-export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> {
-  function asWsRelativePath(absPath: string): string {
-    let project = workspace.asRelativePath(absPath, false);
-    if (project === absPath) {
-      project = ""; // single root
-    }
-    return project;
-  }
+type ProjectInfoCache = {
+  projects: ProjectInfo[];
+  timestamp: number;
+};
 
+const _projectsInfoCache: Map<string, ProjectInfoCache> = new Map<string, ProjectInfoCache>();
+function getProjectsInfoFromCache(wsFolder: string): ProjectInfo[] | undefined {
+  const cached = _projectsInfoCache.get(wsFolder);
+  // internal usage cache of 5 seconds
+  if (cached && Date.now() - cached.timestamp < 5000) {
+    return cached.projects;
+  }
+}
+
+function setProjectsInfoToCache(wsFolder: string, projects: ProjectInfo[]): void {
+  _projectsInfoCache.set(wsFolder, { projects, timestamp: Date.now() });
+}
+
+export async function collectProjects(wsFolder: string, disableCache = false): Promise<ProjectInfo[]> {
+  // discovering projects in a workspace is a costly operation, so we cache the result for 5 seconds (assuming projects
+  // don't change during this time) useful in cases where this method is called multiple times on the same flow
+  const cached = getProjectsInfoFromCache(wsFolder);
+  if (!disableCache && cached) {
+    return cached;
+  }
+  function asWsRelativePath(absPath: string): string {
+    const project = workspace.asRelativePath(absPath, false);
+    return project === absPath ? "" /*single root*/ : project;
+  }
   const items: Promise<ProjectInfo | undefined>[] = [];
   const requestedFolder = Uri.file(wsFolder);
   const btaExtension: any = extensions.getExtension("SAPOSS.app-studio-toolkit");
@@ -104,7 +126,7 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
       project.getProjectInfo().then((info) => {
         if (info) {
           const workspaceFolder = workspace.getWorkspaceFolder(Uri.file(info.path));
-          if (workspaceFolder?.uri.fsPath.startsWith(requestedFolder.fsPath)) {
+          if (isPathRelatedToFolder(workspaceFolder?.uri.path ?? "", requestedFolder.path)) {
             let style: ProjectTypes | undefined;
             if (info.type === "com.sap.fe") {
               style = ProjTypes.FIORI_FE;
@@ -125,7 +147,9 @@ export async function collectProjects(wsFolder: string): Promise<ProjectInfo[]> 
       }),
     );
   }
-  return Promise.all(items).then((items) => compact(items));
+  const projects = compact(await Promise.all(items));
+  setProjectsInfoToCache(wsFolder, projects);
+  return projects;
 }
 
 export async function addTaskDefinition(wsFolder: string, tasks: TaskDefinition[]): Promise<any> {
@@ -172,7 +196,7 @@ export async function generateMtaDeployTasks(
     }
   }
   const projectUri = Uri.joinPath(Uri.file(wsFolder), project);
-  const buildTaskLabel = `Build MTA`;
+  const buildTaskLabel = `Build ${project}`;
   const taskBuild = {
     type: "build.mta",
     label: labelType === "uniq" ? getUniqueTaskLabel(buildTaskLabel) : buildTaskLabel,
@@ -180,13 +204,13 @@ export async function generateMtaDeployTasks(
     projectPath: `${projectUri.fsPath}`,
     extensions: [],
   };
-  const deployTaskLabel = `Deploy MTA to Cloud Foundry`;
+  const deployTaskLabel = `Deploy to Cloud Foundry ${project}`;
   const taskDeploy = extend(
     {
       type: "deploy.mta.cf",
       label: labelType === "uniq" ? getUniqueTaskLabel(deployTaskLabel) : deployTaskLabel,
       taskType: "Deploy",
-      mtarPath: `${projectUri.fsPath}/mta_archives/${project || last(compact(split(wsFolder, sep)))}_0.0.1.mtar`,
+      mtarPath: join(projectUri.fsPath, "mta_archives", `${project || last(compact(split(wsFolder, sep)))}_0.0.1.mtar`),
       extensions: [],
       dependsOn: [`${taskBuild.label}`],
     },
@@ -208,4 +232,36 @@ export function isTasksSettled(wsFolder: string, targetTasks: TaskDefinition[]):
     },
     true,
   );
+}
+
+export function calculateTaskWsFolder(task: ConfiguredTask): string {
+  let key = "";
+  // internal euristic to recognize the task relation to the workspace folder
+  if (task.type === "npm") {
+    if (task.path) {
+      key = "path";
+    } else if (task.options?.cwd) {
+      key = "options.cwd";
+    }
+  } else if (/(.*\.mta(\.cf$)?)|(^deploy$)/.test(task.type)) {
+    if (task.projectPath) {
+      key = "projectPath";
+    } else if (task.mtarPath) {
+      key = "mtarPath";
+    }
+  } else if (task.type === "npm-script") {
+    if (task.packageJSONPath) {
+      key = "packageJSONPath";
+    }
+  }
+  // get the task nested property value
+  let projectPath: any = key.split(".").reduce((object, property) => object[property], task) ?? "";
+  // if the path includes the workspace folder, use the relative path
+  // example:  task { type: "npm", path: "/home/user/ws1/project1" } and wsFolder: /home/user/ws1
+  // expected projectFolder result: "project1"
+  if (isPathRelatedToFolder(projectPath, task.__wsFolder)) {
+    projectPath = relative(task.__wsFolder, projectPath);
+  }
+
+  return join(task["__wsFolder"], projectPath);
 }

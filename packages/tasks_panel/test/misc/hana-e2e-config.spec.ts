@@ -30,11 +30,18 @@ describe("hana-e2e-config scope", () => {
     });
 
     it("getHanaE2ePickItems - ok", async () => {
-      sandbox.stub(e2eConfig, "isTasksSettled").returns(false);
+      const e2eStub = sandbox.stub(e2eConfig, "isTasksSettled").returns(false);
       expect(await getHanaE2ePickItems(info)).to.be.deep.equal({
         ...info,
         ...{ type: e2eConfig.HANA_DEPLOYMENT_CONFIG },
       });
+      expect(e2eStub.calledOnce).to.be.true;
+      const tasksPattern = e2eStub.getCall(0).args[1];
+      expect(tasksPattern).to.have.lengthOf(2);
+      const buildTask = tasksPattern.find((task) => task.type === "build.mta");
+      expect(buildTask).to.not.have.property("label");
+      const deployTask = tasksPattern.find((task) => task.type === "deploy.mta.cf");
+      expect(deployTask).to.not.have.property("dependsOn");
     });
 
     it("getHanaE2ePickItems - tasks settled, project configured", async () => {

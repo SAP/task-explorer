@@ -23,20 +23,42 @@ class BranchTreeItem extends TreeTooltiplessItem {
     this.contextValue = context;
   }
 }
-export class ProjectTreeItem extends BranchTreeItem {
+class FolderTreeItem extends BranchTreeItem {
   constructor(
     label: string,
     public fqn: string,
-    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
+    context: string,
+    collapsibleState: TreeItemCollapsibleState,
+    parent?: TreeItem,
   ) {
-    super(label, collapsibleState, "project");
+    super(label, collapsibleState, context, parent);
+  }
+}
+export class RootTreeItem extends FolderTreeItem {
+  constructor(
+    label: string,
+    fqn: string,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded,
+  ) {
+    super(label, fqn, "root", collapsibleState, undefined);
+    this.iconPath = new ThemeIcon("folder");
+  }
+}
+export class ProjectTreeItem extends FolderTreeItem {
+  constructor(
+    label: string,
+    fqn: string,
+    parent?: TreeItem,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded,
+  ) {
+    super(label, fqn, "project", collapsibleState, parent);
     this.iconPath = new ThemeIcon("folder");
   }
 }
 export class IntentTreeItem extends BranchTreeItem {
   constructor(
     label: string,
-    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded,
     parent?: TreeItem,
   ) {
     super(label, collapsibleState, "intent", parent);

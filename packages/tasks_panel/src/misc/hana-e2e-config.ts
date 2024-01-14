@@ -7,18 +7,23 @@ import {
   generateMtaDeployTasks,
   isTasksSettled,
 } from "./e2e-config";
-import { last } from "lodash";
+import { last, map } from "lodash";
 
 export interface HanaProjectConfigInfo extends ProjectInfo {
   type: string;
 }
 
 export async function getHanaE2ePickItems(info: ProjectInfo): Promise<HanaProjectConfigInfo | undefined> {
-  if (
-    info.style === ProjTypes.HANA &&
-    !isTasksSettled(info.wsFolder, await generateMtaDeployTasks(info.wsFolder, info.project, "sequence"))
-  ) {
-    return { ...info, ...{ type: HANA_DEPLOYMENT_CONFIG } };
+  if (info.style === ProjTypes.HANA) {
+    const tasksPattern = map(await generateMtaDeployTasks(info.wsFolder, info.project, "sequence"), (task) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- object destructuring is used to exclude the specified properties
+      const { ["label"]: excludedLabel, ["dependsOn"]: excludedDependsOn, ...copyTask } = task;
+      return copyTask;
+    });
+    // attempt to find a match for the generated tasks (without 'label' and 'dependsOn' properties) in the tasks configuration
+    if (!isTasksSettled(info.wsFolder, tasksPattern)) {
+      return { ...info, ...{ type: HANA_DEPLOYMENT_CONFIG } };
+    }
   }
 }
 
