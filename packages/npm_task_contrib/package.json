@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.184",
     "@types/mocha": "10.0.6",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.11.1",
     "@types/vscode": "1.83.0",
     "@vscode/vsce": "2.22.0",
     "proxyquire": "2.1.3",
