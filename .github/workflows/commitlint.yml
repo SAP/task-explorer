@@ -3,10 +3,10 @@ name: Lint Commit Messages
 on:
   push:
     branches:
-      - githubAction
+      - main
   pull_request:
     branches:
-      - githubAction
+      - main
 
 jobs:
   commitlint:

@@ -3,10 +3,10 @@ on:
   # Trigger the workflow on push or pull request, only for the main branch
   push:
     branches:
-      - githubAction
+      - main
   pull_request:
     branches:
-      - githubAction
+      - main
 
 jobs:
   build:
@@ -20,7 +20,6 @@ jobs:
       fail-fast: false
 
     steps:
-      # using `v1` because of: https://github.com/actions/checkout/issues/246
       - name: Checkout repository
         uses: actions/checkout@v2
 
