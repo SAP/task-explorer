@@ -1,0 +1,21 @@
+name: Lint Commit Messages
+
+on:
+  push:
+    branches:
+      - githubAction
+  pull_request:
+    branches:
+      - githubAction
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Run Commitlint
+        uses: wagoid/commitlint-github-action@v4
