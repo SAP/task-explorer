@@ -1,0 +1,43 @@
+name: Continuous Integration
+on:
+  # Trigger the workflow on push or pull request, only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Full Build (node ${{ matrix.node_version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version:
+          - 18.x
+      # https://stackoverflow.com/questions/61070925/github-actions-disable-auto-cancel-when-job-fails
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn run ci
+
+  compliance:
+    name: REUSE Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: fsfe/reuse-action@v1
