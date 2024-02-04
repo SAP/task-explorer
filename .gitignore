@@ -71,3 +71,6 @@ tsconfig.tsbuildinfo
 dist
 packages/tasks_panel/dummy
 task-explorer.iml
+
+# os specific generated files
+.DS_Store

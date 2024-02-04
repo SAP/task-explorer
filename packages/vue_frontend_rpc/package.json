@@ -9,7 +9,7 @@
     "build-dev": "vite build --mode development",
     "ci": "npm-run-all clean build test",
     "ci:artifacts_only": "npm-run-all clean build",
-    "clean": "rimraf dist coverage",
+    "clean": "shx rm -rf dist coverage",
     "dev": "vite",
     "serve": "vite",
     "test": "jest -w 1 --colors"
