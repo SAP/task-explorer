@@ -6,6 +6,7 @@ import { NpmTaskProvider } from "../src/task-provider";
 import { Task, TaskScope } from "vscode";
 import { cloneDeep, set } from "lodash";
 import { stub } from "sinon";
+import * as _path from "path";
 
 describe("TaskProvider unit test scope", () => {
   const provider = new NpmTaskProvider();
@@ -13,7 +14,7 @@ describe("TaskProvider unit test scope", () => {
     name: "label",
     type: "type",
     definition: { script: "script", path: "path" },
-    scope: { uri: { path: "/my/project/" } },
+    scope: { uri: { path: _path.join("/", "my", "project") } },
   };
 
   it("provideTasks", async () => {
@@ -39,9 +40,10 @@ describe("TaskProvider unit test scope", () => {
   });
 
   it("resolveCwd, task.scope undefined, but workspace set", async () => {
-    stub(testVscode.workspace, "workspaceFolders").value([{ uri: { path: "/project//my" } }]);
+    const fsFolder = _path.join("/", "project", "my");
+    stub(testVscode.workspace, "workspaceFolders").value([{ uri: { path: fsFolder } }]);
     const other = cloneDeep(task) as unknown as Task;
     set(other, "scope", TaskScope.Workspace);
-    expect(provider["resolveCwd"](other)).to.be.equal("/project/my");
+    expect(provider["resolveCwd"](other)).to.be.equal(_path.resolve(fsFolder));
   });
 });

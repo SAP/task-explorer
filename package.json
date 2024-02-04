@@ -59,7 +59,6 @@
     "@commitlint/config-conventional": "18.4.3",
     "@types/chai": "4.3.3",
     "@types/mocha": "9.1.1",
-    "@types/rimraf": "4.0.5",
     "@typescript-eslint/eslint-plugin": "6.16.0",
     "@typescript-eslint/parser": "6.16.0",
     "chai": "4.3.3",
@@ -79,7 +78,6 @@
     "nyc": "15.1.0",
     "patch-package": "^6.4.7",
     "prettier": "3.1.1",
-    "rimraf": "5.0.5",
     "shx": "0.3.4",
     "typescript": "4.7.4"
   }
