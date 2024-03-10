@@ -215,7 +215,7 @@
     ]
   },
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "dependencies": {
     "@sap-devx/webview-rpc": "0.2.3",
