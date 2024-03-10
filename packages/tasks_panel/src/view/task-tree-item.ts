@@ -3,6 +3,7 @@ import { TreeItem, TreeItemCollapsibleState, Command, tasks, ThemeIcon } from "v
 import { isMatchBuild, isMatchDeploy } from "../../src/utils/ws-folder";
 
 type TaskStatus = "idle" | "running";
+export type ElementTreeItem = ProjectTreeItem | IntentTreeItem | TaskTreeItem;
 
 class TreeTooltiplessItem extends TreeItem {
   constructor(label: string, collapsibleState: TreeItemCollapsibleState) {
@@ -16,19 +17,50 @@ class BranchTreeItem extends TreeTooltiplessItem {
     label: string,
     collapsibleState: TreeItemCollapsibleState,
     context: string,
-    public readonly parent?: TreeItem
+    public readonly parent?: TreeItem,
   ) {
     super(label, collapsibleState);
     this.contextValue = context;
   }
 }
-export class ProjectTreeItem extends BranchTreeItem {
-  constructor(label: string, public fqn: string, collapsibleState: TreeItemCollapsibleState) {
-    super(label, collapsibleState, "branch");
+class FolderTreeItem extends BranchTreeItem {
+  constructor(
+    label: string,
+    public fqn: string,
+    context: string,
+    collapsibleState: TreeItemCollapsibleState,
+    parent?: TreeItem,
+  ) {
+    super(label, collapsibleState, context, parent);
+  }
+}
+export class RootTreeItem extends FolderTreeItem {
+  constructor(
+    label: string,
+    fqn: string,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded,
+  ) {
+    super(label, fqn, "root", collapsibleState, undefined);
+    this.iconPath = new ThemeIcon("folder");
+  }
+}
+export class ProjectTreeItem extends FolderTreeItem {
+  constructor(
+    label: string,
+    fqn: string,
+    parent?: TreeItem,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded,
+  ) {
+    super(label, fqn, "project", collapsibleState, parent);
+    this.iconPath = new ThemeIcon("folder");
   }
 }
 export class IntentTreeItem extends BranchTreeItem {
-  constructor(label: string, collapsibleState: TreeItemCollapsibleState, parent?: TreeItem) {
+  constructor(
+    label: string,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded,
+    parent?: TreeItem,
+  ) {
     super(label, collapsibleState, "intent", parent);
   }
 }
@@ -41,7 +73,7 @@ export class TaskTreeItem extends TreeTooltiplessItem {
     public wsFolder: string,
     collapsibleState: TreeItemCollapsibleState,
     public readonly parent: TreeItem,
-    command?: Command
+    command?: Command,
   ) {
     super(label, collapsibleState);
     this.command = command;
@@ -53,6 +85,18 @@ export class TaskTreeItem extends TreeTooltiplessItem {
   }
 }
 
+export class EmptyTaskTreeItem extends TreeTooltiplessItem {
+  constructor(public readonly parent: ProjectTreeItem) {
+    super("Create a task", TreeItemCollapsibleState.None);
+    this.iconPath = getIcon();
+    this.command = {
+      command: "tasks-explorer.createTask",
+      title: "Create Task",
+      arguments: [parent],
+    };
+  }
+}
+
 function getTaskStatus(task: any): TaskStatus {
   return find(tasks.taskExecutions, (_) => {
     return _.task.name === task.label && _.task.definition.type === task.type;
@@ -61,8 +105,10 @@ function getTaskStatus(task: any): TaskStatus {
     : "idle";
 }
 
-function getIcon(intent: string): ThemeIcon {
-  if (isMatchDeploy(intent)) {
+function getIcon(intent?: string): ThemeIcon {
+  if (!intent) {
+    return new ThemeIcon("add");
+  } else if (isMatchDeploy(intent)) {
     return new ThemeIcon("rocket");
   } else if (isMatchBuild(intent)) {
     return new ThemeIcon("package");

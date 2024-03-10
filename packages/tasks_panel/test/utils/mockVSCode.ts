@@ -1,5 +1,6 @@
-import { resolve, join } from "path";
+import { resolve, join, sep } from "path";
 import { ConfiguredTask, FormProperty, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
+import * as _ from "lodash";
 
 const Module = require("module");
 const originalRequire = Module.prototype.require;
@@ -14,7 +15,7 @@ export class MockConfigTask {
         path: string;
       };
     },
-    public path?: string
+    public path?: string,
   ) {}
 }
 
@@ -59,19 +60,23 @@ export const testVscode: any = {
         MockVSCodeInfo.visiblePanel = rest[1];
       }
     },
+    getCommands: () => Promise.resolve([]),
   },
   extensions: {
     all: [],
+    getExtension: () => {
+      return {};
+    },
   },
   Uri: {
     file(...args: string[]): any {
       if (args[0] === "fail") {
         throw new Error("uriError");
       }
-      return { path: args[0] };
+      return { path: args[0], fsPath: args[0] };
     },
     joinPath(root: any, ...args: string[]): any {
-      return { path: join(root.path, ...args) };
+      return { path: join(root.path, ...args), fsPath: join(root.path, ...args) };
     },
   },
   workspace: {
@@ -95,15 +100,31 @@ export const testVscode: any = {
       };
     },
     getWorkspaceFolder: (v) => {
-      return { name: v.path };
+      return { name: v.path, uri: { fsPath: v.path } };
+    },
+    asRelativePath: (p) => _.last(_.split(p, sep)),
+    fs: {
+      stat: () => Promise.resolve(),
+      readFile: () => Promise.resolve(),
+    },
+    createFileSystemWatcher: () => {
+      return {
+        dispose: () => true,
+      };
     },
   },
 
   Selection: class {
-    constructor(public readonly anchor: any, public readonly active: any) {}
+    constructor(
+      public readonly anchor: any,
+      public readonly active: any,
+    ) {}
   },
   Range: class {
-    constructor(public readonly start: any, public readonly end: any) {}
+    constructor(
+      public readonly start: any,
+      public readonly end: any,
+    ) {}
   },
   ConfigurationTarget: {
     WorkspaceFolder: 3,
@@ -117,11 +138,21 @@ export const testVscode: any = {
     source: string;
     scope: any;
 
-    constructor(public readonly definition: ConfiguredTask, source?: string, scope?: any) {
+    constructor(
+      public readonly definition: ConfiguredTask,
+      source?: string,
+      scope?: any,
+    ) {
       this.name = definition.label;
       this.source = source === undefined ? definition.type : source;
       this.scope = scope;
     }
+  },
+  RelativePattern: class {
+    constructor(
+      public readonly base: any,
+      public readonly pattern: string,
+    ) {}
   },
   window: {
     showOpenDialog: async (options: {
@@ -161,13 +192,23 @@ export const testVscode: any = {
     showTextDocument: async () => {
       throw new Error("not implemented");
     },
+    showWarningMessage: async () => {
+      throw new Error("not implemented");
+    },
     withProgress: (
       options: {
         location: number;
         title: string;
       },
-      task: (progress: any, token: any) => Promise<any>
+      task: (progress: any, token: any) => Promise<any>,
     ) => Promise.resolve(task({}, {})),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- disable no-unused-vars for test scope
+    showQuickPick: (items: any[], options: any) => {
+      throw new Error("not implemented");
+    },
+    createTreeView: (id, opt) => {
+      MockVSCodeInfo.treeDataProvider.set(id, opt.treeDataProvider);
+    },
   },
   ViewColumn: {
     One: 1,
@@ -177,10 +218,17 @@ export const testVscode: any = {
   },
   ExtensionContext: {
     extensionPath: "path",
-    subscriptions: [],
+    subscriptions: { push: (disposable) => disposable },
+    workspaceState: {
+      get: () => true,
+      update: () => true,
+    },
   },
   TreeItem: class {
-    constructor(public label: string, public collapsibleState: any) {}
+    constructor(
+      public label: string,
+      public collapsibleState: any,
+    ) {}
   },
   EventEmitter: class {
     fire(): void {
@@ -199,6 +247,12 @@ export const testVscode: any = {
     None: 0,
     Collapsed: 1,
     Expanded: 2,
+  },
+  FileType: {
+    Unknown: 0,
+    File: 1,
+    Directory: 2,
+    SymbolicLink: 64,
   },
   tasks: {
     fetchTasks: async (): Promise<any> => {
@@ -220,8 +274,13 @@ export const testVscode: any = {
               task: MockVSCodeInfo.taskParam,
             },
           }),
-        100
+        100,
       );
+      return {
+        dispose: () => true,
+      };
+    },
+    onDidStartTask: () => {
       return {
         dispose: () => true,
       };
@@ -230,6 +289,17 @@ export const testVscode: any = {
   },
   ThemeIcon: class {
     constructor(public readonly id: string) {}
+  },
+  QuickPickItemKind: {
+    Separator: -1,
+    Default: 0,
+  },
+  languages: {
+    onDidChangeDiagnostics: () => {
+      return {
+        dispose: () => true,
+      };
+    },
   },
 };
 

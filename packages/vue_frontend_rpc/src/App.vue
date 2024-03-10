@@ -1,29 +1,24 @@
 <template>
   <v-app id="app">
     <Editor ref="editor" :editor="editor" :rpc="rpc" />
-    <Selector ref="selector" :selector="selector" :rpc="rpc" />
   </v-app>
 </template>
 
 <script>
 import { RpcBrowser } from "@sap-devx/webview-rpc/out.browser/rpc-browser";
 import { RpcBrowserWebSockets } from "@sap-devx/webview-rpc/out.browser/rpc-browser-ws";
-import { forEach } from "lodash";
-import Selector from "./components/Selector";
-import Editor from "./components/Editor";
+import Editor from "./components/Editor.vue";
 
 function initialState() {
   return {
     rpc: Object,
     editor: true,
-    selector: false,
   };
 }
 
 export default {
   name: "app",
   components: {
-    Selector,
     Editor,
   },
   data() {
@@ -31,19 +26,20 @@ export default {
   },
 
   created() {
-    /* istanbul ignore if - we cannot test VSCode related flow without VSCode */
-    if (this.isInVsCode()) {
-      this.setupVSCodeRpc();
-    }
-    // istanbul ignore if - None Productive local-dev only flow.
-    if (location.port === "8090") {
-      // Local Development Flow
-      // Assumes a WS server is already up and waiting.
-      this.setupWsRPC(8081);
-    }
+    this.setupRpc();
   },
 
   methods: {
+    setupRpc() {
+      if (this.isInVsCode()) {
+        this.setupVSCodeRpc();
+      } else {
+        // Local Development Flow
+        // Assumes a WS server is already up and waiting.
+        this.setupWsRPC(8081);
+      }
+    },
+
     isInVsCode() {
       return typeof acquireVsCodeApi !== "undefined";
     },
@@ -81,27 +77,19 @@ export default {
 
     async initRpc() {
       const functions = ["setTask", "setTasks"];
-      forEach(functions, (funcName) => {
+      functions.forEach((funcName) => {
         this.rpc.registerMethod({
           func: this[funcName],
           thisArg: this,
           name: funcName,
         });
       });
-
       await this.rpc.invoke("onFrontendReady");
     },
 
     async setTask(task) {
       this.$refs.editor.setTask(task);
       this.editor = true;
-      this.selector = false;
-    },
-
-    setTasks(tasks, message) {
-      this.editor = false;
-      this.selector = true;
-      this.$refs.selector.setTasks(tasks, message);
     },
   },
 };

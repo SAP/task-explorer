@@ -16,7 +16,7 @@ export class MockConfigTask {
       uri: {
         path: string;
       };
-    }
+    },
   ) {}
 }
 
@@ -108,7 +108,11 @@ export const testVscode: any = {
     source: string;
     scope: any;
 
-    constructor(public readonly definition: ConfiguredTask, source?: string, scope?: any) {
+    constructor(
+      public readonly definition: ConfiguredTask,
+      source?: string,
+      scope?: any,
+    ) {
       this.name = definition.label;
       this.source = source === undefined ? definition.type : source;
       this.scope = scope;
@@ -154,7 +158,7 @@ export const testVscode: any = {
         location: number;
         title: string;
       },
-      task: (progress: any, token: any) => Promise<any>
+      task: (progress: any, token: any) => Promise<any>,
     ) => Promise.resolve(task({}, {})),
   },
   ViewColumn: {
@@ -163,7 +167,7 @@ export const testVscode: any = {
   ProgressLocation: {
     Notification: 15,
   },
-  ExtensionContext: { extensionPath: "path" },
+  ExtensionContext: { extensionPath: "path", subscriptions: { push: (disposable) => disposable } },
   TreeItem: class {},
   EventEmitter: class {
     fire(): void {
@@ -200,7 +204,10 @@ export const testVscode: any = {
     },
   },
   ShellExecution: class {
-    constructor(public script: string, public options?: { cwd?: string }) {}
+    constructor(
+      public script: string,
+      public options?: { cwd?: string },
+    ) {}
   },
 };
 

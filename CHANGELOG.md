@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.1](https://github.com/SAP/task-explorer/compare/v4.7.0...v4.7.1) (2024-01-14)
+
+**Note:** Version bump only for package vscode-tasks-explorer
+
+# [4.7.0](https://github.com/SAP/task-explorer/compare/v4.6.0...v4.7.0) (2023-12-26)
+
+### Features
+
+- `deploy` readiness issues ([#339](https://github.com/SAP/task-explorer/issues/339)) ([d94dcfa](https://github.com/SAP/task-explorer/commit/d94dcfa8c44347dfe46fd620d37cad5331c5bb47))
+- deploy readiness issues ([#352](https://github.com/SAP/task-explorer/issues/352)) ([38baf39](https://github.com/SAP/task-explorer/commit/38baf3938d6fae8ae818d6dfbe6be3a5a7f5887a))
+
+# [4.6.0](https://github.com/SAP/task-explorer/compare/v4.5.0...v4.6.0) (2023-12-13)
+
+### Features
+
+- **platform:** frontend vue3, vite node18 ([#328](https://github.com/SAP/task-explorer/issues/328)) ([d7af75f](https://github.com/SAP/task-explorer/commit/d7af75f47e858f1b7fab9f14d115b3fe726dc8da)), closes [#346](https://github.com/SAP/task-explorer/issues/346)
+
+# [4.5.0](https://github.com/SAP/task-explorer/compare/v4.4.1...v4.5.0) (2023-09-06)
+
+### Features
+
+- E2E Deploy configuration action ([#297](https://github.com/SAP/task-explorer/issues/297)) ([a431aa1](https://github.com/SAP/task-explorer/commit/a431aa1368f08037116655fa1dfe31342da6dd87))
+
+## [4.4.1](https://github.com/SAP/task-explorer/compare/v4.4.0...v4.4.1) (2023-08-08)
+
+### Bug Fixes
+
+- avoid misc group duplicate appearance ([#293](https://github.com/SAP/task-explorer/issues/293)) ([d6a18ca](https://github.com/SAP/task-explorer/commit/d6a18cac77f0008c7d1fe42ae2ccf7c58a6cdccc))
+
+# [4.4.0](https://github.com/SAP/task-explorer/compare/v4.3.1...v4.4.0) (2023-08-06)
+
+### Features
+
+- switch from selector editor to prompt wizard ([#290](https://github.com/SAP/task-explorer/issues/290)) ([fe3d5f6](https://github.com/SAP/task-explorer/commit/fe3d5f66ceacf398afb02e2db2339088b799922e))
+
 ## [4.3.1](https://github.com/SAP/task-explorer/compare/v4.3.0...v4.3.1) (2023-07-26)
 
 **Note:** Version bump only for package vscode-tasks-explorer

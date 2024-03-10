@@ -10,6 +10,6 @@ export async function getTaskSources(filename: string): Promise<Dictionary<strin
     wsFolders,
     map(wsFolders, (wsFolder) => {
       return filter(paths, (_) => _.startsWith(wsFolder));
-    })
+    }),
   );
 }

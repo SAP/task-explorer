@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.1](https://github.com/SAP/task-explorer/compare/v4.7.0...v4.7.1) (2024-01-14)
+
+**Note:** Version bump only for package npm-task-contrib
+
+# [4.4.0](https://github.com/SAP/task-explorer/compare/v4.3.1...v4.4.0) (2023-08-06)
+
+### Features
+
+- switch from selector editor to prompt wizard ([#290](https://github.com/SAP/task-explorer/issues/290)) ([fe3d5f6](https://github.com/SAP/task-explorer/commit/fe3d5f66ceacf398afb02e2db2339088b799922e))
+
 ## [4.3.1](https://github.com/SAP/task-explorer/compare/v4.3.0...v4.3.1) (2023-07-26)
 
 **Note:** Version bump only for package npm-task-contrib

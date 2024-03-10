@@ -65,7 +65,7 @@ describe("tasks executor - terminateVScodeTask", () => {
       fail("should fail");
     } catch (e: any) {
       expect(e.message).to.be.equal(
-        messages.TERMINATE_FAILURE(serializeTask(task), new Error(messages.TASK_NOT_FOUND(task.label)).toString())
+        messages.TERMINATE_FAILURE(serializeTask(task), new Error(messages.TASK_NOT_FOUND(task.label)).toString()),
       );
     }
   });

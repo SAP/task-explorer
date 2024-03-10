@@ -70,6 +70,7 @@ tsconfig.tsbuildinfo
 # generated artifacts
 dist
 packages/tasks_panel/dummy
+task-explorer.iml
 
-# Auto-generated files
+# os specific generated files
 .DS_Store

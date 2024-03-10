@@ -2,7 +2,7 @@ import { commands, tasks, window } from "vscode";
 import { find } from "lodash";
 import { getLogger } from "../logger/logger-wrapper";
 import { messages } from "../i18n/messages";
-import { serializeTask } from "../utils/task-serializer";
+import { exceptionToString, serializeTask } from "../utils/task-serializer";
 
 export async function executeVScodeTask(task: any): Promise<void> {
   const allTasks = await tasks.fetchTasks({ type: task.type });
@@ -39,6 +39,6 @@ export async function terminateVScodeTask(task: any): Promise<void> {
     }
     execution.terminate();
   } catch (e: any) {
-    throw new Error(messages.TERMINATE_FAILURE(serializeTask(task), e.toString()));
+    throw new Error(messages.TERMINATE_FAILURE(serializeTask(task), exceptionToString(e)));
   }
 }

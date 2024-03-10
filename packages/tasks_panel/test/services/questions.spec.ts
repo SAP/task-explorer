@@ -42,7 +42,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
           mandatory: true,
         },
       },
-      true
+      true,
     );
     await checkDefaultMandatoryValidation(questions[0]);
   });
@@ -302,7 +302,7 @@ describe("convertContributedPropertiesToQuestions function", () => {
           mandatory: true,
         },
       },
-      true
+      true,
     );
     expect(questions[0].getPath).exist;
     checkDefaultMandatoryValidation(questions[0]);

@@ -78,7 +78,7 @@ describe("TaskEditorPanel class", () => {
           label: "aaa",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       expect(panel).to.exist;
@@ -90,7 +90,7 @@ describe("TaskEditorPanel class", () => {
           label: "task1",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       expect(panel).to.exist;
@@ -105,7 +105,29 @@ describe("TaskEditorPanel class", () => {
           label: "aaa",
           type: "testType",
         },
-        readFile
+        readFile,
+      );
+      const panel1 = getTaskEditorPanel();
+      expect(panel1).exist;
+      await createTaskEditorPanel(
+        {
+          label: "aaa1",
+          type: "testType",
+        },
+        readFile,
+      );
+      const panel2 = getTaskEditorPanel();
+      expect(panel2).to.exist;
+      expect(panel2).to.not.eq(panel1);
+    });
+
+    it("verify a two created instances are the same instance if they are created with the same task", async () => {
+      await createTaskEditorPanel(
+        {
+          label: "aaa",
+          type: "testType",
+        },
+        readFile,
       );
       const panel1 = getTaskEditorPanel();
       expect(panel1).exist;
@@ -114,11 +136,11 @@ describe("TaskEditorPanel class", () => {
           label: "aaa",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel2 = getTaskEditorPanel();
       expect(panel2).to.exist;
-      expect(panel2).to.not.eq(panel1);
+      expect(panel2).to.eq(panel1);
     });
   });
 
@@ -135,7 +157,7 @@ describe("TaskEditorPanel class", () => {
           label: "aaa",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       panel!.showOpenFileDialog("");
@@ -150,7 +172,7 @@ describe("TaskEditorPanel class", () => {
           label: "aaa",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       expect(panel).exist;
@@ -166,7 +188,7 @@ describe("TaskEditorPanel class", () => {
           label: "task1",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       expect(panel).exist;
@@ -180,7 +202,7 @@ describe("TaskEditorPanel class", () => {
           label: "task1",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       expect(panel).exist;
@@ -193,7 +215,7 @@ describe("TaskEditorPanel class", () => {
           label: "task1",
           type: "testType",
         },
-        readFile
+        readFile,
       );
       const panel = getTaskEditorPanel();
       expect(panel).exist;

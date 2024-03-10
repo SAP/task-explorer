@@ -18,14 +18,6 @@ describe("Command deleteTask", () => {
     return "aaa";
   };
 
-  const tasks = [
-    {
-      label: "task 1",
-      type: "testType",
-      taskType: "Deploy",
-      prop1: "value 1.1",
-    },
-  ];
   let sandbox: SinonSandbox;
   let spyGetConfiguration: SinonSpy;
   const wsFolder = "wsFolder1";
@@ -64,7 +56,7 @@ describe("Command deleteTask", () => {
     MockVSCodeInfo.configTasks?.set(wsFolder, [new MockConfigTask("aaa", "test")]);
     const item1 = new TaskTreeItem(0, "test", "aaa", wsFolder, TreeItemCollapsibleState.None, parentItem, command1);
 
-    await editTreeItemTask(new MockTasksProvider(tasks), readFile, item1);
+    await editTreeItemTask(new MockTasksProvider([task1]), readFile, task1);
     expect(MockVSCodeInfo.webViewCreated).eq(1);
     mockWindow
       .expects("showInformationMessage")
@@ -73,7 +65,8 @@ describe("Command deleteTask", () => {
     await deleteTask(item1);
     expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.empty;
     expect(MockVSCodeInfo.disposeCalled).eq(true);
-    expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+    expect(spyGetConfiguration.calledTwice).to.be.true;
+    expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
   });
 
   it("task is not opened for editing, task will be deleted", async () => {
@@ -87,7 +80,8 @@ describe("Command deleteTask", () => {
     expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
     expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(testVscode.ConfigurationTarget.WorkspaceFolder);
     expect(MockVSCodeInfo.configTasks?.get(wsFolder)).to.empty;
-    expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
+    expect(spyGetConfiguration.calledTwice).to.be.true;
+    expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(wsFolder))).to.be.true;
   });
 
   it("tasks configuration is undefined, configuration is not updated", async () => {

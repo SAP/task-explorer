@@ -7,10 +7,10 @@ import { messages } from "../i18n/messages";
 export function convertContributedPropertiesToQuestions(
   task: ConfiguredTask,
   properties: FormProperty[],
-  getPropertyDescription: Pick<AppEvents, "getTaskPropertyDescription">
+  getPropertyDescription: Pick<AppEvents, "getTaskPropertyDescription">,
 ): TaskQuestion[] {
   return map(properties, (property, index) =>
-    convertContributedPropertyToQuestion(task, property, getPropertyDescription, index)
+    convertContributedPropertyToQuestion(task, property, getPropertyDescription, index),
   );
 }
 
@@ -18,7 +18,7 @@ function convertContributedPropertyToQuestion(
   task: ConfiguredTask,
   formProperty: FormProperty,
   taskInfo: Pick<AppEvents, "getTaskPropertyDescription">,
-  index: number
+  index: number,
 ): TaskQuestion {
   const taskProperty = getTaskProperty(formProperty);
   const name = getName(formProperty, index);
@@ -139,7 +139,7 @@ type valueType = string | boolean | undefined | string[];
 function getDefault(
   value: valueType,
   taskProperty: string | undefined,
-  task: ConfiguredTask
+  task: ConfiguredTask,
 ): string | boolean | string[] {
   if (value === undefined) {
     return taskProperty !== undefined ? task[taskProperty] : "";
@@ -153,7 +153,7 @@ function getQuestionMessage(
   taskProperty: string | undefined,
   message: string | undefined,
   taskInfo: Pick<AppEvents, "getTaskPropertyDescription">,
-  questionName: string
+  questionName: string,
 ): string {
   if (!taskProperty || message) {
     return message ?? questionName;
@@ -177,7 +177,7 @@ function handleFolderBrowser(originalType: string, question: TaskQuestion, guiOp
 
 export function combineValidationFunctions(
   first: validationFunction | undefined,
-  second: validationFunction | undefined
+  second: validationFunction | undefined,
 ): validationFunction {
   return async function (value: string): Promise<boolean | string> {
     const firstResult = await callValidationFunction(first, value);

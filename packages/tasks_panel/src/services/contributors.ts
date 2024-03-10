@@ -1,9 +1,10 @@
 import { commands, Extension, extensions } from "vscode";
-import { get, keys, map, uniq, zipObject } from "lodash";
+import { Dictionary, get, keys, map, uniq, zipObject } from "lodash";
 import { ConfiguredTask, TaskEditorContributionAPI } from "@sap_oss/task_contrib_types";
 import { getLogger } from "../logger/logger-wrapper";
 import { ITaskTypeEventHandler, IContributors } from "./definitions";
 import { messages } from "../i18n/messages";
+import { exceptionToString } from "../utils/task-serializer";
 
 export class Contributors implements IContributors {
   private readonly eventHandlers: ITaskTypeEventHandler[] = [];
@@ -81,7 +82,8 @@ export class Contributors implements IContributors {
                         provider: provider,
                         intent: typeInfo["intent"],
                         extensionName: extensionName,
-                        properties: tasksPropertyMessageMap[type],
+                        properties: tasksPropertyMessageMap[type].properties,
+                        requires: tasksPropertyMessageMap[type].requires,
                       });
                     } else {
                       throw new Error(messages.DUPLICATED_TYPE(type));
@@ -94,7 +96,7 @@ export class Contributors implements IContributors {
             });
           }
         });
-      })
+      }),
     )
       .then(() => {
         setTimeout(() => {
@@ -104,20 +106,25 @@ export class Contributors implements IContributors {
         });
       })
       .catch((e) => {
-        getLogger().error(e.toString());
+        getLogger().error(exceptionToString(e));
       })
       .finally(() => {
         void commands.executeCommand("setContext", "ext.isViewVisible", this.tasksEditorContributorsMap.size > 0);
       });
   }
 
-  private getTasksPropertyMessageMap(packageJSON: any): Record<string, Record<string, string>> {
+  private getTasksPropertyMessageMap(
+    packageJSON: any,
+  ): Record<string, { properties: Dictionary<any>; requires: string[] }> {
     const tasksDefinitions = get(packageJSON.contributes, "taskDefinitions");
     const tasksTypes = map(tasksDefinitions, (_) => _.type);
     const tasksProperties = map(tasksDefinitions, (taskDefinition) => {
       const propertiesNames: string[] = keys(taskDefinition.properties);
-      const propertiesDescriptions: string[] = map(propertiesNames, (_) => taskDefinition.properties[_].description);
-      return zipObject(propertiesNames, propertiesDescriptions);
+      const propertiesDetails: any[] = map(propertiesNames, (_) => taskDefinition.properties[_]);
+      return {
+        properties: zipObject(propertiesNames, propertiesDetails),
+        requires: taskDefinition.required,
+      };
     });
     return zipObject(tasksTypes, tasksProperties);
   }
@@ -135,6 +142,6 @@ export class Contributors implements IContributors {
   }
 
   getTaskPropertyDescription(type: string, property: string): string {
-    return this.tasksEditorContributorsMap.get(type).properties[property];
+    return get(this.tasksEditorContributorsMap.get(type).properties[property], "description", "");
   }
 }

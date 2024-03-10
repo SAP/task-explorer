@@ -10,6 +10,11 @@ module.exports = Object.assign(baseNycConfig, {
     "dummy/main.js",
     "src/dummy.js",
     "dist/test/**",
+    "dist/media/**",
     "src/webSocketServer/**",
   ],
+  branches: 99,
+  lines: 99,
+  functions: 99,
+  statements: 99,
 });

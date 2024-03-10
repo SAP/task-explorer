@@ -332,7 +332,7 @@ describe("the TaskEditor class", () => {
       });
       await taskEditor["onFrontendReady"]();
       expect(await taskEditor["evaluateMethod"]([{ prop1: "v" }], "prop1", "validate")).to.eq(
-        "Enter at least 2 characters"
+        "Enter at least 2 characters",
       );
     });
 

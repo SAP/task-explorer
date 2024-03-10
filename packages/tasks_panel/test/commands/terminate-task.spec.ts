@@ -50,7 +50,7 @@ describe("Command terminateTaskFromTree", () => {
       "wsFolder",
       testVscode.TreeItemCollapsibleState.None,
       parentItem,
-      command
+      command,
     );
     await terminateTaskFromTree(item);
   });
@@ -68,7 +68,7 @@ describe("Command terminateTaskFromTree", () => {
       "wsFolder",
       testVscode.TreeItemCollapsibleState.None,
       parentItem,
-      command
+      command,
     );
     mockWindow
       .expects("showErrorMessage")
@@ -99,7 +99,7 @@ describe("Command terminateTaskFromTree", () => {
       "wsFolder",
       testVscode.TreeItemCollapsibleState.None,
       parentItem,
-      command
+      command,
     );
     mockWindow.expects("showErrorMessage").resolves();
     await terminateTaskFromTree(item);

@@ -19,7 +19,6 @@ export const messages = {
   DELETE_TASK: (task: string): string => `The ${task} task has been deleted.`,
   EDIT_TASK: (task: string): string => `The changes to the ${task} task have been saved.`,
   TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
-  EDIT_TASK_NOT_FOUND: (task: string): string => `Could not find the ${task} task.`,
   EXECUTE_TASK: (task: string): string => `Executed the ${task} task.`,
   TERMINATE_TASK: (task: string): string => `Terminate the ${task} task.`,
   CREATE_TASK: (task: string): string => `Create the ${task} task.`,
@@ -47,4 +46,7 @@ export const messages = {
   delete_task_confirmation: (name: string) => `Are you sure you want to delete the '${name}' configuration?`,
   resource_open_could_not_open_editor: "Could not open the editor for the required resource",
   configuration_task_not_found: (label: string) => `Could not find the "${label}" configuration.`,
+  create_task_pick_project_placeholder: "Select the project for which you want to create the task:",
+  create_task_pick_task_placeholder: "Select the task you want to perform:",
+  err_task_definition_unsupported_target: "Unable to complete the tasks definition - unsupported deployment target",
 };

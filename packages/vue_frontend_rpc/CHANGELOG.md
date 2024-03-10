@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.1](https://github.com/SAP/task-explorer/compare/v4.7.0...v4.7.1) (2024-01-14)
+
+**Note:** Version bump only for package @vscode-tasks-explorer/vue_frontend_rpc
+
+# [4.7.0](https://github.com/SAP/task-explorer/compare/v4.6.0...v4.7.0) (2023-12-26)
+
+**Note:** Version bump only for package @vscode-tasks-explorer/vue_frontend_rpc
+
+# [4.6.0](https://github.com/SAP/task-explorer/compare/v4.5.0...v4.6.0) (2023-12-13)
+
+### Features
+
+- **platform:** frontend vue3, vite node18 ([#328](https://github.com/SAP/task-explorer/issues/328)) ([d7af75f](https://github.com/SAP/task-explorer/commit/d7af75f47e858f1b7fab9f14d115b3fe726dc8da)), closes [#346](https://github.com/SAP/task-explorer/issues/346)
+
+# [4.4.0](https://github.com/SAP/task-explorer/compare/v4.3.1...v4.4.0) (2023-08-06)
+
+### Features
+
+- switch from selector editor to prompt wizard ([#290](https://github.com/SAP/task-explorer/issues/290)) ([fe3d5f6](https://github.com/SAP/task-explorer/commit/fe3d5f66ceacf398afb02e2db2339088b799922e))
+
 ## [4.3.1](https://github.com/SAP/task-explorer/compare/v4.3.0...v4.3.1) (2023-07-26)
 
 **Note:** Version bump only for package @vscode-tasks-explorer/vue_frontend_rpc

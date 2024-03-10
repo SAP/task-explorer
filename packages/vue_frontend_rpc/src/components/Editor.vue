@@ -9,7 +9,7 @@
             <v-spacer></v-spacer>
             <div>
               <v-divider vertical inset></v-divider>
-              <v-btn id="exec" text tile @click="onExec" :disabled="!isExecuteEnabled">
+              <v-btn variant="text" id="exec" tile @click="onExec" :disabled="!isExecuteEnabled">
                 <div class="exec-title">{{ task.taskIntent }}</div>
                 <div
                   :style="{
@@ -22,20 +22,20 @@
             </div>
           </v-card-title>
           <v-divider></v-divider>
-          <v-list-group class="my-list-group" :value="true" sub-group prepend-icon="$expand">
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>General Properties</v-list-item-title>
-              </v-list-item-content>
-            </template>
-            <v-list-item class="pl-10">
-              <Form ref="form" :questions="task.content" @answered="onAnswered" />
+          <v-list id="myListGroup">
+            <v-list-item @click="showConnectivityInfo = !showConnectivityInfo" class="pa-0">
+              <v-list-item-title class="main-list-item-title">
+                <v-icon>{{ showConnectivityInfo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+                General Properties
+              </v-list-item-title>
             </v-list-item>
-          </v-list-group>
+            <v-list-item class="pl-8 mt-0" v-show="showConnectivityInfo">
+              <Form id="form" ref="form" :questions="questions" @answered="onAnswered" />
+            </v-list-item>
+          </v-list>
         </v-card>
       </v-col>
     </v-row>
-
     <v-divider class="mr-16"></v-divider>
     <v-row style="height: 4rem" class="mr-16" v-if="editor" sm="auto">
       <v-col class="bottom-buttons-col" style="display: flex; align-items: center">
@@ -46,50 +46,30 @@
 </template>
 
 <script>
-import Vue from "vue";
-import { get } from "lodash";
-import FileBrowserPlugin from "@sap-devx/inquirer-gui-file-browser-plugin";
-import FolderBrowserPlugin from "@sap-devx/inquirer-gui-folder-browser-plugin";
-import LabelPlugin from "@sap-devx/inquirer-gui-label-plugin";
-
 const FUNCTION = "__Function";
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names -- TODO: to fix this
   name: "Editor",
   props: ["editor", "rpc"],
   data() {
     return {
       task: Object,
+      questions: [],
       state: {
         saveEnabled: false,
         firstRender: true,
         inputValid: false,
       },
+      showConnectivityInfo: true,
     };
   },
-  mounted() {
-    this.init();
-  },
   computed: {
-    isExecuteEnabled: function () {
+    isExecuteEnabled() {
       return this.state.inputValid && !this.state.saveEnabled;
     },
   },
   methods: {
-    init() {
-      // register custom inquirer-gui plugins
-      this.registerPlugin(FileBrowserPlugin);
-      this.registerPlugin(FolderBrowserPlugin);
-      this.registerPlugin(LabelPlugin);
-    },
-    registerPlugin(plugin) {
-      const options = {};
-      Vue.use(plugin, options);
-      if (options.plugin) {
-        const registerPluginFunc = get(this.$refs, "form.registerPlugin");
-        registerPluginFunc(options.plugin);
-      }
-    },
     setTask(task) {
       this.prepareTask(task);
     },
@@ -103,19 +83,18 @@ export default {
     },
     prepareTask(task) {
       this.task = task;
-      for (const question of task.content) {
+      const questions = [...task.content];
+      for (const question of questions) {
         for (const prop in question) {
           if (question[prop] === FUNCTION) {
-            const that = this;
-            question[prop] = this.getEvaluationFunction(that.rpc, question.name, prop);
+            var that = this;
+            question[prop] = (...args) => {
+              return that.rpc.invoke("evaluateMethod", [args, question.name, prop]);
+            };
           }
         }
       }
-    },
-    getEvaluationFunction(rpc, questionName, questionProperty) {
-      return async (...args) => {
-        return rpc.invoke("evaluateMethod", [args, questionName, questionProperty]);
-      };
+      this.questions = questions;
     },
     async onAnswered(answers, issues) {
       this.state.inputValid = issues === undefined;

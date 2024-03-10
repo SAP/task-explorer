@@ -7,6 +7,7 @@ import { VSCodeEvents } from "../src/vscode-events";
 import { messages } from "../src/i18n/messages";
 import { Contributors } from "../src/services/contributors";
 import { MockTaskTypeProvider } from "./utils/mockTaskTypeProvider";
+import { cloneDeep, extend } from "lodash";
 
 const task = {
   label: "task 1",
@@ -77,9 +78,31 @@ describe("the VscodeEvents class", () => {
       expect(MockVSCodeInfo.configTasks.get(folderPath)![1].label).eq("task 1");
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
-        testVscode.ConfigurationTarget.WorkspaceFolder
+        testVscode.ConfigurationTarget.WorkspaceFolder,
       );
-      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledTwice).to.be.true;
+      expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+    });
+
+    it("updates task in tasks configuration. `task 2` instead of `task two`, webview panel not exists", async () => {
+      const folderPath = "path";
+      const vscodeEvents = new VSCodeEvents();
+      MockVSCodeInfo.configTasks = new Map<string, MockConfigTask[]>();
+      MockVSCodeInfo.configTasks.set(folderPath, [
+        new MockConfigTask("task one", "test"),
+        new MockConfigTask("task two", "test"),
+      ]);
+      await vscodeEvents.updateTaskInConfiguration(folderPath, extend(cloneDeep(task), { label: "task 2" }), 1);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
+      expect(MockVSCodeInfo.configTasks.get(folderPath)![0].label).eq("task one");
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- suppressed: must be definied for test scope
+      expect(MockVSCodeInfo.configTasks.get(folderPath)![1].label).eq("task 2");
+      expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
+      expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
+        testVscode.ConfigurationTarget.WorkspaceFolder,
+      );
+      expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledTwice).to.be.true;
     });
 
     it("logs error on try to update task with wrong index", async () => {
@@ -110,9 +133,10 @@ describe("the VscodeEvents class", () => {
       expect(await vscodeEvents.addTaskToConfiguration(folderPath, task)).eq(2);
       expect(MockVSCodeInfo.updateCalled.section).to.be.equal("tasks");
       expect(MockVSCodeInfo.updateCalled.configurationTarget).to.be.equal(
-        testVscode.ConfigurationTarget.WorkspaceFolder
+        testVscode.ConfigurationTarget.WorkspaceFolder,
       );
-      expect(spyGetConfiguration.calledOnceWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
+      expect(spyGetConfiguration.calledTwice).to.be.true;
+      expect(spyGetConfiguration.calledWithExactly("tasks", testVscode.Uri.file(folderPath))).to.be.true;
     });
 
     it("adds new task to the empty configuration and returns its index", async () => {

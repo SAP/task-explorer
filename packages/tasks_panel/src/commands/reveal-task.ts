@@ -10,13 +10,12 @@ export async function revealTask(treeItem: TaskTreeItem): Promise<void> {
     if (treeItem.command?.arguments === undefined) {
       return;
     }
-    const task = treeItem.command.arguments[0];
 
-    const taskEditor = getTaskEditor();
-    if (taskEditor !== undefined && taskEditor.getTask().label === treeItem.label) {
+    if (getTaskEditor()?.getTask().label === treeItem.label) {
       disposeTaskEditorPanel();
     }
 
+    const task = treeItem.command.arguments[0];
     const resource = Uri.joinPath(Uri.file(task.__wsFolder), ".vscode", "tasks.json");
     const docEditor = await window.showTextDocument(resource, { preview: false });
     if (docEditor) {

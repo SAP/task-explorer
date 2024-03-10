@@ -3,7 +3,7 @@ import { mockVscode, MockVSCodeInfo, resetTestVSCode, testVscode } from "./utils
 
 mockVscode("src/extension");
 import { activate } from "../src/extension";
-import { find, size } from "lodash";
+import { find, map, size, split, trim } from "lodash";
 import { mock } from "sinon";
 
 describe("extension", () => {
@@ -37,6 +37,25 @@ describe("extension", () => {
           contents: string;
           view: string;
         }[];
+        menus: {
+          "view/title": {
+            command: string;
+            when: string;
+            group: string;
+          }[];
+          "view/item/context": {
+            command: string;
+            when: string;
+            group: string;
+          }[];
+        };
+        views: {
+          "tasks-explorer": {
+            id: string;
+            name: string;
+            when: string;
+          }[];
+        };
       };
     };
 
@@ -53,11 +72,42 @@ describe("extension", () => {
       expect(
         find(contents, (line) =>
           /\[.*\]\(https:\/\/help.sap.com\/docs\/bas\/sap-business-application-studio\/task-explorer\?version=Cloud\)/.test(
-            line
-          )
-        )
+            line,
+          ),
+        ),
       ).to.be.ok;
       expect(find(contents, (line) => /\[.*\]\(command:tasks-explorer.createTask\)/.test(line))).to.be.ok;
+    });
+
+    it("extension pack contributes views task-explorer", () => {
+      const view = packageJson.contributes.views["tasks-explorer"][0];
+      expect(view.when).to.be.equal("ext.isViewVisible");
+      expect(view.id).to.be.equal("tasksPanel");
+      expect(view.name).to.be.empty;
+    });
+
+    it("extension pack contributes menus->view/item/context", () => {
+      const item = find(packageJson.contributes.menus["view/item/context"], ["command", "tasks-explorer.createTask"]);
+      expect(item?.group).to.be.equal("inline");
+      const statements = split(item?.when, "&&");
+      expect(map(split(statements[0], "=="), trim).includes("view")).to.be.true;
+      expect(map(split(statements[0], "=="), trim).includes("tasksPanel")).to.be.true;
+      expect(map(split(statements[1], "=~"), trim).includes("viewItem")).to.be.true;
+      expect(map(split(statements[1], "=~"), trim).includes("/^(root|project|intent)$/")).to.be.true;
+    });
+
+    it("extension pack contributes menus->view/title createTask command", () => {
+      const item = find(packageJson.contributes.menus["view/title"], ["command", "tasks-explorer.createTask"]);
+      expect(item?.group).to.be.equal("navigation");
+      expect(map(split(item?.when, "=="), trim).includes("view")).to.be.true;
+      expect(map(split(item?.when, "=="), trim).includes("tasksPanel")).to.be.true;
+    });
+
+    it("extension pack contributes menus->view/title refresh command", () => {
+      const item = find(packageJson.contributes.menus["view/title"], ["command", "tasks-explorer.tree.refresh"]);
+      expect(item?.group).to.be.equal("navigation");
+      expect(map(split(item?.when, "=="), trim).includes("view")).to.be.true;
+      expect(map(split(item?.when, "=="), trim).includes("tasksPanel")).to.be.true;
     });
   });
 });

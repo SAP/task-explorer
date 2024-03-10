@@ -24,7 +24,7 @@ glob.sync("packages/*/.nyc_output").forEach((nycOutput) => {
       encoding: "utf8",
       shell: true,
       cwd,
-    }
+    },
   );
 
   if (status !== 0) {
@@ -41,7 +41,7 @@ const { status, stderr } = spawnSync(
     encoding: "utf8",
     shell: true,
     cwd: resolve(__dirname, ".."),
-  }
+  },
 );
 
 if (status !== 0) {

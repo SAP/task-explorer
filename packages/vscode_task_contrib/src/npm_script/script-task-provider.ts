@@ -29,7 +29,7 @@ export class ScriptTaskProvider implements TaskProvider {
           NPM_SCRIPT_TYPE,
           new ShellExecution("sleep 2; echo template only", {
             cwd: wsFolder.uri.path,
-          })
+          }),
         );
         npmTasks = npmTasks.concat(task);
       }
@@ -50,14 +50,14 @@ export class ScriptTaskProvider implements TaskProvider {
       `npm run ${npmTask.definition.script} ${npmTask.definition.arguments}; sleep 2;`,
       {
         cwd: dirname(npmTask.definition.packageJSONPath),
-      }
+      },
     );
     return new Task(
       npmTask.definition,
       npmTask.scope ?? TaskScope.Workspace,
       npmTask.name,
       NPM_SCRIPT_TYPE,
-      taskExecution
+      taskExecution,
     );
   }
 
