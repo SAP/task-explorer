@@ -1,9 +1,9 @@
 import * as path from "path";
-import { filter, find, get, has, isEmpty, isFunction, isUndefined, map, merge, pick } from "lodash";
+import { filter, find, get, has, isEmpty, isFunction, isUndefined, map, pick } from "lodash";
 import { IRpc } from "@sap-devx/webview-rpc/out.ext/rpc-common";
 import { ConfiguredTask, TaskEditorContributionAPI, TaskUserInput } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "./app-events";
-import { getSWA } from "./utils/swa";
+import { AnalyticsWrapper } from "./usage-report/usage-analytics-wrapper";
 import { getClassLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { getExtensionPath } from "./extension";
@@ -148,8 +148,14 @@ export class TaskEditor {
   }
 
   public async saveTask() {
-    // report usage analytics on save
-    getSWA().track(messages.SWA_SAVE_TASK_EVENT(), [messages.SWA_TASK_EDITOR_PARAM(), this.intent, this.extensionName]);
+    // report telemetry event
+    AnalyticsWrapper.reportTaskSave({
+      __wsFolder: this.wsFolder,
+      __intent: this.intent,
+      __extensionName: this.extensionName,
+      ...this.task,
+    });
+
     const editedTask = { ...this.task };
     delete editedTask.__image;
     if (this.taskEditorContributor !== undefined && isFunction(this.taskEditorContributor.onSave)) {
@@ -161,14 +167,15 @@ export class TaskEditor {
   }
 
   private async executeTask() {
-    // report usage analytics on execute
-    getSWA().track(messages.SWA_EXECUTE_TASK_EVENT(), [
-      messages.SWA_TASK_EDITOR_PARAM(),
-      this.intent,
-      this.extensionName,
-    ]);
+    // report telemetry event
+    AnalyticsWrapper.reportTaskExecuteEditor({
+      __wsFolder: this.wsFolder,
+      __intent: this.intent,
+      __extensionName: this.extensionName,
+      ...this.task,
+    });
     // force to propogate `__wsFolder` property in favor of `npm` task
-    return this.appEvents.executeTask(merge({ ...this.task }, { __wsFolder: this.wsFolder }));
+    return this.appEvents.executeTask({ ...this.task, __wsFolder: this.wsFolder });
   }
 
   private async setAnswers(state: any): Promise<void> {

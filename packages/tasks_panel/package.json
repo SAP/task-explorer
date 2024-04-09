@@ -4,7 +4,9 @@
   "version": "4.7.1",
   "private": true,
   "categories": [],
-  "keywords": [],
+  "keywords": [
+    "BAS"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/SAP/task-explorer",
@@ -90,12 +92,6 @@
       "type": "object",
       "title": "TaskExplorer",
       "properties": {
-        "vscode-tasks-explorer-tasks-panel.enableSapWebAnalytics": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable collecting usage analytics data for Application Wizard.  If enabled, non-personally identifiable information is used to help understand the product usage and improve the tool.",
-          "scope": "resource"
-        },
         "vscode-tasks-explorer-tasks-panel.loggingLevel": {
           "type": "string",
           "enum": [
@@ -242,18 +238,19 @@
     "onStartupFinished"
   ],
   "dependencies": {
-    "@sap-devx/app-studio-toolkit-types": "1.15.19",
+    "@sap-devx/app-studio-toolkit-types": "1.15.23",
     "@sap-devx/webview-rpc": "0.4.1",
     "@sap/cf-tools": "3.2.0",
+    "@sap/swa-for-sapbas-vsx": "2.0.4",
     "@sap_oss/task_contrib_types": "^4.7.1",
-    "@vscode-logging/logger": "1.2.3",
+    "@vscode-logging/logger": "2.0.0",
     "cheerio": "^1.0.0-rc.12",
     "datauri": "4.1.0",
     "escape-string-regexp": "4.0.0",
     "lodash": "4.17.21",
     "strip-ansi": "7.1.0",
     "ws": "8.8.1",
-    "yaml": "2.3.4"
+    "yaml": "2.4.1"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
