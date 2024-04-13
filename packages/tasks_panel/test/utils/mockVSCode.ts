@@ -208,6 +208,9 @@ export const testVscode: any = {
     },
     createTreeView: (id, opt) => {
       MockVSCodeInfo.treeDataProvider.set(id, opt.treeDataProvider);
+      return {
+        onDidChangeVisibility: () => {},
+      };
     },
   },
   ViewColumn: {

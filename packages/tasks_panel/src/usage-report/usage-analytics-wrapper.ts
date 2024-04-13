@@ -4,11 +4,14 @@ import { getLogger } from "../logger/logger-wrapper";
 import type { ExtensionContext } from "vscode";
 
 type Properties = { [key: string]: string | boolean };
+const dummyClient = { report: () => Promise.resolve() };
 
 /**
  * A Simple Wrapper for reporting usage analytics
  */
 export class AnalyticsWrapper {
+  private static client: BASTelemetryClient = dummyClient as unknown as BASTelemetryClient;
+
   // Event types used by Application Wizard
   private static readonly EVENT_TYPES = {
     TASK_CREATE: "task create initiated",
@@ -20,42 +23,34 @@ export class AnalyticsWrapper {
     TASK_DUPLICATE: "task duplicate",
     TASK_TERMINATE: "task terminate",
     TASK_REVEAL: "task show in file",
+    VIEW_VISIBILITY: "view visibility",
   };
 
-  /**
-   * Note the use of a getter function so the value would be lazy resolved on each use.
-   * This enables concise and simple consumption of the tracker throughout our Extension.
-   *
-   * @returns { Tracker }
-   */
   private static getTracker(): BASTelemetryClient {
-    return BASClientFactory.getBASTelemetryClient();
+    return AnalyticsWrapper.client;
   }
 
   public static createTracker(context: ExtensionContext): void {
-    try {
-      const packageJson = require(path.join(context.extensionPath, "package.json"));
-      const vscodeExtentionFullName = `${packageJson.publisher}.${packageJson.name}`;
-      initTelemetrySettings(vscodeExtentionFullName, packageJson.version);
-      getLogger().info(`SAP Web Analytics tracker was created for ${vscodeExtentionFullName}`);
-    } catch (err: any) {
-      getLogger().error(err);
+    // avoid reports for local VSCode environment
+    if (process.env.LANDSCAPE_ENVIRONMENT) {
+      try {
+        const packageJson = require(path.join(context.extensionPath, "package.json"));
+        const vscodeExtentionFullName = `${packageJson.publisher}.${packageJson.name}`;
+        initTelemetrySettings(vscodeExtentionFullName, packageJson.version);
+        AnalyticsWrapper.client = BASClientFactory.getBASTelemetryClient();
+        getLogger().info(`SAP Web Analytics tracker was created for ${vscodeExtentionFullName}`);
+      } catch (err: any) {
+        getLogger().error(err);
+      }
     }
   }
 
   private static report(eventName: string, properties?: Properties): void {
-    // avoid reports for local VSCode environment
-    if (process.env.LANDSCAPE_ENVIRONMENT) {
-      void AnalyticsWrapper.getTracker()
-        .report(eventName, { ...properties })
-        .catch((error) => {
-          getLogger().error(error, { eventName });
-        });
-    } else {
-      getLogger().trace("SAP Web Analytics tracker was not called because LANDSCAPE_ENVIRONMENT is not set", {
-        eventName,
+    void AnalyticsWrapper.getTracker()
+      .report(eventName, { ...properties })
+      .catch((error) => {
+        getLogger().error(error, { eventName });
       });
-    }
   }
 
   public static reportTaskCreate(properties?: Properties): void {
@@ -66,14 +61,14 @@ export class AnalyticsWrapper {
 
   public static reportTaskCreateSelected(properties: Properties): void {
     AnalyticsWrapper.report(AnalyticsWrapper.EVENT_TYPES.TASK_CREATE_SELECTED, {
-      intent: properties.taskType,
+      intent: properties.taskType ?? "",
       type: properties.type,
     });
   }
 
   public static reportTaskCreateFinished(properties: Properties): void {
     AnalyticsWrapper.report(AnalyticsWrapper.EVENT_TYPES.TASK_CREATE_FINISHED, {
-      intent: properties.taskType,
+      intent: properties.taskType ?? "",
       type: properties.type,
     });
   }
@@ -133,6 +128,12 @@ export class AnalyticsWrapper {
       intent: properties.__intent,
       extensionName: properties.__extensionName,
       type: properties.type,
+    });
+  }
+
+  public static reportViewVisibility(properties: Properties): void {
+    AnalyticsWrapper.report(AnalyticsWrapper.EVENT_TYPES.VIEW_VISIBILITY, {
+      visible: properties.visible,
     });
   }
 }

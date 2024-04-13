@@ -34,6 +34,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const tasksTree = new TasksTree(tasksProvider);
   const view = window.createTreeView("tasksPanel", { treeDataProvider: tasksTree, showCollapseAll: true });
 
+  view.onDidChangeVisibility((e) => {
+    AnalyticsWrapper.reportViewVisibility({ visible: e.visible });
+  });
+
   context.subscriptions.push(
     commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource)),
   );
