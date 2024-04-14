@@ -9,12 +9,16 @@ import {
 } from "../panels/panels-handler";
 import { ElementTreeItem } from "../view/task-tree-item";
 import { isEmpty } from "lodash";
+import { AnalyticsWrapper } from "../usage-report/usage-analytics-wrapper";
 
 export async function createTask(
   tasksProvider: ITasksProvider,
   readResource: (file: string) => Promise<string>,
   treeItem?: ElementTreeItem,
 ): Promise<void> {
+  // report telemetry event
+  AnalyticsWrapper.reportTaskCreate(treeItem as any);
+
   const taskInProcess = getTaskInProcess();
 
   if (taskInProcess !== undefined) {

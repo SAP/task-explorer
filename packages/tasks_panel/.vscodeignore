@@ -1,9 +1,8 @@
-# We are bundling our extension so no need to include the dependencies separately.
-node_modules
-
-# The VSCode Extension's dev artifacts
-coverage/**
-.nyc_output/**
-dist/test/**
-test/**
-scripts
+**
+!LICENSE
+!README.md
+!package.json
+!icon.png
+!dist/media
+!dist/*.js
+!resources

@@ -1,7 +1,7 @@
 import { isFunction } from "lodash";
 import { ConfiguredTask } from "@sap_oss/task_contrib_types";
 import { AppEvents } from "./app-events";
-import { getSWA } from "./utils/swa";
+import { AnalyticsWrapper } from "./usage-report/usage-analytics-wrapper";
 import { getLogger } from "./logger/logger-wrapper";
 import { messages } from "./i18n/messages";
 import { exceptionToString, getUniqueTaskLabel, serializeTask } from "./utils/task-serializer";
@@ -22,7 +22,11 @@ export class TasksSelection {
     try {
       const { task } = await multiStepTaskSelect(this.tasks, treeItem);
       if (task) {
-        return await (isDeploymentConfigTask(task) ? completeDeployConfig(task) : this.setSelectedTask(task));
+        // report telemetry event
+        AnalyticsWrapper.reportTaskCreateSelected(task);
+        await (isDeploymentConfigTask(task) ? completeDeployConfig(task) : this.setSelectedTask(task));
+        // report telemetry event
+        AnalyticsWrapper.reportTaskCreateFinished(task);
       }
     } catch (e: any) {
       getLogger().debug(`Task selection failed: ${exceptionToString(e)}`);
@@ -30,12 +34,6 @@ export class TasksSelection {
     }
   }
   private async setSelectedTask(selectedTask: ConfiguredTask): Promise<void> {
-    getSWA().track(messages.SWA_CREATE_TASK_EVENT(), [
-      messages.SWA_TASK_EXPLORER_PARAM(),
-      selectedTask.__intent,
-      selectedTask.__extensionName,
-    ]);
-
     selectedTask.label = getUniqueTaskLabel(selectedTask.label);
 
     const newTask = { ...selectedTask };

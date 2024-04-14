@@ -4,7 +4,7 @@ import { getLogger } from "../logger/logger-wrapper";
 import { TaskTreeItem } from "../view/task-tree-item";
 import { serializeTask, updateTasksConfiguration } from "../utils/task-serializer";
 import { messages } from "../i18n/messages";
-import { getSWA } from "../utils/swa";
+import { AnalyticsWrapper } from "../usage-report/usage-analytics-wrapper";
 import { disposeTaskEditorPanel, getTaskEditor } from "../panels/panels-handler";
 import { cleanTasks } from "../utils/ws-folder";
 
@@ -18,11 +18,8 @@ export async function deleteTask(treeItem: TaskTreeItem): Promise<void> {
     (await window.showInformationMessage(messages.delete_task_confirmation(task.label), { modal: true }, "Delete")) ===
     "Delete"
   ) {
-    getSWA().track(messages.SWA_DELETE_TASK_EVENT(), [
-      messages.SWA_TASK_EXPLORER_PARAM(),
-      task.__intent,
-      task.__extensionName,
-    ]);
+    // report telemetry event
+    AnalyticsWrapper.reportTaskDelete({ ...task });
 
     if (getTaskEditor()?.getTask().label === treeItem.label) {
       disposeTaskEditorPanel();

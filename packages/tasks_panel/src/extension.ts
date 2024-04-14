@@ -18,6 +18,7 @@ import { selectTreeItem } from "./commands/select-tree-item";
 import { actionDeploy } from "./commands/action-deploy";
 import { subscribeTaskRun } from "./commands/action";
 import { actionBuild } from "./commands/action-build";
+import { AnalyticsWrapper } from "./usage-report/usage-analytics-wrapper";
 
 let extensionPath = "";
 
@@ -25,12 +26,17 @@ export async function activate(context: ExtensionContext): Promise<void> {
   extensionPath = context.extensionPath;
 
   initializeLogger(context);
+  AnalyticsWrapper.createTracker(context);
 
   const contributors = Contributors.getInstance();
   void contributors.init();
   const tasksProvider = new TasksProvider(contributors);
   const tasksTree = new TasksTree(tasksProvider);
   const view = window.createTreeView("tasksPanel", { treeDataProvider: tasksTree, showCollapseAll: true });
+
+  view.onDidChangeVisibility((e) => {
+    AnalyticsWrapper.reportViewVisibility({ visible: e.visible });
+  });
 
   context.subscriptions.push(
     commands.registerCommand("tasks-explorer.editTask", partial(editTreeItemTask, tasksProvider, readResource)),

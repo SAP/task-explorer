@@ -4,6 +4,7 @@ import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { disposeTaskEditorPanel, getTaskEditor } from "../panels/panels-handler";
 import { size } from "lodash";
+import { AnalyticsWrapper } from "../usage-report/usage-analytics-wrapper";
 
 export async function revealTask(treeItem: TaskTreeItem): Promise<void> {
   try {
@@ -16,6 +17,10 @@ export async function revealTask(treeItem: TaskTreeItem): Promise<void> {
     }
 
     const task = treeItem.command.arguments[0];
+
+    // report telemetry event
+    AnalyticsWrapper.reportTaskReveal({ ...task });
+
     const resource = Uri.joinPath(Uri.file(task.__wsFolder), ".vscode", "tasks.json");
     const docEditor = await window.showTextDocument(resource, { preview: false });
     if (docEditor) {

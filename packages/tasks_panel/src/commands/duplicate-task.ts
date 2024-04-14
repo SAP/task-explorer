@@ -5,7 +5,8 @@ import { TaskTreeItem } from "../view/task-tree-item";
 import { messages } from "../i18n/messages";
 import { cleanTasks } from "../utils/ws-folder";
 import { cloneDeep, filter, find, map } from "lodash";
-import { updateTasksConfiguration } from "../../src/utils/task-serializer";
+import { updateTasksConfiguration } from "../utils/task-serializer";
+import { AnalyticsWrapper } from "../usage-report/usage-analytics-wrapper";
 
 export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
   try {
@@ -13,6 +14,9 @@ export async function duplicateTask(treeItem: TaskTreeItem): Promise<void> {
       return;
     }
     const task = treeItem.command.arguments[0];
+
+    // report telemetry event
+    AnalyticsWrapper.reportTaskDuplicate({ ...task });
 
     const tasksConfig = workspace.getConfiguration("tasks", Uri.file(task.__wsFolder));
     const tasks: ConfiguredTask[] = tasksConfig.get("tasks") ?? [];
