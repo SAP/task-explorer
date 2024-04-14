@@ -1,7 +1,7 @@
 {
   "name": "vscode-tasks-explorer-tasks-panel",
   "displayName": "Task Explorer",
-  "version": "4.7.1",
+  "version": "4.8.0",
   "private": true,
   "categories": [],
   "keywords": [
@@ -259,7 +259,7 @@
     "@types/sinon": "17.0.2",
     "@types/vscode": "1.75.0",
     "@types/ws": "^7.2.3",
-    "@vscode-tasks-explorer/vue_frontend_rpc": "^4.7.1",
+    "@vscode-tasks-explorer/vue_frontend_rpc": "^4.8.0",
     "@vscode/vsce": "2.22.0",
     "copy-webpack-plugin": "^11.0.0",
     "fs-extra": "10.1.0",
