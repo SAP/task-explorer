@@ -272,27 +272,5 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "icon": "icon.png",
-  "basContributes": {
-    "quick.access.actions": [
-      {
-        "id": "quick.access.action.build",
-        "label": "Build",
-        "codicon": "symbol-method",
-        "params": {
-          "command": "tasks-explorer.action.build"
-        },
-        "position": 20
-      },
-      {
-        "id": "quick.access.action.deploy",
-        "label": "Deploy",
-        "codicon": "rocket",
-        "params": {
-          "command": "tasks-explorer.action.deploy"
-        },
-        "position": 30
-      }
-    ]
-  }
+  "icon": "icon.png"
 }
