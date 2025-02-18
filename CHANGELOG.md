@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/SAP/task-explorer/compare/v4.8.0...v4.9.0) (2025-02-18)
+
+### Features
+
+- support quick access hidden actions: Build, Run, guide center ([#383](https://github.com/SAP/task-explorer/issues/383)) ([1ec8016](https://github.com/SAP/task-explorer/commit/1ec801618a85d0b58d4c095a9d9d4c7cb8309427))
+
 # [4.8.0](https://github.com/SAP/task-explorer/compare/v4.7.1...v4.8.0) (2024-04-14)
 
 ### Bug Fixes
