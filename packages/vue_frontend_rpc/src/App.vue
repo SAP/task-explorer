@@ -29,6 +29,10 @@ export default {
     this.setupRpc();
   },
 
+  mounted() {
+    document.addEventListener("contextmenu", (e) => e.preventDefault());
+  },
+
   methods: {
     setupRpc() {
       if (this.isInVsCode()) {
