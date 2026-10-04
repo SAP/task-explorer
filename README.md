@@ -37,10 +37,10 @@ It currently contains:
 
 The extension contributes the following VS Code settings:
 
-| Setting | Default | Description |
-|---|---|---|
-| `vscode-tasks-explorer-tasks-panel.loggingLevel` | `"error"` | Logging verbosity (`off`/`fatal`/`error`/`warn`/`info`/`debug`/`trace`) |
-| `vscode-tasks-explorer-tasks-panel.sourceLocationTracking` | `false` | Include source file and line number in log entries |
+| Setting                                                    | Default   | Description                                                             |
+| ---------------------------------------------------------- | --------- | ----------------------------------------------------------------------- |
+| `vscode-tasks-explorer-tasks-panel.loggingLevel`           | `"error"` | Logging verbosity (`off`/`fatal`/`error`/`warn`/`info`/`debug`/`trace`) |
+| `vscode-tasks-explorer-tasks-panel.sourceLocationTracking` | `false`   | Include source file and line number in log entries                      |
 
 ## Support
 

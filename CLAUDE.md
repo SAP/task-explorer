@@ -36,6 +36,7 @@ vue_frontend_rpc     (standalone Vue 3 SPA; assets copied into tasks_panel/dist/
 Entry point: `packages/tasks_panel/src/extension.ts` — `activate(context)`.
 
 On activation (`onStartupFinished`) it:
+
 1. Initialises structured logging (`@vscode-logging/logger` → Output Channel).
 2. Creates `AnalyticsWrapper` (SAP telemetry; only active when `LANDSCAPE_ENVIRONMENT` is set).
 3. Runs `Contributors.init()` — scans all installed extensions for `BASContributes.tasksExplorer` in their `package.json`, activates them, and populates a `type → contributor` map.
@@ -46,6 +47,7 @@ On activation (`onStartupFinished`) it:
 ### Contributor protocol
 
 Third-party extensions register task types via `package.json`:
+
 ```json
 "BASContributes": {
   "tasksExplorer": [
@@ -53,6 +55,7 @@ Third-party extensions register task types via `package.json`:
   ]
 }
 ```
+
 Their `activate()` must return `{ getTaskEditorContributors() }` — the shape is defined in `task_contrib_types/api.d.ts` (`TaskEditorContributorExtensionAPI`). Each contributor implements `TaskEditorContributionAPI<T>`: `init`, `convertTaskToFormProperties`, `updateTask`, `getTaskImage`, and optional `onSave`.
 
 ### Webview RPC (extension ↔ Vue frontend)
@@ -109,13 +112,13 @@ yarn build       # vite build (vue_frontend_rpc only)
 
 ## Testing
 
-| Package | Framework | Coverage threshold |
-|---|---|---|
-| `tasks_panel` | Mocha 10 + Chai + Sinon + Proxyquire + nyc | 99% branches/lines/functions/statements |
-| `npm_task_contrib` | Mocha + Chai + Proxyquire + nyc | 100% all metrics |
-| `vue_frontend_rpc` | Jest 29 + `@vue/test-utils` 2 + jsdom | 76% branches, 77% lines/statements, 52% functions |
-| `task_contrib_types` | — (types only) | — |
-| `vscode_task_contrib` | — (no tests) | — |
+| Package               | Framework                                  | Coverage threshold                                |
+| --------------------- | ------------------------------------------ | ------------------------------------------------- |
+| `tasks_panel`         | Mocha 10 + Chai + Sinon + Proxyquire + nyc | 99% branches/lines/functions/statements           |
+| `npm_task_contrib`    | Mocha + Chai + Proxyquire + nyc            | 100% all metrics                                  |
+| `vue_frontend_rpc`    | Jest 29 + `@vue/test-utils` 2 + jsdom      | 76% branches, 77% lines/statements, 52% functions |
+| `task_contrib_types`  | — (types only)                             | —                                                 |
+| `vscode_task_contrib` | — (no tests)                               | —                                                 |
 
 Tests for `tasks_panel` and `npm_task_contrib` run against compiled output — run `yarn compile` first, or use `yarn ci` which compiles before running coverage.
 
@@ -125,17 +128,17 @@ Coverage reports per package are merged into a combined lcov at the root by `scr
 
 ### VS Code settings (contributed by `tasks_panel`)
 
-| Setting | Type | Default | Description |
-|---|---|---|---|
-| `vscode-tasks-explorer-tasks-panel.loggingLevel` | enum (`off`/`fatal`/`error`/`warn`/`info`/`debug`/`trace`) | `"error"` | Logging verbosity for the Output Channel |
-| `vscode-tasks-explorer-tasks-panel.sourceLocationTracking` | boolean | `false` | Include source file/line in log entries |
+| Setting                                                    | Type                                                       | Default   | Description                              |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------- | ---------------------------------------- |
+| `vscode-tasks-explorer-tasks-panel.loggingLevel`           | enum (`off`/`fatal`/`error`/`warn`/`info`/`debug`/`trace`) | `"error"` | Logging verbosity for the Output Channel |
+| `vscode-tasks-explorer-tasks-panel.sourceLocationTracking` | boolean                                                    | `false`   | Include source file/line in log entries  |
 
 ### Environment variables
 
-| Variable | Used in | Effect |
-|---|---|---|
-| `PORT` | `packages/tasks_panel/src/webSocketServer/index.ts` | WebSocket server port for local frontend dev (default: `8081`) |
-| `LANDSCAPE_ENVIRONMENT` | `packages/tasks_panel/src/analytics-wrapper.ts` | Enables SAP Web Analytics telemetry when set |
+| Variable                | Used in                                             | Effect                                                         |
+| ----------------------- | --------------------------------------------------- | -------------------------------------------------------------- |
+| `PORT`                  | `packages/tasks_panel/src/webSocketServer/index.ts` | WebSocket server port for local frontend dev (default: `8081`) |
+| `LANDSCAPE_ENVIRONMENT` | `packages/tasks_panel/src/analytics-wrapper.ts`     | Enables SAP Web Analytics telemetry when set                   |
 
 ## CI / Release
 
