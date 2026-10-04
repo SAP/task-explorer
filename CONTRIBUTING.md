@@ -119,8 +119,8 @@ Performing a release requires push permissions to the repository.
 - `yarn run release:version`
 - Follow the lerna CLI instructions.
   - Note the next version number will be determined by the commit messages history since the last release.
-- Track the `RELEASE` tag build on circle-ci.
-  - https://circleci.com/gh/SAP/task-explorer.
+- Track the `RELEASE` tag build on GitHub Actions.
+  - https://github.com/SAP/task-explorer/actions/workflows/release.yml
 - Once the tag build has finished successfully inspect the npm registry to see the new versions
   for all the changed packages of this mono-repo.
   - `npm view [package-name] version`
