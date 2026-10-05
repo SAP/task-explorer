@@ -138,11 +138,11 @@ Coverage reports per package are merged into a combined lcov at the root by `scr
 | Variable                | Used in                                             | Effect                                                         |
 | ----------------------- | --------------------------------------------------- | -------------------------------------------------------------- |
 | `PORT`                  | `packages/tasks_panel/src/webSocketServer/index.ts` | WebSocket server port for local frontend dev (default: `8081`) |
-| `LANDSCAPE_ENVIRONMENT` | `packages/tasks_panel/src/analytics-wrapper.ts`     | Enables SAP Web Analytics telemetry when set                   |
+| `LANDSCAPE_ENVIRONMENT` | `packages/tasks_panel/src/usage-report/usage-analytics-wrapper.ts` | Enables SAP Web Analytics telemetry when set                   |
 
 ## CI / Release
 
 - **CI:** GitHub Actions — `.github/workflows/ci.yml` (push/PR to `main`; runs `yarn ci` on Node 18).
 - **Release:** GitHub Actions — `.github/workflows/release.yml` (triggered on `v*.*.*` tags; runs `yarn ci`, publishes to npm via `yarn release:publish`, creates a GitHub Release with `.vsix` artefacts).
 - **Commit format:** conventional commits enforced by `commitlint` (`.github/workflows/commitlint.yml`) and a `lint-staged` pre-commit hook.
-- **Versioning:** Lerna Fixed/Locked mode — all packages share a single version number. Use `yarn run release:version` to bump.
+- **Versioning:** Lerna Fixed/Locked mode configured (`lerna.json`). Use `yarn run release:version` to bump. Note: packages may carry different versions between releases.
