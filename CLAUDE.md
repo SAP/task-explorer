@@ -135,9 +135,9 @@ Coverage reports per package are merged into a combined lcov at the root by `scr
 
 ### Environment variables
 
-| Variable                | Used in                                             | Effect                                                         |
-| ----------------------- | --------------------------------------------------- | -------------------------------------------------------------- |
-| `PORT`                  | `packages/tasks_panel/src/webSocketServer/index.ts` | WebSocket server port for local frontend dev (default: `8081`) |
+| Variable                | Used in                                                            | Effect                                                         |
+| ----------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| `PORT`                  | `packages/tasks_panel/src/webSocketServer/index.ts`                | WebSocket server port for local frontend dev (default: `8081`) |
 | `LANDSCAPE_ENVIRONMENT` | `packages/tasks_panel/src/usage-report/usage-analytics-wrapper.ts` | Enables SAP Web Analytics telemetry when set                   |
 
 ## CI / Release
