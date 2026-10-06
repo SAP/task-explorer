@@ -1,5 +1,4 @@
 [![CI](https://github.com/SAP/task-explorer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SAP/task-explorer/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/SAP/task-explorer/badge.svg?branch=main)](https://coveralls.io/github/SAP/task-explorer?branch=main)
 [![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/SAP/task-explorer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SAP/task-explorer/context:javascript)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)

@@ -41,7 +41,7 @@ On activation (`onStartupFinished`) it:
 2. Creates `AnalyticsWrapper` (SAP telemetry; only active when `LANDSCAPE_ENVIRONMENT` is set).
 3. Runs `Contributors.init()` — scans all installed extensions for `BASContributes.tasksExplorer` in their `package.json`, activates them, and populates a `type → contributor` map.
 4. Creates `TasksProvider` — reads `tasks.json` from VS Code workspace config, filters to supported types, injects metadata fields (`__index`, `__wsFolder`, `__intent`, `__extensionName`).
-5. Creates `TasksTree` and registers `window.createTreeView("tasksPanel")` — four-level hierarchy: Workspace Root → Project → Intent → Task.
+5. Creates `TasksTree` and registers `window.createTreeView("tasksPanel")` — hierarchy: Workspace Root → (optional) Project → Intent → Task. The Project level is omitted when no projects are discovered (`tasks-tree.ts:120`).
 6. Registers 11 commands (`tasks-explorer.*`): edit, create, delete, duplicate, reveal, execute, stop, refresh, select, build action, deploy action.
 
 ### Contributor protocol
@@ -103,10 +103,10 @@ yarn run release:publish   # publish changed packages to npm
 ### Per-package commands (run inside each `packages/<name>/`)
 
 ```bash
-yarn ci          # full package build + test
-yarn compile     # TypeScript only
-yarn test        # mocha (tests_panel, npm_task_contrib) or jest (vue_frontend_rpc)
-yarn coverage    # mocha + nyc coverage (tasks_panel, npm_task_contrib)
+yarn ci          # full package build + test (all packages)
+yarn compile     # TypeScript only (tasks_panel, npm_task_contrib, task_contrib_types, vscode_task_contrib)
+yarn test        # mocha (tasks_panel, npm_task_contrib) or jest (vue_frontend_rpc)
+yarn coverage    # mocha + nyc coverage (tasks_panel, npm_task_contrib only)
 yarn build       # vite build (vue_frontend_rpc only)
 ```
 
@@ -144,5 +144,5 @@ Coverage reports per package (nyc only — Jest coverage from `vue_frontend_rpc`
 
 - **CI:** GitHub Actions — `.github/workflows/ci.yml` (push/PR to `main`; runs `yarn ci` on Node 18).
 - **Release:** GitHub Actions — `.github/workflows/release.yml` (triggered on `v*.*.*` tags; runs `yarn ci`, publishes to npm via `yarn release:publish`, creates a GitHub Release with `.vsix` artefacts).
-- **Commit format:** conventional commits enforced by `commitlint` (`.github/workflows/commitlint.yml`) and a `lint-staged` pre-commit hook.
+- **Commit format:** conventional commits enforced by `commitlint` via the `.husky/commit-msg` hook and `.github/workflows/commitlint.yml`. `lint-staged` runs formatting/linting on staged files (pre-commit) but does **not** enforce commit message format.
 - **Versioning:** Lerna Fixed/Locked mode configured (`lerna.json`). Use `yarn run release:version` to bump. Note: packages may carry different versions between releases.
