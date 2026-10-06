@@ -68,7 +68,7 @@ Communication uses `@sap-devx/webview-rpc` (JSON-RPC over VS Code's `postMessage
 
 Function-valued form properties cannot be JSON-serialised. `TaskEditor.normalizeFunctions()` replaces them with the string `"__Function"`; the frontend replaces these back with closures that call `rpc.invoke("evaluateMethod", [...])` on the extension.
 
-**Local development transport:** the extension also provides a WebSocket server (`packages/tasks_panel/src/webSocketServer/index.ts`, default port `8081`, overridable via `PORT` env var). The Vue frontend (`vue_frontend_rpc`) auto-detects the non-VS Code environment and connects via `RpcBrowserWebSockets`.
+**Local development transport:** the extension also provides a WebSocket server (`packages/tasks_panel/src/webSocketServer/index.ts`, default port `8081`, overridable via `PORT` env var). Note: the Vue frontend (`vue_frontend_rpc`) always connects to port `8081` regardless of `PORT` — changing `PORT` breaks local frontend connectivity unless `App.vue:43` is also updated.
 
 ### Webview HTML loading
 
@@ -122,7 +122,7 @@ yarn build       # vite build (vue_frontend_rpc only)
 
 Tests for `tasks_panel` and `npm_task_contrib` run against compiled output — run `yarn compile` first, or use `yarn ci` which compiles before running coverage.
 
-Coverage reports per package are merged into a combined lcov at the root by `scripts/merge-coverage.js` and uploaded to Coveralls.
+Coverage reports per package (nyc only — Jest coverage from `vue_frontend_rpc` is not included) are merged into a combined lcov at the root by `scripts/merge-coverage.js`. No Coveralls upload step exists in CI.
 
 ## Configuration
 

@@ -19,7 +19,7 @@ It currently contains:
   - [@task-explorer/tasks_panel](./packages/tasks_panel) The Task Explorer extension.
   - [@task-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
   - [@task-explorer/vscode_task_contrib](./packages/vscode_task_contrib) A sample of the task provider that contributes to Task Explorer.
-  - [@task-explorer/npm_task_contrib](./packages/npm_task_contrib) A full end-to-end sample task provider implementation.
+  - [npm-task-contrib](./packages/npm_task_contrib) A full end-to-end sample task provider implementation.
 
 ## Download and Installation
 
