@@ -144,5 +144,5 @@ Coverage reports per package (nyc only — Jest coverage from `vue_frontend_rpc`
 
 - **CI:** GitHub Actions — `.github/workflows/ci.yml` (push/PR to `main`; runs `yarn ci` on Node 18).
 - **Release:** GitHub Actions — `.github/workflows/release.yml` (triggered on `v*.*.*` tags; runs `yarn ci`, publishes to npm via `yarn release:publish`, creates a GitHub Release with `.vsix` artefacts).
-- **Commit format:** conventional commits enforced by `commitlint` via the `.husky/commit-msg` hook and `.github/workflows/commitlint.yml`. `lint-staged` runs formatting/linting on staged files (pre-commit) but does **not** enforce commit message format.
+- **Commit format:** conventional commits enforced by `commitlint` via the `.husky/commit-msg` hook and `.github/workflows/commitlint.yml`. `lint-staged` is configured in `package.json` but there is no `.husky/pre-commit` hook, so formatting/linting on staged files does **not** run automatically on commit.
 - **Versioning:** Lerna Fixed/Locked mode configured (`lerna.json`). Use `yarn run release:version` to bump. Note: packages may carry different versions between releases.

@@ -1,5 +1,4 @@
 [![CI](https://github.com/SAP/task-explorer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SAP/task-explorer/actions/workflows/ci.yml)
-[![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/SAP/task-explorer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SAP/task-explorer/context:javascript)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/task-explorer)](https://api.reuse.software/info/github.com/SAP/task-explorer)
@@ -14,10 +13,10 @@ It currently contains:
 
 - The following packages:
 
-  - [@task-explorer/task_contrib_types](./packages/task_contrib_types) Type signatures for task providers contributing to the Task Explorer.
-  - [@task-explorer/tasks_panel](./packages/tasks_panel) The Task Explorer extension.
-  - [@task-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
-  - [@task-explorer/vscode_task_contrib](./packages/vscode_task_contrib) A sample of the task provider that contributes to Task Explorer.
+  - [@sap_oss/task_contrib_types](./packages/task_contrib_types) Type signatures for task providers contributing to the Task Explorer.
+  - [vscode-tasks-explorer-tasks-panel](./packages/tasks_panel) The Task Explorer extension.
+  - [@vscode-tasks-explorer/vue_frontend_rpc](./packages/vue_frontend_rpc) Task Explorer views.
+  - [vscode-task-contrib](./packages/vscode_task_contrib) A sample of the task provider that contributes to Task Explorer.
   - [npm-task-contrib](./packages/npm_task_contrib) A full end-to-end sample task provider implementation.
 
 ## Download and Installation
