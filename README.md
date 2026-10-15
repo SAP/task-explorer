@@ -1,3 +1,6 @@
+> [!WARNING]
+> **This repository has moved to [SAP/app-studio-toolkit/projects/task-explorer](https://github.com/SAP/app-studio-toolkit/tree/main/projects/task-explorer).**
+
 [![CI](https://github.com/SAP/task-explorer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SAP/task-explorer/actions/workflows/ci.yml)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
