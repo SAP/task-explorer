@@ -1,4 +1,5 @@
 > [!WARNING]
+>
 > **This repository has moved to [SAP/app-studio-toolkit/projects/task-explorer](https://github.com/SAP/app-studio-toolkit/tree/main/projects/task-explorer).**
 
 [![CI](https://github.com/SAP/task-explorer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SAP/task-explorer/actions/workflows/ci.yml)
